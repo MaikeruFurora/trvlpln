@@ -25,11 +25,12 @@
             html, body{
                 background-image: url('{{ asset("assets/images/bg.jpg") }}');background-position: 'center';background-repeat: no-repeat;background-size: 'cover';
             }
-            </style>
+        </style>
         @else
         <link href="{{ asset('assets/css/style.css') }}" rel="stylesheet" type="text/css" />
         @endif
         <link href="{{ asset('plugins/fullcalendar/css/fullcalendar.css') }}" rel="stylesheet" />
+        <link href="{{ asset('plugins/timepicker/jquery.timepicker.css') }}" rel="stylesheet" />
         {{-- datepicker --}}
         {{-- <link href="{{ asset('plugins/bootstrap-datepicker/css/bootstrap-datepicker.min.css') }}" rel="stylesheet"> --}}
         <link href="{{ asset('plugins/datetimepicker/jquery.datetimepicker.min.css') }}" rel="stylesheet">
@@ -58,14 +59,14 @@
         @if (auth()->user()->type!='bdo')
             @include('layout.header')
         @endif
-
         <div class="wrapper">
             <div class="container-fluid">
                 <div class="row">
                     @yield('content')
-                 </div>
+                </div>
             </div> <!-- end container-fluid -->
         </div>
+
         <!-- end wrapper -->
 
         <!-- jQuery  -->
@@ -83,6 +84,7 @@
         {{-- <script src="{{ asset('plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}"></script> --}}
         
         <script src="{{ asset('plugins/datetimepicker/jquery.datetimepicker.full.min.js') }}"></script>
+        <script src="{{ asset('plugins/timepicker/jquery.timepicker.js') }}"></script>
         <script src="{{ asset('plugins/alertify/js/alertify.js') }}"></script>
         <script src="{{ asset('plugins/jquery-toast/jquery.toast.js') }}"></script>
         <script src="{{ asset('plugins/moment/moment.js') }}"></script>

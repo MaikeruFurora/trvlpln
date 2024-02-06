@@ -1,33 +1,65 @@
+const aTime = [
+    '08:00','08:20','08:40','09:00','09:20','09:40','10:00','10:20','10:40',
+    '11:00','11:20','11:40','12:00','12:20','12:40','13:00','13:20','13:40',
+    '14:00','14:20','14:40','15:00','15:20','15:40','16:00','16:20','16:40',
+    '17:00','17:20','17:40','18:00'
+]
+
 $('.datepicker').datetimepicker({
     minDate: moment(),
     // timeFormat: 'hh:mm a',
-    allowTimes:[
-    '08:00', '09:00','10:00','11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'
-    ],
-    formatTime:'g:iA',
+    allowTimes:aTime,
+    formatTime:'g:i A',
     format: 'Y-m-d H:i',
     //minTime:moment("g:i")
-    
+
+}).on('change', function(){
+    let dateFrom = $(this).datetimepicker('getValue');
+    if (dateFrom) {
+        $('input[name="time_to"]').datetimepicker({
+            value: new Date(dateFrom.getTime() + 30 * 60000),
+            format: 'h:i A'
+        });
+    }
 });
+$('.timepicker').datetimepicker({
+    datepicker:false,
+    allowTimes:aTime,
+    formatTime:'g:i A',
+    format: 'H:i',
+
+});
+
+
+// $('.timepicker').timepicker({
+    // 'timeFormat': 'h:i A',
+    // 'minTime': '07:00 AM',
+    // 'maxTime': '06:00 PM'
+// });
 
 var defaultView = 'agendaWeek';
 var defaultView = ($(window).width() <= 600) ? 'agendaDay' : 'agendaWeek';
 let Activity     = $("#Activity")
 let ActivityForm = $("#ActivityForm")
+let ActivityDate = $("#ActivityDate")
 let clndr        = $('#calendar')
 let DateResched  = ActivityForm.find("#DateResched")
 let settings     = (getDataURL) =>{
     return {
-        themeSystem : "jquery-ui",
+        timeZone: 'UTC',
         defaultView:defaultView,//agendaWeek
         aspectRatio: 1.5, // Adjust as needed
-        height: 650, // or a specific value like 'auto', 'parent', or a number    
+        height: 700, // or a specific value like 'auto', 'parent', or a number    
         eventLimit: false,
         eventLimitText: 'more',
+        slotDuration: '00:5:00', // Set the slot duration to 20 minute intervals
+        scrollTime: '19:00:00', // Set the initial scroll of the calendar to 6 PM
+        slotEventOverlap:false,
+        eventOverlap:false,
         header: {
-            left: 'prev,next today',
+            left: 'prev,next',
             center: 'title',
-            right: 'agendaWeek,agendaDay,'
+            right: 'month,agendaWeek,agendaDay,'
             // right: 'month,basicWeek,agendaDay'
         },
         minTime: '06:00:00', // Set the minimum time to display (e.g., 8:00 AM)
@@ -49,8 +81,8 @@ let settings     = (getDataURL) =>{
             // $(info.el).css("border-style", "dashed");
             $(info.el).css("border-color", "#20232a");
             element.find('.fc-title').css('color', info.textColor); // Set text color for each event
-            element.find('.fc-title').css('font-weight', 'normal'); // Set text color for each event
-            element.find('.fc-time').css('color', info.textColor);
+            element.find('.fc-title').css('font-weight', '900'); // Set text color for each event
+            element.find('.fc-time').css('color', info.textColor)
         },
         businessHours: {
             start: moment().format('HH:mm'), /* Current Hour/Minute 24H format */
@@ -117,21 +149,23 @@ let settings     = (getDataURL) =>{
                 url: updateUrl,
                 type:"GET",
                 dataType:'json',
-                success:function(data)
-                {
-                    ActivityForm.find("input[name=id]").val(data.id)
-                    $.each($("#ActivityForm .getInput"),function(i,val){
-                       if(val.name!='sttus[]'){
-                            ActivityForm.find("select[name="+val.name+"]").val(data[val.name]).prop('readonly',disablePastAndFuture)
-                            ActivityForm.find("input[name="+val.name+"]").val(data[val.name]).prop('readonly',disablePastAndFuture)
-                            ActivityForm.find("textarea[name="+val.name+"]").val(data[val.name]).prop('readonly',disablePastAndFuture)
+                success: function(data) {
+                    ActivityForm.find("input[name=id]").val(data.id);
+                    $("#ActivityForm .getInput").each(function() {
+                        var name = this.name;
+                        if(name !== 'sttus[]') {
+                            var $elem = ActivityForm.find("[name=" + name + "]");
+                            $elem.val(data[name]).prop('readonly', disablePastAndFuture);
                         }
-                    })
-                    ActivityForm.find("input[type=checkbox]").each(function(val,i){
-                        ActivityForm.find(".sample"+val).prop("checked",($(this).val()==data.sttus))
-                    })
-                    ActivityForm.find('input[type="checkbox"]').prop('disabled',disablePastAndFuture)
-                    ActivityForm.find("select[name=activity]").val(data.activity_list.id)
+                    });
+                    ActivityForm.find("input[type=checkbox]").prop('checked', false).filter(function() {
+                        return this.value == data.sttus;
+                    }).prop('checked', true);
+
+                    ActivityForm.find('input[type=checkbox]').prop('disabled', disablePastAndFuture);
+                    ActivityForm.find("select[name=activity]").val(data.activity_list.id);
+                    ActivityForm.find("input[name=date_from]").val(data.date_from).prop('readonly', false);
+                    ActivityForm.find("input[name=date_to]").val(data.date_to).prop('readonly', false);
                 },
                 error:function (jqxHR, textStatus, errorThrown) 
                 {
@@ -142,20 +176,16 @@ let settings     = (getDataURL) =>{
         
         },
 
-        loading: function(bool) {
-            $('#loading').toggle(bool);
-        },
+        loading: function(isLoading) {
+            // Show or hide loading spinner based on loading state
+            if (isLoading) {
+              $('<div class="loading-spinner"><i class="fa fa-spinner fa-spin"></i> Loading...</div>').appendTo('body');
+            } else {
+              $('.loading-spinner').remove();
+            }
+        }
 
-        eventAllow: function(dropLocation, draggedEvent) {
-        // Check if the dropped event's start date is in the past
-        var currentDate = moment();
-        var eventStartDate = moment(draggedEvent.start);
-
-        // Allow the drop only if the event start date is not in the past
-        return eventStartDate.isSameOrAfter(currentDate, 'day');
-        },
-
-}
+    }
 }
 
 let DefaultURL = clndr.attr("data-list").replace("user",clndr.attr("data-id"))
@@ -164,39 +194,41 @@ clndr.fullCalendar(settings(DefaultURL));
 
 
 Activity.on('submit',function(e){
-    e.preventDefault()
+    e.preventDefault();
+    // const startTime = Activity.find('input[name="date_from"]').datetimepicker('getValue');
+    // const endTime = Activity.find('input[name="time_to"]').datetimepicker('getValue');
+    // console.log(startTime,endTime);
+    // if (startTime >= endTime) {
+    //     toasMessage("Start time must be less than end time", "Error", 'error');
+    //     return false;
+    // }
+
     $.ajax({
-        url:  Activity.attr("action"),
-        type:'POST',
+        url: Activity.attr("action"),
+        type: 'POST',
         data: new FormData(this),
         processData: false,
         contentType: false,
         cache: false,
-    }).done(function(data){
-        
+    }).done(function(data) {
         if (data.msg) {
-            Activity[0].reset()
-            Activity.find('input[name=id]').val('')
-            toasMessage(data.msg,"success",data.icon)
+            Activity[0].reset();
+            Activity.find('input[name=id]').val('');
+            toasMessage(data.msg, "success", data.icon);
             $('#calendar').fullCalendar('refetchEvents');
         }
-    }).fail(function (jqxHR, textStatus, errorThrown) {
-        toasMessage(jqxHR.responseJSON.msg,"Error",jqxHR.responseJSON.icon)
-    })
+    }).fail(function(jqxHR, textStatus, errorThrown) {
+        toasMessage(jqxHR.responseJSON.msg, "Error", jqxHR.responseJSON.icon);
+    });
 })
-
-
-
-
-
 
 ActivityForm.on('submit',function(e){
 
      // Verify that at least one checkbox is checked
-     if (ActivityForm.find('input[type="checkbox"]:checked').length === 0) {
-        toasMessage("Please select least one option before saving.", "Error", 'error');
-        return false;
-    }
+    // if (ActivityForm.find('input[type="checkbox"]:checked').length === 0) {
+    //     toasMessage("Please select least one option before saving.", "Error", 'error');
+    //     return false;
+    // }
 
     let id          = ActivityForm.find("input[name=id]").val()
     let updateUrl   = ActivityForm.attr("action").replace("param",id)
@@ -220,7 +252,6 @@ ActivityForm.on('submit',function(e){
         toasMessage(jqxHR.responseJSON.msg,"Error",jqxHR.responseJSON.icon)
     })
 })
-
 
 Activity.find("input[name=week]").on('click',function(){
     if (Activity.find("input[name=date_from]").val()=="") {
@@ -277,9 +308,3 @@ $('input[type=checkbox]').click(function(){
 $(document).on('click', '.custom-control-input', function() {      
     $('input[type="checkbox"]').not(this).prop('checked', false);
 });
-
- //colorpicker start
- $('.colorpicker-default').colorpicker({
-    format: 'hex'
-});
-$('.colorpicker-rgba').colorpicker();

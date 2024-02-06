@@ -17,46 +17,57 @@ class ActivityController extends Controller
     }
 
     public function store(Request $request){
-
-
+        $time =   Carbon::createFromFormat('h:iA', $request->time_to)->format('H:i');
         $dateFrom = Carbon::parse($request->date_from);
-        if ($this->checkForOverlappingSchedule($request->date_from,$request->date_from,1)) {
-            if($request->has('week')){
-                $startOfWeek = $dateFrom->startOfWeek();
-                $dateTime = Carbon::parse($request->date_from);
-                $dayOfWeek = ($dateFrom->dayOfWeek + 6) % 7;
-                
-                for ($i = $dayOfWeek; $i < 6; $i++) {
-                    $dates = Carbon::parse($startOfWeek->copy()->addDays($i)->toDateString().' '.$dateTime->toTimeString());
-                    
-                    if (!$dates->isPast()) {
-                        $this->createActivity($request, $startOfWeek->copy()->addDays($i), $dateTime);
-                    }
+        $timeFrom = $dateFrom->format('H:i');
+        if ($timeFrom > $time) {
+            return response()->json(['msg'=>'Please check your time.', 'icon'  => 'warning'],500);
+        }
+       
+        if($request->has('week')){
+            $startOfWeek = $dateFrom->startOfWeek();
+            $dayOfWeek = ($dateFrom->dayOfWeek + 6) % 7;
+            for ($i = $dayOfWeek; $i < 6; $i++) {
+                $dates = Carbon::parse($startOfWeek->copy()->addDays($i)->toDateString().$time);
+                if (!$dates->isPast()) {
+                        $startDate = $startOfWeek->copy()->addDays($i)->toDateString();
+                        $startTime = $timeFrom;
+                        $endTime = $time;
+                        $startDateTime = Carbon::parse($startDate . ' ' . $startTime);
+                        $endDateTime = Carbon::parse($startDate . ' ' . $endTime);
+
+                        if ($this->checkForOverlappingSchedule($startDateTime, $endDateTime)) {
+                            $this->createActivity($request, $startDateTime, $endDateTime);
+                        } else {
+                            //  response()->json(['msg'=>'Time slot is overlapping with existing activity.', 'icon' => 'warning'], 500);
+                        }
                 }
+            }
             } else {
                 if (!$dateFrom->isPast()) {
-    
-                    $this->createActivity($request, $dateFrom, Carbon::parse($request->date_from));
+                    if ($this->checkForOverlappingSchedule($request->date_from,$request->date_from)) {
+                        $this->createActivity($request, $dateFrom, $dateFrom->format('Y-m-d').' '.$time);
+                    }else{
+                        return response()->json(['msg'=>'Please check your CALENDAR for conflicts. Please check your date & time.', 'icon'  => 'warning'],500);
+                    }
                 } else {
-                     return response()->json(['msg'=>'Please check your date & time.', 'icon'  => 'warning'],500);
+                     return response()->json(['msg'=>'Your date is in the past', 'icon'  => 'warning'],500);
                 }
             }
             
             return response()->json(['msg'=>'Your details have been saved', 'icon'  => 'success']);
-        }else{
-            return response()->json(['msg'=>'Please check your date & time.', 'icon'  => 'warning'],500);
-        }
+        
 
     }
 
-    public function createActivity($request, $dateFrom, $dateTime){
+    public function createActivity($request, $dateFrom, $dateTo){
         return auth()->user()->activities()->create([
             'activity_list_id'  => $request->activity,
             'client'            => strtoupper($request->client),
             'note'              => $request->note,
             'sttus'             => $request->sttus,
-            'date_from'         => $dateFrom->toDateString().' '.$dateTime->toTimeString(),
-            'date_to'           => $dateFrom->addMinute(59)
+            'date_from'         => $dateFrom,
+            'date_to'           => $dateTo
         ]);
     }
 
@@ -110,8 +121,8 @@ class ActivityController extends Controller
         }
     }
 
-    public function update(Activity $activity,Request $request)
-    {
+    public function update(Activity $activity,Request $request){
+
         $date = Carbon::parse($activity->date_from);
         if(!$activity) {
             return response()->json([
@@ -120,7 +131,6 @@ class ActivityController extends Controller
             ], 404);
         }
         if (!$date->isPast()) {
-           if ($this->checkForOverlappingSchedule($request->date_from,$request->date_to)) {
                 $activity->update([
                     'date_from' => $request->date_from,
                     'date_to'   => $request->date_to,
@@ -136,10 +146,6 @@ class ActivityController extends Controller
                     'new_date_to'        => $request->date_to,
                 ];
                 $activity->histories()->create($historyData);
-
-            }else{
-                return response()->json(['msg'=>'We encounter error && Check your date & time', 'icon'  => 'warning'],500);
-            }
         }else{
             return response()->json([
                 'msg'   => 'Not allowed activity',
@@ -150,17 +156,27 @@ class ActivityController extends Controller
             'msg' => 'Updated Activity',
             'icon'  => 'success'
         ], 200);
+
     }
 
-    public function checkForOverlappingSchedule($start, $end,$addHours)
-    {
+    public function checkForOverlappingSchedule($start, $end){
         $startTime = Carbon::parse($start);
-        $endTime = Carbon::parse($end)->addMinute(59);//->addHours(1);
+        $endTime = Carbon::parse($end);
     
         $overlappingActivitiesExist = auth()->user()->activities()
+            // ->where(function ($query) use ($startTime, $endTime) {
+            //     $query->whereBetween('date_from', [$startTime, $endTime])
+            //           ->orWhereBetween('date_to', [$startTime, $endTime]);
+            // })
             ->where(function ($query) use ($startTime, $endTime) {
-                $query->whereBetween('date_from', [$startTime, $endTime])
-                      ->orWhereBetween('date_to', [$startTime, $endTime]);
+                $query->where(function ($q) use ($startTime, $endTime) {
+                    $q->where('date_from', '<', $endTime)
+                        ->where('date_to', '>', $startTime);
+                })
+                ->orWhere(function ($q) use ($startTime, $endTime) {
+                    $q->where('date_from', '>=', $startTime)
+                        ->where('date_to', '<=', $endTime);
+                });
             })
             ->exists();
     
@@ -189,12 +205,40 @@ class ActivityController extends Controller
             }
             
         }else{
+            $activity->update([
+                'date_from' => $request->date_from,
+                'date_to'   => $request->date_to,
+            ]);
+
+            return response()->json([
+                'msg' => 'Updated Activity',
+                'icon'  => 'success'
+            ], 200);
+            // return response()->json([
+            //     'msg'   => 'Not allowed activity',
+            //     'icon'  => 'warning'
+            // ], 500);
+        }
+       
+    }
+
+    public function updateDate(Activity $activity, Request $request){
+        $date = Carbon::parse($activity->date_from);
+        if (!$date->isPast()) {
+            $activity->update([
+                'date_from' => $request->date_from,
+                'date_to'   => $request->date_to,
+            ]);
+            return response()->json([
+                'msg' => 'Updated Activity',
+                'icon'  => 'success'
+            ], 200);
+        }else{
             return response()->json([
                 'msg'   => 'Not allowed activity',
                 'icon'  => 'warning'
             ], 500);
         }
-       
     }
 
     public function info(Activity $activity){

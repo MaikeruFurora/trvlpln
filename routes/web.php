@@ -35,6 +35,7 @@ Route::middleware(['auth:web','preventBackHistory','auth.user'])->name('authenti
     Route::post('activity/list/{user}',[ActivityController::class,'list'])->name('activity.list');
     Route::post('activity/update/{activity}',[ActivityController::class,'update'])->name('activity.update');
     Route::post('activity/update/info/{activity}',[ActivityController::class,'updateInfo'])->name('activity.update.info');
+    Route::post('activity/update/date/{activity}',[ActivityController::class,'updateDate'])->name('activity.update.date');
     Route::get('activity/info/{activity}',[ActivityController::class,'info'])->name('activity.info');
     Route::delete('activity/destroy/{activity}',[ActivityController::class,'destroy'])->name('activity.destroy');
 

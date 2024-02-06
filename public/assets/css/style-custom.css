@@ -964,7 +964,7 @@ body {
 }
 
 .container-fluid {
-  max-width: 1700px;
+  max-width: 1800px;
 }
 
 #topnav .navbar-custom {
@@ -3016,7 +3016,7 @@ table.focus-on tbody tr.focused td {
   Account Pages
 ===================*/
 .account-pages {
-  margin: 10.5% auto;
+  margin: auto;
   position: relative;
 }
 

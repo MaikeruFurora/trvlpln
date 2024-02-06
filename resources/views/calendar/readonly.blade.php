@@ -9,6 +9,7 @@
                     <div class="card border m-0">
                         <div class="card-body p-0">
                             <ul class="list-group list-group-flush">
+                                <li class="list-group-item activity_list"></li>
                                 <li class="list-group-item client"></li>
                                 <li class="list-group-item osnum"></li>
                                 <li class="list-group-item note"></li>
