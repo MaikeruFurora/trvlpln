@@ -19,20 +19,19 @@
         <!-- App css -->
         <link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
         <link href="{{ asset('assets/css/icons.css') }}" rel="stylesheet" type="text/css" />
-        @if (auth()->user()->type=='bdo')
-        <link href="{{ asset('assets/css/style-custom.css') }}" rel="stylesheet" type="text/css" />
-        <style>
-            html, body{
-                background-image: url('{{ asset("assets/images/bg.jpg") }}');background-position: 'center';background-repeat: no-repeat;background-size: 'cover';
-            }
-        </style>
-        @else
-        <link href="{{ asset('assets/css/style.css') }}" rel="stylesheet" type="text/css" />
-        @endif
+            @if ((auth()->user()->type??'')=='bdo')
+            <link href="{{ asset('assets/css/style-custom.css') }}" rel="stylesheet" type="text/css" />
+            <style>
+                html, body{
+                    background-image: url('{{ asset("assets/images/bg.jpg") }}');background-position: 'center';background-repeat: no-repeat;background-size: 'cover';
+                }
+            </style>
+            @else
+            <link href="{{ asset('assets/css/style.css') }}" rel="stylesheet" type="text/css" />
+            @endif
         <link href="{{ asset('plugins/fullcalendar/css/fullcalendar.css') }}" rel="stylesheet" />
         <link href="{{ asset('plugins/timepicker/jquery.timepicker.css') }}" rel="stylesheet" />
-        {{-- datepicker --}}
-        {{-- <link href="{{ asset('plugins/bootstrap-datepicker/css/bootstrap-datepicker.min.css') }}" rel="stylesheet"> --}}
+        <link href="{{ asset('assets/css/app.css') }}" rel="stylesheet" type="text/css" />
         <link href="{{ asset('plugins/datetimepicker/jquery.datetimepicker.min.css') }}" rel="stylesheet">
         <link href="{{ asset('plugins/alertify/css/alertify.css') }}" rel="stylesheet">
         <link href="{{ asset('plugins/select2/select2.min.css') }}" rel="stylesheet" />
@@ -72,17 +71,14 @@
         <!-- jQuery  -->
         <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
         <script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
+        <script src="{{ asset('assets/js/tooltip.min.js') }}"></script>
         <script src="{{ asset('assets/js/modernizr.min.js') }}"></script>
         <script src="{{ asset('assets/js/waves.js') }}"></script>
         <script src="{{ asset('assets/js/jquery.slimscroll.js') }}"></script>
-        <script src="{{ asset('plugins/bootstrap-colorpicker/js/bootstrap-colorpicker.min.js') }}"></script>
         <!-- Jquery-Ui -->
-        <script src="{{ asset('plugins/jquery-ui/jquery-ui.min.js') }}"></script>
+        {{-- <script src="{{ asset('plugins/jquery-ui/jquery-ui.min.js') }}"></script> --}}
         <script src="{{ asset('plugins/moment/moment.js') }}"></script>
         <script src='{{ asset('plugins/fullcalendar/js/fullcalendar.min.js') }}'></script>
-        {{-- datepicker --}}
-        {{-- <script src="{{ asset('plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}"></script> --}}
-        
         <script src="{{ asset('plugins/datetimepicker/jquery.datetimepicker.full.min.js') }}"></script>
         <script src="{{ asset('plugins/timepicker/jquery.timepicker.js') }}"></script>
         <script src="{{ asset('plugins/alertify/js/alertify.js') }}"></script>

@@ -1,54 +1,19 @@
 @extends('layout.app')
-
+@section('css')
+<link href="{{ asset('assets/css/calendar.css') }}" rel="stylesheet" type="text/css" />
+@endsection
 @section('content')
-<style>
-    .fc-title{
-        font-size: .9em;
-    }
-    .label-text{
-        font-size: 12px
-    }
-    .buttons{
-        background: red;
-    }
-    /* Default styles for FullCalendar */
-    #calendar {
-      margin: 0 auto;
-    }
 
-    /* Media query for mobile devices */
-    @media (max-width: 600px) {
-      #calendar {
-        max-width: 100%;
-        padding: 0 10px;
-      }
-    }
-
-
-    /* Loading spinner styles */
-    .loading-spinner {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 9999;
-      background-color: rgba(255, 255, 255, 0.8);
-      border-radius: 5px;
-      padding: 10px;
-    }
-
-</style>
 <div class="card m-2">
     <div class="card-header p-1">
-        <ul class="list-group">
+        <ul class="list-group"  data-toggle="tooltip" data-placement="top" title="Tooltip on top">
             <li class="list-group-item d-flex justify-content-between align-items-center">
                 {{ strtoupper(auth()->user()->name) }}
                 <a  class="badge text-danger badge-pill"style="cursor:pointer;font-size: 15px"
                 onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="fas fa-power-off"></i></a>
                 <form id="logout-form" action="{{ route('authenticate.signout') }}" method="POST" class="d-none">@csrf</form>
-              </li>
-
-    </ul>
+            </li>
+        </ul>
     </div>
     <div class="card-body shadow">
 

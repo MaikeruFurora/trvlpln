@@ -2,18 +2,7 @@
 @section('content')
     <div class="col-12 mt-4">
         <div class="card">
-            {{-- <div class="card-header my-0">
-                <div class="col-4">
-                    <div class="input-group input-group-sm">
-                        <select name="bdo" class="form-control" id="{{ route("authenticate.user.api.list") }}" ></select>
-                    </div>
-                </div>
-            </div> --}}
             <div class="card-body">
-                {{-- <div id='calendar' 
-                    data-list="{{ route("authenticate.activity.list",['user']) }}" 
-                    class="col-xl-12 col-lg-12 col-md-12"></div> --}}
-
               <div class="row">
                 <div class="col-xl-2 col-lg-3 col-md-4">
                     @foreach ($users as $key => $item)    

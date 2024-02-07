@@ -95,9 +95,12 @@ class ActivityController extends Controller
                 'title'           =>  $value->activity_list->name. !empty($value->client)? $value->client: '',
                 'start'           =>  $value->date_from,
                 'end'             =>  $value->date_to,
-                'borderColor'     => 'white',
+                'osnum'           =>  $value->osnum,
+                'note'            =>  $value->note,
+                'sttus'           =>  $value->sttus,
                 'color'           =>  $this->color($value->sttus),#$value->activity_list->color,
                 'textColor'       => 'black',
+                'borderColor'       => 'white',
             ];
         }
 

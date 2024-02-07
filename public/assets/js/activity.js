@@ -49,11 +49,11 @@ let settings     = (getDataURL) =>{
         timeZone: 'UTC',
         defaultView:defaultView,//agendaWeek
         aspectRatio: 1.5, // Adjust as needed
-        height: 700, // or a specific value like 'auto', 'parent', or a number    
+        height: 730, // or a specific value like 'auto', 'parent', or a number    
         eventLimit: false,
         eventLimitText: 'more',
-        slotDuration: '00:5:00', // Set the slot duration to 20 minute intervals
-        scrollTime: '19:00:00', // Set the initial scroll of the calendar to 6 PM
+        slotDuration: '00:20:00', // Set the slot duration to 20 minute intervals
+        scrollTime: '06:00:00', // Set the initial scroll of the calendar to 6 PM
         slotEventOverlap:false,
         eventOverlap:false,
         header: {
@@ -62,8 +62,8 @@ let settings     = (getDataURL) =>{
             right: 'month,agendaWeek,agendaDay,'
             // right: 'month,basicWeek,agendaDay'
         },
-        minTime: '06:00:00', // Set the minimum time to display (e.g., 8:00 AM)
-        maxTime: '19:00:00', // Set the maximum time to display (e.g., 6:00 PM)
+        minTime: '07:00:00', // Set the minimum time to display (e.g., 8:00 AM)
+        maxTime: '18:00:00', // Set the maximum time to display (e.g., 6:00 PM)
         editable: true, 
         hiddenDays: [0],
         allDaySlot: false,
@@ -78,11 +78,26 @@ let settings     = (getDataURL) =>{
         },
         
         eventRender: function (info,element) {
-            // $(info.el).css("border-style", "dashed");
             $(info.el).css("border-color", "#20232a");
             element.find('.fc-title').css('color', info.textColor); // Set text color for each event
             element.find('.fc-title').css('font-weight', '900'); // Set text color for each event
             element.find('.fc-time').css('color', info.textColor)
+            element.tooltip({ 
+                title: function() {
+                    return `<div class="event-tooltip text-left">
+                                <p><b>Client:</b> ${info.title}</p>
+                                <p><b>Date</b>: ${info.start.format('YYYY-MM-DD')}</p>
+                                ${info.osnum?`<p><b>OS:</b> ${info.osnum}</p>`:''}
+                                ${info.note?`<p><b>Note:</b> ${info.note}</p>`:''}
+                                ${info.sttus?`<p><b>Status:</b> ${info.sttus}</p>`:''}
+                                <p><b>Time:</b> ${info.start.format('H:mm A')} - ${info.end ? info.end.format('H:mm A') : 'N/A'}</p>
+                            </div>`;
+                },
+                html: true,
+                placement: "top",
+                trigger: "hover",
+                container: "body"
+            });
         },
         businessHours: {
             start: moment().format('HH:mm'), /* Current Hour/Minute 24H format */
@@ -183,7 +198,7 @@ let settings     = (getDataURL) =>{
             } else {
               $('.loading-spinner').remove();
             }
-        }
+        },
 
     }
 }
