@@ -4,7 +4,7 @@
         <div class="card">
             <div class="card-body">
               <div class="row">
-                <div class="col-xl-2 col-lg-3 col-md-4">
+                <div class="col-xl-2 col-lg-3 col-md-3 col-sm-12">
                     @foreach ($users as $key => $item)    
                     <div id="accordion">
                         <div class="card m-0 border">
@@ -12,7 +12,7 @@
                                 href="#collapseOne{{ $key }}"
                                 aria-controls="collapseOne{{ $key }}" class="text-dark">
                             <div class="card-header p-2" id="headingOne{{ $key }}">
-                                <h5 class="mb-0 mt-0 font-14"> <i class="fas fa-warehouse"></i> {{ $key }} </h5>
+                                <h5 class="mb-0 mt-0 font-14"> <i class="fas fa-warehouse mr-2"></i> {{ $key }}</h5>
                             </div>
                             </a>
 
@@ -36,7 +36,16 @@
                     data-list="{{ route("authenticate.activity.list",['user']) }}" 
                     data-update="{{ route('authenticate.activity.update',['param']) }}" 
                     data-info="{{ route('authenticate.activity.info',['param']) }}" 
-                    class="col-xl-10 col-lg-9 col-md-8">
+                    class="col-xl-9 col-lg-9 col-md-8 col-sm-12">
+                </div>
+                <div class="col-xl-1 col-lg-1 col-md-1 col-sm-12">
+                    <button class="btn btn-secondary btn-block mb-3 btn-sm" onclick="alert('Not yet Available')">REPORT</button>
+                    <p><strong>Guide</strong></p>
+                    <ul class="list-group">
+                        @foreach ($lists as $item)
+                            <i class="list-group-item text-center p-1 pt-3" style="font-size: 11px"> <i class="{{ $item->icon }}" style="font-size: 15px"></i> <br>{{ $item->name }}</i>
+                        @endforeach
+                    </ul>
                 </div>
               </div>
             </div>

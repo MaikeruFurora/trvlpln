@@ -31,6 +31,7 @@ class ActivityList extends Model implements Auditable
             'name'         => $request->name,
             'is_disabled'  => $request->is_disabled,
             'color'        => $request->color,
+            'icon'         => $request->icon,
         ];
 
     }

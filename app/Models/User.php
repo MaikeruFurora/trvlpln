@@ -12,6 +12,10 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
+    
+    const SUPERVISOR = 'SUPERVISOR';
+    const BDO = 'BDO';
+    const ADMIN = 'ADMIN';
 
     /**
      * The attributes that are mass assignable.
@@ -54,7 +58,15 @@ class User extends Authenticatable
     }
 
     public function scopeTypeBDO($query){
-        return $query->where('type','BDO');
+        return $query->where('type',self::BDO);
+    }
+
+    public function scopeTypeVisor($query){
+        return $query->where('type', self::SUPERVISOR);
+    }
+
+    public function scopeNotAdmin($query){
+        return $query->whereNot('type', self::ADMIN);
     }
 
     public function scopeStoreUser($q,$request){

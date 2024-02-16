@@ -964,7 +964,7 @@ body {
 }
 
 .container-fluid {
-  max-width: 1300px;
+  max-width: 1800px;
 }
 
 #topnav .navbar-custom {
@@ -1203,6 +1203,10 @@ body {
   .wrapper {
     margin-top: 40px !important;
   }
+
+  .wrapper-bdo {
+    margin-top: 0px !important;
+  }
 }
 
 @media (min-width: 768px) {
@@ -1227,6 +1231,11 @@ body {
 ===================*/
 .wrapper {
   margin-top: 100px;
+}
+
+/* for bdo only */
+.wrapper-bdo {
+  margin-top: 50px;
 }
 
 .page-title-box {

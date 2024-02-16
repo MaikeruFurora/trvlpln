@@ -23,16 +23,19 @@
         <link href="{{ asset('plugins/alertify/css/alertify.css') }}" rel="stylesheet">
         <link href="{{ asset('plugins/select2/select2.min.css') }}" rel="stylesheet" />
         @yield('css')
+        <style>
+            html, body{
+                background: #cdcdcd
+            }
+        </style>
     </head>
-
    
     <body>
 
-        <!-- Loader -->
-        @include('layout.loader')
+       <!-- Loader -->
+       @include('layout.loader')
         <!-- header-bg -->
-        @include('layout.header')
-        <div class="wrapper">
+        <div class="wrapper-bdo">
             <div class="container-fluid">
                 <div class="row">
                     @yield('content')

@@ -1,12 +1,12 @@
-@extends('layout.app')
+@extends('layout.app-bdo')
 @section('css')
 <link href="{{ asset('assets/css/calendar.css') }}" rel="stylesheet" type="text/css" />
 @endsection
 @section('content')
 
-<div class="card m-2">
+<div class="card m-1 shadow-lg border">
     <div class="card-header p-1">
-        <ul class="list-group"  data-toggle="tooltip" data-placement="top" title="Tooltip on top">
+        <ul class="list-group">
             <li class="list-group-item d-flex justify-content-between align-items-center">
                 {{ strtoupper(auth()->user()->name) }}
                 <a  class="badge text-danger badge-pill"style="cursor:pointer;font-size: 15px"
@@ -15,48 +15,13 @@
             </li>
         </ul>
     </div>
-    <div class="card-body shadow">
+    <div class="card-body shadow ">
 
         <div class="row">
             <div class="col-xl-2 col-lg-3 col-md-4">
                 <h3 class="m-t-5 m-b-15 font-14 border-bottom lead">Create Activity</h3>
-                <form id="Activity" autocomplete="off" class="m-t-5 m-b-20" action="{{ route('authenticate.activity.store') }}">@csrf
-                    <input type="hidden" name="id">
-                    <div class="form-group mb-3">
-                        <small class="mb-0 label-text" for="">Activity</small>
-                        <select name="activity" id="" class="custom-select custom-select-sm" required>
-                            <option value=""></option>
-                            @foreach ($lists as $item)
-                                <option value="{{ $item->id }}">{{ $item->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="form-row mb-1">
-                        <div class="form-group col-lg-8 col-md-8 col-sm-12">
-                            <small class="mb-0 label-text" for="">Date & time from</small>
-                            <input type="text" class="form-control form-control-sm datepicker" name="date_from" required/>
-                        </div>
-                        <div class="form-group col-lg-4 col-md-4 col-sm-12">
-                            <small class="mb-0 label-text" for="">Time to</small>
-                            <input type="text"palceholder="Time to" name="time_to" class="form-control form-control-sm timepicker">
-                        </div>
-                    </div>
-                    <div class="form-group form-check">
-                        <input type="checkbox" class="form-check-input" name="week" id="applydisWeek">
-                        <small class="form-check-label label-text" for="applydisWeek">Apply this week.</small>
-                    </div>
-                    
-                    {{-- <div class="form-group mb-2">
-                        <small class="mb-0 label-text" for="">Date & time </small>
-                        <input type="text" class="form-control form-control-sm datepicker" name="date_to"/>
-                    </div> --}}
-                    <div class="form-group mb-2">
-                        <small class="mb-0 label-text" for="">Client</small>
-                        <textarea class="form-control form-control-sm text-uppercase" id="" rows="3" name="client" maxlength="100" required></textarea>
-                    </div> 
-                    <button type="submit" class="btn btn-block btn-secondary mb-3">Save</button>
-                </form>
-                @include('calendar.parts.guide')
+               <x-activity-form :lists="$lists"/>
+                @include('calendar.parts.guide',['list'=>$lists])
             </div>
 
             <div id='calendar' 

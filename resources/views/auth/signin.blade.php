@@ -42,14 +42,14 @@
             
             <div class="container">
                 <div class="row align-items-center">
-                    <div class="col-lg-6">
+                    <div class="col-lg-6 mx-auto">
                         <div>
                             <div >
                                 <a href="index.html" class="logo logo-admin">
-                                    <img src="{{ asset('assets/images/favicon.ico') }}" height="60" alt="logo">
+                                    <img src="{{ asset('assets/images/logo-bg-1.png') }}" height="65" alt="logo">
                                 </a>
                             </div>
-                            <h5 class="font-14 text-muted">
+                            <h5 class="font-14 text-muted"></h5>
                             <p class="text-muted ">
                                 <b>BEAT PLAN</b> - A "beat plan" might be a strategic plan outlining the schedule and locations for sales representatives or merchandisers to visit. This plan helps ensure that sales representatives cover specific territories or retail outlets efficiently and regularly.
                             </p>
@@ -73,7 +73,7 @@
                                 <div class="p-2">
                                     <h4 class="text-muted float-right font-18 mt-4">Sign In</h4>
                                     <div>
-                                        <a href="index.html" class="logo logo-admin"><img src="{{ asset('assets/images/favicon.ico') }}" height="50" alt="logo"></a>
+                                        <a href="index.html" class="logo logo-admin"><img src="{{ asset('assets/images/logo-bg-sm.png') }}" height="40" alt="logo"></a>
                                     </div>
                                 </div>
         

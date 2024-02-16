@@ -12,11 +12,11 @@
         background: red;
     }
 </style>
-<div class="card m-2">
+<div class="card mt-3">
     <div class="card-body shadow">
        
         <div class="row mt-4">
-            <div class="col-xl-3 col-lg-3 col-md-4">
+            <div class="col-xl-2 col-lg-2 col-md-4">
                  <!-- Nav tabs -->
                 <ul class="nav nav-tabs nav-justified" role="tablist">
                     <li class="nav-item">
@@ -34,35 +34,7 @@
                 <!-- Tab panes -->
                 <div class="tab-content">
                     <div class="tab-pane  p-1" id="home" role="tabpanel">
-                        <form id="Activity" autocomplete="off" class="m-t-5 m-b-20" action="{{ route('authenticate.activity.store') }}">@csrf
-                            <input type="hidden" name="id">
-                            <div class="form-group mb-2">
-                                <small class="mb-0 label-text" for="">Activity</small>
-                                <select name="activity" id="" class="custom-select custom-select-sm" required>
-                                    <option value=""></option>
-                                    @foreach ($lists as $item)
-                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="form-group mb-2">
-                                <small class="mb-0 label-text" for="">Date</small>
-                                <input type="text" class="form-control form-control-sm datepicker" name="date_from" required/>
-                            </div>
-                            <div class="form-group form-check">
-                                <input type="checkbox" class="form-check-input" name="week" id="applydisWeek">
-                                <small class="form-check-label label-text" for="applydisWeek">Apply this week.</small>
-                            </div>
-                            {{-- <div class="form-group mb-2">
-                                <small class="mb-0 label-text" for="">Date & time </small>
-                                <input type="text" class="form-control form-control-sm datepicker" name="date_to"/>
-                            </div> --}}
-                            <div class="form-group mb-2">
-                                <small class="mb-0 label-text" for="">Client</small>
-                                <textarea class="form-control form-control-sm text-uppercase" id="" rows="3" name="client" maxlength="100" required></textarea>
-                            </div> 
-                            <button type="submit" class="btn btn-block btn-secondary mb-3">Save</button>
-                        </form>
+                        <x-activity-form :lists="$lists"/>
                     </div>
                     <div class="tab-pane py-3 active" id="profile" role="tabpanel">
                        @foreach ($bdo as $item)
@@ -73,15 +45,22 @@
                     </div>
                 </div>
                
-                @include('calendar.parts.guide')
+                @include('calendar.parts.guide',['list'=>$lists])
             </div>
 
             <div id='calendar' 
-            data-id="{{ auth()->id() }}"
-            data-list="{{ route("authenticate.activity.list",['user']) }}" 
-            data-update="{{ route('authenticate.activity.update',['param']) }}" 
-            data-info="{{ route('authenticate.activity.info',['param']) }}" 
-            class="col-xl-9 col-lg-9 col-md-8"></div>
+                data-id="{{ auth()->id() }}"
+                data-list="{{ route("authenticate.activity.list",['user']) }}" 
+                data-update="{{ route('authenticate.activity.update',['param']) }}" 
+                data-info="{{ route('authenticate.activity.info',['param']) }}" 
+                class="col-xl-10 col-lg-10 col-md-8">
+            </div>
+            {{-- <div class="col-xl-1 col-lg-1 col-md-8">
+                
+                @for ($i = 0; $i < 10; $i++)
+                    <button class="btn btn-sm btn-secondary btn-block p-2 m-1" style="font-size: 11px">dasdasd</button>
+                @endfor
+            </div> --}}
         </div>
         <!-- end row -->
       

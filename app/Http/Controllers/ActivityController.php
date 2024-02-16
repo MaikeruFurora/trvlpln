@@ -11,8 +11,8 @@ use Illuminate\Http\Request;
 class ActivityController extends Controller
 {
     public function index(){
-        $lists = ActivityList::getActive()->get(['id','name','color']);
-        $sttus = ['success','failed'];
+        $lists = ActivityList::getActive()->get(['id','name','color','icon']);
+        $sttus = ['success','failed','cancelled'];
         return view('calendar.index',compact('lists','sttus'));
     }
 
@@ -45,7 +45,7 @@ class ActivityController extends Controller
             }
             } else {
                 if (!$dateFrom->isPast()) {
-                    if ($this->checkForOverlappingSchedule($request->date_from,$request->date_from)) {
+                    if ($this->checkForOverlappingSchedule($request->date_from,$dateFrom->format('Y-m-d').' '.$time )) {
                         $this->createActivity($request, $dateFrom, $dateFrom->format('Y-m-d').' '.$time);
                     }else{
                         return response()->json(['msg'=>'Please check your CALENDAR for conflicts. Please check your date & time.', 'icon'  => 'warning'],500);
@@ -76,10 +76,10 @@ class ActivityController extends Controller
        
         if ($user!="all") {
             $data = User::find($user);
-            $activities = $data->load(['activities','activities.activity_list:id,name,color']);
+            $activities = $data->load(['activities','activities.activity_list:id,name,color,icon']);
             return $this->renderActivity($activities->activities);
         }else{
-             $data = Activity::with(['activity_list:id,name,color'])->get();
+            return $data = Activity::with(['activity_list:id,name,color,icon'])->get();
             return $this->renderActivity($data);
         }
         
@@ -92,15 +92,18 @@ class ActivityController extends Controller
         foreach ($data as $key => $value) {
             $events[] = [
                 'id'              =>  $value->id,
-                'title'           =>  $value->activity_list->name. !empty($value->client)? $value->client: '',
+                'title'           =>  $value->client,
                 'start'           =>  $value->date_from,
                 'end'             =>  $value->date_to,
                 'osnum'           =>  $value->osnum,
                 'note'            =>  $value->note,
                 'sttus'           =>  $value->sttus,
+                'activity'        =>  $value->activity_list->name,
+                'activityColor'   =>  $value->activity_list->color,
                 'color'           =>  $this->color($value->sttus),#$value->activity_list->color,
-                'textColor'       => 'black',
-                'borderColor'       => 'white',
+                'icon'            =>  $value->activity_list->icon,
+                'textColor'       =>  'black',
+                'borderColor'     =>  'white',
             ];
         }
 
@@ -118,8 +121,11 @@ class ActivityController extends Controller
             case 'failed':
                     return '#dc3545';
                 break;
+            case 'cancelled':
+                    return '#bc9090';
+                break;
             default:
-                    return '#4bbbce';
+                    return '#a6d8f3';
                 break;
         }
     }
@@ -193,6 +199,8 @@ class ActivityController extends Controller
         $date_from = Carbon::parse($activity->date_from)->format("Y-m-d");
         if ($date_from==Carbon::now()->format("Y-m-d")) {
             $data =  $activity->update([
+                'date_from'         => $request->date_from,
+                'date_to'           => $request->date_to,
                 'activity_list_id'  => $request->activity,
                 'client'            => $request->client,
                 'note'              => $request->note,
@@ -214,7 +222,7 @@ class ActivityController extends Controller
             ]);
 
             return response()->json([
-                'msg' => 'Updated Activity',
+                'msg' => 'Updated Activity Time Slot',
                 'icon'  => 'success'
             ], 200);
             // return response()->json([

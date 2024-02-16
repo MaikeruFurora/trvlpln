@@ -22,7 +22,7 @@ class ActivityListService{
 
         $filter = $search['value'];    
     
-        $query = ActivityList::select(['name','is_disabled','color','id','created_at']);
+        $query = ActivityList::select(['name','is_disabled','color','id','icon','created_at']);
     
         if (!empty($filter)) {
             $query
@@ -53,6 +53,7 @@ class ActivityListService{
                     "name"          => $value->name,
                     "is_disabled"   => $value->is_disabled,
                     "color"         => $value->color,
+                    "icon"          => $value->icon,
                     "created_at"    => ($value->created_at),
                 ];
         }

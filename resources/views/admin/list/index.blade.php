@@ -30,7 +30,9 @@
                                         <option value="1">No</option>
                                         <option value="0">Yes</option>
                                     </select>
-                                <th colspan="2"><input type="color" name="color" class="form-control form-control-sm"></th>
+                                <th><input type="color" name="color" class="form-control form-control-sm"></th>
+                                <th><input type="text" name="icon" class="form-control form-control-sm" maxlength="30"></th>
+                                <th></th>
                                 </th>
                                 <th>
                                     <button type="submit" class="btn btn-sm btn-primary btn-block">Save</button>
@@ -41,6 +43,7 @@
                                 <th>Name</th>
                                 <th>Active</th>
                                 <th>Color</th>
+                                <th>Icon</th>
                                 <th>Created at</th>
                                 <th>Action</th>
                             </tr>
@@ -83,6 +86,7 @@
                     }
                 },
                 { data:'color' },
+                { data:'icon' },
                 { data:'created_at' },
                 { 
                     data:null,

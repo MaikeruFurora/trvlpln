@@ -5,15 +5,14 @@ const aTime = [
     '17:00','17:20','17:40','18:00'
 ]
 
-$('.datepicker').datetimepicker({
+let dateTimeSetting = {
     minDate: moment(),
-    // timeFormat: 'hh:mm a',
     allowTimes:aTime,
     formatTime:'g:i A',
     format: 'Y-m-d H:i',
-    //minTime:moment("g:i")
+}
 
-}).on('change', function(){
+$('.datepicker').datetimepicker(dateTimeSetting).on('change', function(){
     let dateFrom = $(this).datetimepicker('getValue');
     if (dateFrom) {
         $('input[name="time_to"]').datetimepicker({
@@ -23,22 +22,15 @@ $('.datepicker').datetimepicker({
     }
 });
 $('.timepicker').datetimepicker({
-    datepicker:false,
-    allowTimes:aTime,
-    formatTime:'g:i A',
-    format: 'H:i',
-
+    datepicker: false,
+    allowTimes: aTime,
+    formatTime: 'g:i A',
+    format: 'g:i A',
+    validateOnBlur: false,
 });
 
-
-// $('.timepicker').timepicker({
-    // 'timeFormat': 'h:i A',
-    // 'minTime': '07:00 AM',
-    // 'maxTime': '06:00 PM'
-// });
-
-var defaultView = 'agendaWeek';
-var defaultView = ($(window).width() <= 600) ? 'agendaDay' : 'agendaWeek';
+var defaultView  = 'agendaWeek';
+var defaultView  = ($(window).width() <= 600) ? 'agendaDay' : 'agendaWeek';
 let Activity     = $("#Activity")
 let ActivityForm = $("#ActivityForm")
 let ActivityDate = $("#ActivityDate")
@@ -49,7 +41,7 @@ let settings     = (getDataURL) =>{
         timeZone: 'UTC',
         defaultView:defaultView,//agendaWeek
         aspectRatio: 1.5, // Adjust as needed
-        height: 730, // or a specific value like 'auto', 'parent', or a number    
+        height: 710, // or a specific value like 'auto', 'parent', or a number    
         eventLimit: false,
         eventLimitText: 'more',
         slotDuration: '00:20:00', // Set the slot duration to 20 minute intervals
@@ -59,10 +51,10 @@ let settings     = (getDataURL) =>{
         header: {
             left: 'prev,next',
             center: 'title',
-            right: 'month,agendaWeek,agendaDay,'
+            right: 'month,agendaWeek,basicWeek,agendaDay,'
             // right: 'month,basicWeek,agendaDay'
         },
-        minTime: '07:00:00', // Set the minimum time to display (e.g., 8:00 AM)
+        minTime: '08:00:00', // Set the minimum time to display (e.g., 8:00 AM)
         maxTime: '18:00:00', // Set the maximum time to display (e.g., 6:00 PM)
         editable: true, 
         hiddenDays: [0],
@@ -80,17 +72,20 @@ let settings     = (getDataURL) =>{
         eventRender: function (info,element) {
             $(info.el).css("border-color", "#20232a");
             element.find('.fc-title').css('color', info.textColor); // Set text color for each event
-            element.find('.fc-title').css('font-weight', '900'); // Set text color for each event
-            element.find('.fc-time').css('color', info.textColor)
+            element.find('.fc-title').css('font-weight', '800'); // Set text color for each event
+            element.find('.fc-time').css('color', info.textColor).css('font-size','11px')
+            // element.append('<div style="position: absolute; top: 0; right: 0; width: 0; height: 0; transform: rotate(270deg); border-left: 10px solid transparent; border-bottom: 10px solid '+info.activityColor+';"></div>');
+            element.find('.fc-content').prepend('<i style="color:black; position: absolute; top: 1px; right: 1px;" class="'+info.icon+'"></i>');
             element.tooltip({ 
                 title: function() {
-                    return `<div class="event-tooltip text-left">
-                                <p><b>Client:</b> ${info.title}</p>
-                                <p><b>Date</b>: ${info.start.format('YYYY-MM-DD')}</p>
-                                ${info.osnum?`<p><b>OS:</b> ${info.osnum}</p>`:''}
-                                ${info.note?`<p><b>Note:</b> ${info.note}</p>`:''}
-                                ${info.sttus?`<p><b>Status:</b> ${info.sttus}</p>`:''}
-                                <p><b>Time:</b> ${info.start.format('H:mm A')} - ${info.end ? info.end.format('H:mm A') : 'N/A'}</p>
+                    return `<div class="event-tooltip text-left" style="font-size:13px">
+                                <p class="mb-1"><b>Client:</b> ${info.title}</p>
+                                ${info.osnum?`<p class="mb-1"><b>OS:</b> ${info.osnum}</p>`:''}
+                                ${info.note?`<p class="mb-1"><b>Note:</b> ${info.note}</p>`:''}
+                                ${info.sttus?`<p class="mb-1"><b>Status:</b> ${info.sttus}</p>`:''}
+                                ${info.activity?`<p class="mb-1"><b>Activity:</b> ${info.activity}</p>`:''}
+                                <p class="mb-1"><b>Date:</b> ${info.start.format('MMM DD, YYYY')}</p>
+                                <p class="mb-1"><b>Time:</b> ${info.start.format('h:mm A')} - ${info.end ? info.end.format('h:mm A') : 'N/A'}</p>
                             </div>`;
                 },
                 html: true,
@@ -112,6 +107,7 @@ let settings     = (getDataURL) =>{
             //console.log('select', startDate.format(), endDate.format());
         },
         eventResize: function(event){
+            $('.tooltip').hide();
             //$.fullCalendar.formatDate(event.start, "Y-MM-DD HH:mm:ss");
             //$.fullCalendar.formatDate(event.end, "Y-MM-DD HH:mm:ss");
             let id          = event.id
@@ -132,7 +128,25 @@ let settings     = (getDataURL) =>{
                 },
             })
         },
+        
+        eventDropStart: function(event, jsEvent, ui, view) {
+            // Hide tooltip when resizing starts
+            $('.tooltip').hide();
+        },
+        eventDropStop: function(event, jsEvent, ui, view) {
+            // Hide tooltip when resizing starts
+            $('.tooltip').hide();
+        },
+        eventResizeStart: function(event, jsEvent, ui, view) {
+            // Hide tooltip when resizing starts
+            $('.tooltip').hide();
+        },
+        eventResizeStop: function(event, jsEvent, ui, view) {
+            // Show tooltip again when resizing stops
+            $('.tooltip').hide();
+        },
         eventDrop: function(event) {
+            $('.tooltip').hide();
             let id          = event.id;
             let date_from   = moment(event.start).format('YYYY-MM-DD HH:mm:ss')
             let date_to     = moment(event.end).format('YYYY-MM-DD HH:mm:ss')
@@ -154,6 +168,7 @@ let settings     = (getDataURL) =>{
         },
 
         eventClick: function(event, jsEvent, view) {
+            $('.tooltip').hide();
             let disablePastAndFuture =  moment().format('YYYY-MM-DD')!==moment(event.start).format('YYYY-MM-DD');
             $('#viewActivity').modal('show');
             DateResched.hide()
@@ -306,6 +321,19 @@ ActivityForm.find("button[name=delete]").on('click',function(){
         return false
 
 })
+
+
+ActivityForm.find("input[name=date_from]").on('change',function(){
+
+    let dateFrom = $(this).datetimepicker('getValue');
+    if (dateFrom) {
+        $('input[name="date_to"]').datetimepicker({
+            value: new Date(dateFrom.getTime() + 30 * 60000),
+            format: 'Y-m-d H:i:s'
+        });
+    }
+
+}).datetimepicker(dateTimeSetting)
 
 
 DateResched.hide()
