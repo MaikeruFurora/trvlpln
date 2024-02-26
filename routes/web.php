@@ -40,7 +40,9 @@ Route::middleware(['auth:web','preventBackHistory','auth.user'])->name('authenti
     Route::delete('activity/destroy/{activity}',[ActivityController::class,'destroy'])->name('activity.destroy');
 
     // ADMIN API
+    Route::get('dashboard',[AdminController::class,'dashboard'])->name('dashboard');
     Route::get('vw',[AdminController::class,'index'])->name('admin');
+    Route::get('vw/report',[AdminController::class,'report'])->name('admin.report');
     Route::get('user',[UserController::class,'index'])->name('user');
     Route::get('user/list',[UserController::class,'list'])->name('user.list');
     Route::get('user/api/list',[UserController::class,'Apilist'])->name('user.api.list');

@@ -12,7 +12,7 @@ class ActivityController extends Controller
 {
     public function index(){
         $lists = ActivityList::getActive()->get(['id','name','color','icon']);
-        $sttus = ['success','failed','cancelled'];
+        $sttus = ['success','failed'];
         return view('calendar.index',compact('lists','sttus'));
     }
 
@@ -44,15 +44,21 @@ class ActivityController extends Controller
                 }
             }
             } else {
-                if (!$dateFrom->isPast()) {
-                    if ($this->checkForOverlappingSchedule($request->date_from,$dateFrom->format('Y-m-d').' '.$time )) {
+                    $date_from = $dateFrom->format("Y-m-d");
+                    if ($date_from==Carbon::now()->format("Y-m-d")) {
                         $this->createActivity($request, $dateFrom, $dateFrom->format('Y-m-d').' '.$time);
                     }else{
-                        return response()->json(['msg'=>'Please check your CALENDAR for conflicts. Please check your date & time.', 'icon'  => 'warning'],500);
+                        if (!$dateFrom->isPast()) {
+                            if ($this->checkForOverlappingSchedule($request->date_from,$dateFrom->format('Y-m-d').' '.$time )) {
+                                $this->createActivity($request, $dateFrom, $dateFrom->format('Y-m-d').' '.$time);
+                            }else{
+                                return response()->json(['msg'=>'Please check your CALENDAR for conflicts. Please check your date & time.', 'icon'  => 'warning'],500);
+                            }
+                        } else {
+                            return response()->json(['msg'=>'Your date is in the past', 'icon'  => 'warning'],500);
+                        }
                     }
-                } else {
-                     return response()->json(['msg'=>'Your date is in the past', 'icon'  => 'warning'],500);
-                }
+              
             }
             
             return response()->json(['msg'=>'Your details have been saved', 'icon'  => 'success']);
@@ -72,17 +78,22 @@ class ActivityController extends Controller
     }
 
 
-    public function list( $user){
-       
+    public function list( $user, Request $request){
+
         if ($user!="all") {
             $data = User::find($user);
-            $activities = $data->load(['activities','activities.activity_list:id,name,color,icon']);
-            return $this->renderActivity($activities->activities);
+            $activities = $data->activities()
+                        ->whereBetween('date_from', [$request->start, $request->end])
+                        ->with('activity_list:id,name,color,icon')
+                        ->get();
+            return $this->renderActivity($activities);
         }else{
-            return $data = Activity::with(['activity_list:id,name,color,icon'])->get();
+            // $data = Activity::with(['activity_list:id,name,color,icon'])->whereBetween('date_from', [$request->start, $request->end])->get();
+            $data = Activity::with(['activity_list:id,name,color,icon'])
+                ->whereBetween('date_from', [$request->start, $request->end])
+                ->get();
             return $this->renderActivity($data);
         }
-        
        
     }
 
@@ -196,8 +207,10 @@ class ActivityController extends Controller
 
 
     public function updateInfo(Activity $activity, Request $request){
-        $date_from = Carbon::parse($activity->date_from)->format("Y-m-d");
-        if ($date_from==Carbon::now()->format("Y-m-d")) {
+        $date_fromDB = Carbon::parse($activity->date_from);
+        $date_from   = Carbon::parse($request->date_from);
+        $date_to     = Carbon::parse($request->date_to);
+        if ($date_from->format("Y-m-d")==Carbon::now()->format("Y-m-d")) {
             $data =  $activity->update([
                 'date_from'         => $request->date_from,
                 'date_to'           => $request->date_to,
@@ -216,19 +229,22 @@ class ActivityController extends Controller
             }
             
         }else{
-            $activity->update([
-                'date_from' => $request->date_from,
-                'date_to'   => $request->date_to,
-            ]);
 
-            return response()->json([
-                'msg' => 'Updated Activity Time Slot',
-                'icon'  => 'success'
-            ], 200);
-            // return response()->json([
-            //     'msg'   => 'Not allowed activity',
-            //     'icon'  => 'warning'
-            // ], 500);
+            if (!$date_fromDB->isPast()) {
+                $activity->update([
+                    'date_from' => $date_from,
+                    'date_to'   => $date_to,
+                ]);
+                return response()->json([
+                    'msg' => 'Updated Activity Time Slot',
+                    'icon'  => 'success'
+                ], 200);
+            }else{
+                return response()->json([
+                    'msg'   => 'Not allowed due to past date',
+                    'icon'  => 'warning'
+                ], 500);
+            }
         }
        
     }
@@ -253,7 +269,13 @@ class ActivityController extends Controller
     }
 
     public function info(Activity $activity){
-        return $activity->load(['activity_list:id,name,color']);
+        // return $activity->load(['activity_list:id,name,color']);
+        // Assuming you want to add a key to the array returned by the info method
+        $activityDetails = $activity->load(['activity_list:id,name,color']);
+        $activityDetails['isDelete'] = Carbon::parse($activity->date_from)->isPast(); // Replace 'key' and 'value' with the actual key-value pair you want to add
+        return $activityDetails;
+        
+        
     }
 
     public function destroy(Activity $activity){

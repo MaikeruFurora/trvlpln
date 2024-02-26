@@ -26,7 +26,6 @@
                                 </div>
                             </div>
                         </div>
-                       
                     </div>
                     @endforeach
                     <br>
@@ -39,7 +38,7 @@
                     class="col-xl-9 col-lg-9 col-md-8 col-sm-12">
                 </div>
                 <div class="col-xl-1 col-lg-1 col-md-1 col-sm-12">
-                    <button class="btn btn-secondary btn-block mb-3 btn-sm" onclick="alert('Not yet Available')">REPORT</button>
+                    <button name="report" class="btn btn-secondary btn-block mb-3 btn-sm">REPORT</button>
                     <p><strong>Guide</strong></p>
                     <ul class="list-group">
                         @foreach ($lists as $item)
@@ -52,6 +51,7 @@
         </div>
     </div>
     @include('calendar.readonly')
+    @include('calendar.modal-daterange')
 @endsection
 @section('js')
 <script src="{{ asset('assets/js/activity.js') }}"></script>

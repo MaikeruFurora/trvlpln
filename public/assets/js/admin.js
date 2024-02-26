@@ -52,9 +52,29 @@ clndr.fullCalendar('on', 'eventClick', function(event, jsEvent, view) {
          });
  });
 
-
 //  clndr.fullCalendar('option', 'responsive', {
 //      breakpointWidth: 480, // Breakpoint width in pixels for mobile devices
 //      dayViewOnBreakpoint: true // Enable day view on the breakpoint
 //  });
  
+$("button[name=report]").on('click',function(e){
+    e.preventDefault()
+    $("#reportModal").modal('show')
+    $('#date-range-start, #date-range-end').datetimepicker({
+        datepicker: true,
+        timepicker: false, // Disables time selection
+        format: 'Y-m-d',
+    });
+})
+
+
+$("#reportDateRangeForm").on('submit',function(e){
+    e.preventDefault()
+    let url_string = $(this).attr("action");
+    let start      = $(this).find("input[name='start']").val()
+    let end        = $(this).find("input[name='end']").val()
+    let _token     = $(this).find("input[name='_token']").val()
+    let adsURL     = url_string+"?_token="+_token+"&start="+start+"&end="+end;
+
+    CoreModel.loadToPrint(adsURL)
+})

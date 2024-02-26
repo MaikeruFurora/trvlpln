@@ -14,11 +14,11 @@
                 <div class="form-row p-1">
                   <div class="form-group col-lg-6 col-sm-12">
                     <small class="label-text" for="">Date & time from</small>
-                    <input type="text" class="form-control form-control-sm  getInput" name="date_from">
+                    <input type="text" class="form-control form-control-sm getInput" name="date_from">
                   </div>
                   <div class="form-group col-lg-6 col-sm-12">
                     <small class="label-text" for="">Date & time to</small>
-                    <input type="text" class="form-control form-control-sm  getInput" name="date_to">
+                    <input type="text" class="form-control form-control-sm getInput" name="date_to">
                   </div>
                 </div>
                 <input type="hidden" class="getInput" name="id">
@@ -53,15 +53,6 @@
                                   <label class="custom-control-label" for="customControlValidation1{{$item}}">{{ ucwords($item) }}</label>
                                 </div>
                                 @endforeach
-                              </div>
-                            </div>
-                            <div class="form-group mb-2" id="DateResched">
-                              <label class="sr-only" for="inlineFormInputGroup">Date Resched</label>
-                              <div class="input-group input-group-sm">
-                                <div class="input-group-prepend">
-                                  <div class="input-group-text">Date Resched</div>
-                                </div>
-                                <input type="text" class="form-control form-control-sm datepicker" name="date_from"/>
                               </div>
                             </div>
                           </div>

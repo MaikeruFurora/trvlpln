@@ -17,7 +17,7 @@ class UserController extends Controller
     }
 
     public function index(){
-        $wrhs = ['Bacolod','Cagayan','Cebu','Davao','Iloilo','Pampanga','Tabaco','Surigao','Zamboanga','Main'];
+        $wrhs = ['Bacolod','Cagayan','Cebu','Davao','Iloilo','Pampanga','Tabaco','Surigao','Zamboanga','Main','Collector'];
         return view('admin.user.index',compact('wrhs'));
     }
 

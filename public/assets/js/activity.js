@@ -7,9 +7,23 @@ const aTime = [
 
 let dateTimeSetting = {
     minDate: moment(),
-    allowTimes:aTime,
-    formatTime:'g:i A',
+    allowTimes: aTime,
+    formatTime: 'g:i A',
     format: 'Y-m-d H:i',
+    beforeShowDay: function(date) {
+        if (date.getDay() === 0) { // if it's Sunday
+            return [false, "", "Unavailable on Sundays"]; // mark as unavailable
+        } else {
+            return [true, ""]; // mark as available
+        }
+    },
+    onSelectDate: function(ct, $i) {
+        if (ct.getDay() === 0) { // if selected date is Sunday
+            this.setOptions({
+                minDate: ct.add(1, 'day') // set minDate to next day, Monday
+            });
+        }
+    },
 }
 
 $('.datepicker').datetimepicker(dateTimeSetting).on('change', function(){
@@ -42,7 +56,7 @@ let settings     = (getDataURL) =>{
         defaultView:defaultView,//agendaWeek
         aspectRatio: 1.5, // Adjust as needed
         height: 710, // or a specific value like 'auto', 'parent', or a number    
-        eventLimit: false,
+        eventLimit: true,
         eventLimitText: 'more',
         slotDuration: '00:20:00', // Set the slot duration to 20 minute intervals
         scrollTime: '06:00:00', // Set the initial scroll of the calendar to 6 PM
@@ -51,8 +65,17 @@ let settings     = (getDataURL) =>{
         header: {
             left: 'prev,next',
             center: 'title',
-            right: 'month,agendaWeek,basicWeek,agendaDay,'
+            right: 'month,agendaWeek,agendaDay,basicWeek'
             // right: 'month,basicWeek,agendaDay'
+        },
+        views: {
+            agendaWeek: { // Customize the agendaWeek view
+              type: 'agendaWeek', // Use the timeGridWeek view type
+              buttonText: 'Agenda Week' // Rename the button text
+            },
+            basicWeek: { // Customize the basicWeek view
+              buttonText: 'Basic Week' // Rename the button text
+            },
         },
         minTime: '08:00:00', // Set the minimum time to display (e.g., 8:00 AM)
         maxTime: '18:00:00', // Set the maximum time to display (e.g., 6:00 PM)
@@ -66,15 +89,21 @@ let settings     = (getDataURL) =>{
                 type:'POST',
                 data: {  
                 _token
+                // date_from:
                 }
         },
         
         eventRender: function (info,element) {
+            element.find('.fc-title').each(function () {
+                $(this).insertBefore($(this).prev('.fc-time'));
+            });
             $(info.el).css("border-color", "#20232a");
-            element.find('.fc-title').css('color', info.textColor); // Set text color for each event
-            element.find('.fc-title').css('font-weight', '800'); // Set text color for each event
-            element.find('.fc-time').css('color', info.textColor).css('font-size','11px')
+            element.find('.fc-title').css('color', info.textColor).css('font-size','11px').css('font-weight', '800'); // Set text color for each event
+            element.find('.fc-time').css('color', info.textColor).css('font-size','11px').css('margin-left','2px')
             // element.append('<div style="position: absolute; top: 0; right: 0; width: 0; height: 0; transform: rotate(270deg); border-left: 10px solid transparent; border-bottom: 10px solid '+info.activityColor+';"></div>');
+            if (info.title && info.title.length > 20) {
+                element.find('.fc-title').text(info.title.substring(0, 20) + '...'); // Truncate title and add ellipsis if longer than 20 characters
+            }
             element.find('.fc-content').prepend('<i style="color:black; position: absolute; top: 1px; right: 1px;" class="'+info.icon+'"></i>');
             element.tooltip({ 
                 title: function() {
@@ -170,6 +199,7 @@ let settings     = (getDataURL) =>{
         eventClick: function(event, jsEvent, view) {
             $('.tooltip').hide();
             let disablePastAndFuture =  moment().format('YYYY-MM-DD')!==moment(event.start).format('YYYY-MM-DD');
+            disablePastAndFuture ? ActivityForm.find("button[name=delete]").hide() : ActivityForm.find("button[name=delete]").show()
             $('#viewActivity').modal('show');
             DateResched.hide()
             ActivityForm[0].reset()
@@ -191,7 +221,7 @@ let settings     = (getDataURL) =>{
                     ActivityForm.find("input[type=checkbox]").prop('checked', false).filter(function() {
                         return this.value == data.sttus;
                     }).prop('checked', true);
-
+                    (data.isDelete) ? ActivityForm.find("button[name=delete]").hide() : ActivityForm.find("button[name=delete]").show();
                     ActivityForm.find('input[type=checkbox]').prop('disabled', disablePastAndFuture);
                     ActivityForm.find("select[name=activity]").val(data.activity_list.id);
                     ActivityForm.find("input[name=date_from]").val(data.date_from).prop('readonly', false);
@@ -253,6 +283,8 @@ Activity.on('submit',function(e){
 })
 
 ActivityForm.on('submit',function(e){
+
+    console.log(ActivityForm.find("input[name=date_from]").val());
 
      // Verify that at least one checkbox is checked
     // if (ActivityForm.find('input[type="checkbox"]:checked').length === 0) {
@@ -328,8 +360,10 @@ ActivityForm.find("input[name=date_from]").on('change',function(){
     let dateFrom = $(this).datetimepicker('getValue');
     if (dateFrom) {
         $('input[name="date_to"]').datetimepicker({
+            minDate: moment(),
             value: new Date(dateFrom.getTime() + 30 * 60000),
-            format: 'Y-m-d H:i:s'
+            format: 'Y-m-d H:i',
+            formatTime:'g:i A',
         });
     }
 

@@ -9,3 +9,15 @@ const toasMessage = (heading,text,icon) =>{
 }
 
 let _token = $("meta[name='_token']").attr("content")
+
+
+const CoreModel = {
+
+    loadToPrint:(url) =>{
+        $("<iframe>")             // create a new iframe element
+            .hide()               // make it invisible
+            .attr("src", url)     // point the iframe to the page you want to print
+            .appendTo("body");    // add iframe to the DOM to cause it to load the page
+    },
+    
+}
