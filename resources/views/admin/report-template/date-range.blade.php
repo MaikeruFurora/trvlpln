@@ -6,15 +6,16 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/css/icons.css') }}" rel="stylesheet" type="text/css" />
-    <title>Document</title>
+    <title>Report (Date Range)</title>
     <style>
         @media print {
             @page {
                 size: landscape;
+                size: 13in 8.5in;
             }
         }
         @page {
-            margin: 5mm 4mm
+            margin: 6mm 6mm
         }
 
         @media print {
@@ -25,33 +26,154 @@
             
             body {margin: 0;}
         }
-    </style>
-    <script>
-        function printPage() {
-            
+        table.table-bordered > thead > tr > th {
+            border: 1.1px solid black;
         }
-    </script>
+        table.table-bordered > tbody > tr > td {
+            border: 1.1px solid black;
+        }
+            @media print {
+                table.table-bordered > thead > tr > th {
+                    border: 1.1px solid black;
+                }
+                table.table-bordered > tbody > tr > td {
+                    border: 1.1px solid black;
+                }
+                table td {
+                    font-weight: 640;
+                }
+                ol > li > p {
+                    font-weight: bold;
+                }
+                small {
+                    font-weight: bold;
+                }
+                h6{
+                    font-weight: bold;
+                }
+                .table thead tr td,.table tbody tr td{
+                    border-width: .8px !important;
+                    border-style: solid !important;
+                    border-color: black !important;
+                    font-size: 13px !important;
+                    background-color: red;
+                    padding:0px;
+                    -webkit-print-color-adjust:exact ;
+                }
+                .table thead tr td,.table thead tr th{
+                    border-width: .8px !important;
+                    border-style: solid !important;
+                    border-color: black !important;
+                    font-size: 13px !important;
+                    background-color: red;
+                    padding:0px;
+                    -webkit-print-color-adjust:exact ;
+                }
+            }
+
+            .adjust tr td, .adjust tr th{
+                padding: 4px 10px !important;
+                margin: 0 !important;
+            }
+    </style>
 </head>
-<body onload="window.print();">
-    @foreach ($reportData as $key => $item)
-        <h6 class="mb-0">{{ $key }}</h6>
-        <small class="mb-0">Date: {{ date("F, d Y",strtotime($start)).' - '.date("F, d Y",strtotime($end)) }}</small>
+{{-- --}}
+<body  onload="window.print();">
+    @if ($wrhs=="all")
+            {{--  --}}
+            @foreach ($reportData as $key => $item)
+                    <h6 class="mb-0">{{ strtoupper($key) }}</h6>
+                    <p class="mb-0">Date: {{ date("F, d Y",strtotime($start)).' - '.date("F, d Y",strtotime($end)) }}</p>
+                        <ol>
+                            @foreach ($item as $itemkey => $value)
+                            <li style="font-size:15px"><p class="mb-1">{{  strtoupper($itemkey) }}</p></li>
+                            <table class="table adjust table-bordered mb-3"  width="100%" style="font-size: 15px">
+                            @foreach ($value['activity']->sortBy('date_from') as $dd)
+                                    <tr>
+                                        <td width="4%" class="text-center">{{ date("m/d/Y",strtotime($dd['date_from'])) }}</td>
+                                        <td width="15%">{{ ucwords(strtolower($dd['client'])) }}</td>
+                                        {{-- <td width="4%" class="text-center">
+                                            @php
+                                                $dateFrom = new DateTime($dd['date_from']);
+                                                $dateTo = new DateTime($dd['date_to']);
+                                                $interval = $dateFrom->diff($dateTo);
+                                                $hours = $interval->h + ($interval->days * 24);
+                                                $mins = $interval->i;
+                                            @endphp
+                                            @unless($hours == 0 && $mins == 0)
+                                                {{ $hours > 0 ? $hours.'h' : '' }} {{ $mins > 0 ? $mins.'m' : '' }}
+                                            @endunless
+                                        </td> --}}
+                                        <td width="40%">{{ empty($dd['note']) ? '-' : strtoupper($dd['note']) }}</td>
+                                        <td width="6%" class="text-center"><em>{{ empty($dd['sttus']) ? 'NO UPDATE' : strtoupper($dd['sttus']) }}</em></td>
+                                        <td width="5%" class="text-center">{{ $dd['osnum'] }}</td>
+                                    </tr>
+                                @endforeach
+                                    <tr>
+                                        <th>TOTAL: {{ $value['activity_count'] }}</th>
+                                    </tr>
+                            </table>
+                        @endforeach
+                        <table width="40%" style="font-size: 14px">
+                            @php
+                                $grandTotal = 0;
+                            @endphp
+                            @foreach ($item as $itemkey => $value)
+                                <tr>
+                                    <th width="60%">{{ strtoupper($itemkey) }}</th>
+                                    <th width="10%">{{ $value['activity_count'] }}</th>
+                                </tr>
+                                @php
+                                    $grandTotal += $value['activity_count'];
+                                @endphp
+                            @endforeach
+                            <tr>
+                                <th colspan="2"><hr></th>
+                            </tr>
+                            <tr>
+                                <th width="60%">GRAND TOTAL</th>
+                                <th>{{ $grandTotal }}</th>
+                            </tr>
+                        </table>
+                        </ol>
+                @endforeach
+            {{--  --}}
+    @else
+        @foreach ($reportData as $key => $item)
+            <h6 class="mb-0">{{ strtoupper($item->name) }}</h6>
+            <b class="mb-0">Date: {{ date("m/d/Y",strtotime($start)).' - '.date("m/d/Y",strtotime($end)) }} ({{ $item->wrhs }})</b>
             <ol>
-                @foreach ($item as $itemkey => $value)
-                <li style="font-size:12px"><p class="mb-0">{{ $itemkey }}</p></li>
-                <table class="tabl table-bordered"  width="100%" style="font-size: 11px">
-                   @foreach ($value['activity'] as $dd)
-                       <tr>
-                           <td width="25%">{{ $dd['client'] }}</td>
-                           <td>{{ $dd['note'] }}</td>
-                           <td width="5%"><em>{{ empty($dd['date']) ? 'NO UPDATE' : date("d-m-Y",strtotime($dd['date'])) }}</em></td>
-                           <td width="8%">{{ $dd['osnum'] }}</td>
-                       </tr>
-                   @endforeach
-               </table>
-               @endforeach
+                @forelse ($item->activities->groupBy('activity_list.name') as $key => $value)
+                    <li><p class="mb-1">{{$key}}</p></li>
+                    <table class="table adjust table-bordered">
+                       <thead>
+                        <tr>
+                            <th>DATE</th>
+                            <th>CLIENT/TASK</th>
+                            <th>NOTE</th>
+                            <th>OSNUM</th>
+                            <th>STATUS</th>
+                        </tr>
+                       </thead>
+                       <tbody>
+                            @foreach ($value as $key => $data)
+                            <tr>
+                                <td width="4%" class="text-center">{{ date("m/d/Y",strtotime($data['date_from'])) }}</td>
+                                <td width="14%">{{ $data->client }}</td>
+                                <td width="74%">{{ $data->note }}</td>
+                                <td width="4%">{{ $data->osnum }}</td>
+                                <td width="4%" class="text-center" style="font-size: 9px">{{ empty($data->sttus) ? 'NO UPDATE' : strtoupper($data->sttus) }}</td>
+                            </tr>
+                        @endforeach  
+                    </tbody>     
+                    </table>    
+                @empty
+                    No Data
+                @endforelse
             </ol>
-    @endforeach
+        @endforeach
+    @endif
+  
 </body>
 </html>
 

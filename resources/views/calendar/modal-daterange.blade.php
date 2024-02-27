@@ -14,11 +14,19 @@
               <div class="form-group">
                 <div>
                     <div class="input-daterange input-group" id="date-range">
-                        <input type="text" class="form-control-sm form-control" id="date-range-start" name="start" placeholder="Start Date" />
-                        <input type="text" class="form-control-sm form-control" id="date-range-end" name="end" placeholder="End Date" />
+                        <input type="text" class="form-control-sm form-control" id="date-range-start" name="start" placeholder="Start Date"  required/>
+                        <input type="text" class="form-control-sm form-control" id="date-range-end" name="end" placeholder="End Date"  required/>
                     </div>
                 </div>
-            </div>
+              </div>
+              <div class="form-group">
+                 <select class="custom-select custom-select-sm" name="wrhs" id="" required>
+                     <option value=""></option>
+                     @foreach ($wrhs as $item)
+                     <option value="{{ $item->name }}">{{ $item->name }}</option>
+                     @endforeach
+                 </select>
+              </div>
             <button class="btn-sm btn btn-block btn-secondary" type="submit">Get Report</button>
             </form>  
             {{--  --}}

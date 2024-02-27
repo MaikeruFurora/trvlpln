@@ -69,12 +69,17 @@ $("button[name=report]").on('click',function(e){
 
 
 $("#reportDateRangeForm").on('submit',function(e){
+    $(this).find("button[type=submit]").text("Please wait...").prop('disabled',true);
+    setInterval(() => {
+        $(this).find("button[type=submit]").text("Get Report").prop('disabled',false);
+    }, 7000);
     e.preventDefault()
     let url_string = $(this).attr("action");
     let start      = $(this).find("input[name='start']").val()
     let end        = $(this).find("input[name='end']").val()
     let _token     = $(this).find("input[name='_token']").val()
-    let adsURL     = url_string+"?_token="+_token+"&start="+start+"&end="+end;
+    let wrhs       = $(this).find("select[name='wrhs']").val()
+    let adsURL     = url_string+"?_token="+_token+"&start="+start+"&end="+end+"&wrhs="+wrhs;
 
     CoreModel.loadToPrint(adsURL)
 })
