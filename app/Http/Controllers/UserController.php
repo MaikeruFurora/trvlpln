@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Wrhs;
 use App\Services\AuthService;
 
 use Illuminate\Http\Request;
@@ -17,7 +18,7 @@ class UserController extends Controller
     }
 
     public function index(){
-        $wrhs = ['Bacolod','Cagayan','Cebu','Davao','Iloilo','Pampanga','Tabaco','Surigao','Zamboanga','Main','Collector'];
+        $wrhs = Wrhs::active()->orderBy('name')->get(['id','name']);
         return view('admin.user.index',compact('wrhs'));
     }
 

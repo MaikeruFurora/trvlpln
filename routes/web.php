@@ -57,7 +57,7 @@ Route::middleware(['auth:web','preventBackHistory','auth.user'])->name('authenti
 
 
     Route::get('sprvsr',[SupervController::class,'index'])->name('supervisor');
-
+    Route::get('sprvsr/report',[SupervController::class,'report'])->name('admin.report');
 
      //signout
      Route::post('signout', [UserController::class, 'signout'])->name('signout');

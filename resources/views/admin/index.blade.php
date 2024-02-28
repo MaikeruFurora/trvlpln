@@ -51,7 +51,7 @@
         </div>
     </div>
     @include('calendar.readonly')
-    @include('calendar.modal-daterange',['wrhs'=>$wrhs])
+    @include('calendar.modal-daterange-admin',['wrhs'=>$wrhs])
 @endsection
 @section('js')
 <script src="{{ asset('assets/js/activity.js') }}"></script>

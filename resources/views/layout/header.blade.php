@@ -54,9 +54,11 @@
                                     <a href="{{ auth()->user()->type=="admin"?route('authenticate.admin') : route('authenticate.supervisor') }}"><i class="far fa-calendar-alt"></i> Activity Callendar</a>
                                 </li>
                                 @if (auth()->user()->type=="admin")
-                                    <li class="has-submenu">
-                                        <a href="{{ route('authenticate.dashboard') }}"><i class="fas fa-poll"></i> Dashboard</a>
-                                    </li>
+                                <li class="has-submenu">
+                                    <a href="{{ route('authenticate.dashboard') }}"><i class="fas fa-poll"></i> Dashboard</a>
+                                </li>
+                                @endif
+                                @if (auth()->user()->type=="admin" && auth()->user()->wrhs==NULL)
                                     <li class="has-submenu">
                                         <a href="{{ route('authenticate.user') }}"><i class="fas fa-users"></i> Users</a>
                                     </li>

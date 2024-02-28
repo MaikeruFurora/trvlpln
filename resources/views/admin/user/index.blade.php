@@ -33,10 +33,10 @@
                                         <option value="admin">ADMIN</option>
                                     </select>
                                 <th>
-                                    <select name="wrhs" class="custom-select custom-select-sm form-control" required>
+                                    <select name="wrhs" class="custom-select custom-select-sm form-control">
                                         <option value=""></option>
                                         @foreach ($wrhs as $item)
-                                        <option value="{{ $item }}">{{ $item }}</option>
+                                        <option value="{{ $item->name }}">{{ $item->name }}</option>
                                         @endforeach
                                     </select>
                                 </th>

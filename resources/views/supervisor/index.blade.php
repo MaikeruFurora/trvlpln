@@ -43,6 +43,7 @@
                             </ul>
                        @endforeach
                     </div>
+                    <button class="btn btn-sm btn-secondary btn-block my-2" name="report"><i class="fas fa-print"></i> Generate Report</button>
                 </div>
                
                 @include('calendar.parts.guide',['list'=>$lists])
@@ -68,6 +69,7 @@
 </div>
 
 @include('calendar.view-activity',['list'=>$lists,'sttus'=>$sttus])
+@include('calendar.modal-daterange-sprvsr',['bdo'=>$bdo])
 @endsection
 
 @section('js')

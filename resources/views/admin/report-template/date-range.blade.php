@@ -27,17 +27,17 @@
             body {margin: 0;}
         }
         table.table-bordered > thead > tr > th {
-            border: 1.1px solid black;
+            border: .01px solid black;
         }
         table.table-bordered > tbody > tr > td {
-            border: 1.1px solid black;
+            border: .01px solid black;
         }
             @media print {
                 table.table-bordered > thead > tr > th {
-                    border: 1.1px solid black;
+                    border: .01px solid black;
                 }
                 table.table-bordered > tbody > tr > td {
-                    border: 1.1px solid black;
+                    border: .01px solid black;
                 }
                 table td {
                     font-weight: 640;
@@ -51,20 +51,23 @@
                 h6{
                     font-weight: bold;
                 }
+                p {
+                    font-weight: bold;
+                }
                 .table thead tr td,.table tbody tr td{
-                    border-width: .8px !important;
+                    border-width: .01px !important;
                     border-style: solid !important;
-                    border-color: black !important;
-                    font-size: 13px !important;
+                    border-color: rgb(69, 69, 69) !important;
+                    font-size: 10.5px !important;
                     background-color: red;
                     padding:0px;
                     -webkit-print-color-adjust:exact ;
                 }
                 .table thead tr td,.table thead tr th{
-                    border-width: .8px !important;
+                    border-width: .01px !important;
                     border-style: solid !important;
-                    border-color: black !important;
-                    font-size: 13px !important;
+                    border-color: rgb(69, 69, 69) !important;
+                    font-size: 10.5px !important;
                     background-color: red;
                     padding:0px;
                     -webkit-print-color-adjust:exact ;
@@ -72,7 +75,7 @@
             }
 
             .adjust tr td, .adjust tr th{
-                padding: 4px 10px !important;
+                padding: 1px 5px !important;
                 margin: 0 !important;
             }
     </style>
@@ -140,37 +143,41 @@
             {{--  --}}
     @else
         @foreach ($reportData as $key => $item)
-            <h6 class="mb-0">{{ strtoupper($item->name) }}</h6>
-            <b class="mb-0">Date: {{ date("m/d/Y",strtotime($start)).' - '.date("m/d/Y",strtotime($end)) }} ({{ $item->wrhs }})</b>
-            <ol>
+            @php
+             $i=0;   
+            @endphp
+            {{-- <ol> --}}
+                <p style="font-size: 11px" class="mb-0">{{ strtoupper($item->name) }}</p>
+                <p style="font-size: 11px" class="mb-0">DATE: {{ date("m/d/Y",strtotime($start)) }}</p>
                 @forelse ($item->activities->groupBy('activity_list.name') as $key => $value)
-                    <li><p class="mb-1">{{$key}}</p></li>
-                    <table class="table adjust table-bordered">
+                    {{-- <li style="font-size: 11px"><p class="mb-0" >{{$key}}</p></li> --}}
+                    <table class="table adjust table-bordered mb-2">
                        <thead>
                         <tr>
-                            <th>DATE</th>
+                            <th colspan="5">{{ ++$i; }}. {{strtoupper($key)}}</th>
+                        </tr>
+                        <tr>
                             <th>CLIENT/TASK</th>
                             <th>NOTE</th>
-                            <th>OSNUM</th>
-                            <th>STATUS</th>
+                            <th class="text-center">OSNUM</th>
+                            <th class="text-center">STATUS</th>
                         </tr>
                        </thead>
                        <tbody>
                             @foreach ($value as $key => $data)
-                            <tr>
-                                <td width="4%" class="text-center">{{ date("m/d/Y",strtotime($data['date_from'])) }}</td>
-                                <td width="14%">{{ $data->client }}</td>
-                                <td width="74%">{{ $data->note }}</td>
-                                <td width="4%">{{ $data->osnum }}</td>
-                                <td width="4%" class="text-center" style="font-size: 9px">{{ empty($data->sttus) ? 'NO UPDATE' : strtoupper($data->sttus) }}</td>
-                            </tr>
-                        @endforeach  
-                    </tbody>     
+                                <tr>
+                                    <td width="33%">{{ $data->client }}</td>
+                                    <td width="52%">{{ $data->note }}</td>
+                                    <td width="8%" class="text-center">{{ empty($data->osnum) ? '-' : strtoupper($data->osnum) }}</td>
+                                    <td width="6%" class="text-center" style="font-size: 9px">{{ empty($data->sttus) ? 'NO.UPDATE' : strtoupper($data->sttus) }}</td>
+                                </tr>
+                            @endforeach  
+                        </tbody>     
                     </table>    
                 @empty
                     No Data
                 @endforelse
-            </ol>
+            {{-- </ol> --}}
         @endforeach
     @endif
   

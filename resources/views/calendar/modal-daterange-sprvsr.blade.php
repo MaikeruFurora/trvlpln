@@ -3,7 +3,7 @@
       <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content">
           <div class="modal-header p-2">
-            <p class="modal-title ml-1" id="reportModalLabel">Report - Filter</p>
+            <p class="modal-title ml-1" id="reportModalLabel">Report - Filter (Spvsr)</p>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
@@ -21,9 +21,9 @@
               </div>
               <div class="form-group">
                  <select class="custom-select custom-select-sm" name="wrhs" id="" required>
-                     <option value=""></option>
-                     @foreach ($wrhs as $item)
-                     <option value="{{ $item->name }}">{{ $item->name }}</option>
+                     <option value="all">All</option>
+                     @foreach ($bdo as $key => $item)   
+                     <option value="{{ $item->id }}">{{ $item->name }}</option>
                      @endforeach
                  </select>
               </div>
