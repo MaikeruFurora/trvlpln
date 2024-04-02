@@ -960,7 +960,7 @@ code {
   Menu
 ===================*/
 body {
-  padding-bottom: 65px;
+  padding-bottom: 10px;
 }
 
 .container-fluid {
@@ -1235,7 +1235,7 @@ body {
 
 /* for bdo only */
 .wrapper-bdo {
-  margin-top: 50px;
+  margin-top: 10px;
 }
 
 .page-title-box {

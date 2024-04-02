@@ -55,11 +55,11 @@ let settings     = (getDataURL) =>{
         timeZone: 'UTC',
         defaultView:defaultView,//agendaWeek
         aspectRatio: 1.5, // Adjust as needed
-        height: 710, // or a specific value like 'auto', 'parent', or a number    
+        height: 800, // or a specific value like 'auto', 'parent', or a number    
         eventLimit: true,
         eventLimitText: 'more',
         slotDuration: '00:20:00', // Set the slot duration to 20 minute intervals
-        scrollTime: '06:00:00', // Set the initial scroll of the calendar to 6 PM
+        scrollTime: '08:00:00', // Set the initial scroll of the calendar to 6 PM
         slotEventOverlap:false,
         eventOverlap:false,
         header: {
@@ -78,7 +78,7 @@ let settings     = (getDataURL) =>{
             },
         },
         minTime: '08:00:00', // Set the minimum time to display (e.g., 8:00 AM)
-        maxTime: '18:00:00', // Set the maximum time to display (e.g., 6:00 PM)
+        maxTime: '20:00:00', // Set the maximum time to display (e.g., 6:00 PM)
         editable: true, 
         hiddenDays: [0],
         allDaySlot: false,
@@ -110,7 +110,7 @@ let settings     = (getDataURL) =>{
                     return `<div class="event-tooltip text-left" style="font-size:13px">
                                 <p class="mb-1"><b>Client:</b> ${info.title}</p>
                                 ${info.osnum?`<p class="mb-1"><b>OS:</b> ${info.osnum}</p>`:''}
-                                ${info.note?`<p class="mb-1"><b>Note:</b> ${info.note}</p>`:''}
+                                ${info.note ? `<p class="mb-1"><b>Note:</b> ${info.note.length > 80 ? info.note.substring(0, 80) + '<a href="#" onclick="event.preventDefault(); $(this).parent().text(info.note);">...click to see more</a>' : info.note}</p>` : ''}
                                 ${info.sttus?`<p class="mb-1"><b>Status:</b> ${info.sttus}</p>`:''}
                                 ${info.activity?`<p class="mb-1"><b>Activity:</b> ${info.activity}</p>`:''}
                                 <p class="mb-1"><b>Date:</b> ${info.start.format('MMM DD, YYYY')}</p>
@@ -125,7 +125,7 @@ let settings     = (getDataURL) =>{
         },
         businessHours: {
             start: moment().format('HH:mm'), /* Current Hour/Minute 24H format */
-            end: '19:00', // 5pm? set to whatever
+            end: '20:00', // 5pm? set to whatever
             dow: [0,1,2,3,4,5,6] // Day of week. If you don't set it, Sat/Sun are gray too
         },
         eventConstraint: {
@@ -262,7 +262,7 @@ Activity.on('submit',function(e){
     //     toasMessage("Start time must be less than end time", "Error", 'error');
     //     return false;
     // }
-
+    $("#Activity *").prop("readonly", true);
     $.ajax({
         url: Activity.attr("action"),
         type: 'POST',
@@ -270,14 +270,21 @@ Activity.on('submit',function(e){
         processData: false,
         contentType: false,
         cache: false,
+        beforeSend:function(){
+            Activity.find("button[type=submit]").html('<i class="fa fa-spinner fa-spin"></i>');
+        }
     }).done(function(data) {
         if (data.msg) {
+            $("#Activity *").prop("readonly", false);
             Activity[0].reset();
             Activity.find('input[name=id]').val('');
+            Activity.find("button[type=submit]").html('Save');
             toasMessage(data.msg, "success", data.icon);
             $('#calendar').fullCalendar('refetchEvents');
         }
     }).fail(function(jqxHR, textStatus, errorThrown) {
+        Activity.find("button[type=submit]").html('Save');
+        $("#Activity *").prop("readonly", false);
         toasMessage(jqxHR.responseJSON.msg, "Error", jqxHR.responseJSON.icon);
     });
 })

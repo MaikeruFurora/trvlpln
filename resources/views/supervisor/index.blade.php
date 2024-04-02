@@ -43,7 +43,9 @@
                             </ul>
                        @endforeach
                     </div>
+                    @if (auth()->user()->wrhs=='collector')
                     <button class="btn btn-sm btn-secondary btn-block my-2" name="report"><i class="fas fa-print"></i> Generate Report</button>
+                    @endif
                 </div>
                
                 @include('calendar.parts.guide',['list'=>$lists])

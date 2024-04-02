@@ -75,7 +75,7 @@
                             </div>
                             <div class="form-group mb-1">
                               <small class="mb-0 label-text" for="">Notes / Remarks</small>
-                              <textarea name="note" class="getInput form-control mb-0" id="" cols="10" rows="3"></textarea>
+                              <textarea name="note" class="getInput form-control mb-0" id="" cols="10" rows="6"></textarea>
                             </div>
                           </div>
                       </div>

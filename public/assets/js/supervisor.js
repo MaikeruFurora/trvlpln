@@ -29,6 +29,7 @@ $("button[name=report]").on('click',function(e){
         datepicker: true,
         timepicker: false, // Disables time selection
         format: 'Y-m-d',
+        maxDate: 0,
     });
 })
 

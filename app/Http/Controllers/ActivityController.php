@@ -37,7 +37,9 @@ class ActivityController extends Controller
                         $endDateTime = Carbon::parse($startDate . ' ' . $endTime);
 
                         if ($this->checkForOverlappingSchedule($startDateTime, $endDateTime)) {
-                            $this->createActivity($request, $startDateTime, $endDateTime);
+                            if ($this->allowedTime(Carbon::parse($request->date_from)->format('H:i'), $time)) {
+                                $this->createActivity($request, $startDateTime, $endDateTime);
+                            }
                         } else {
                             //  response()->json(['msg'=>'Time slot is overlapping with existing activity.', 'icon' => 'warning'], 500);
                         }
@@ -46,11 +48,19 @@ class ActivityController extends Controller
             } else {
                     $date_from = $dateFrom->format("Y-m-d");
                     if ($date_from==Carbon::now()->format("Y-m-d")) {
-                        $this->createActivity($request, $dateFrom, $dateFrom->format('Y-m-d').' '.$time);
+                        if ($this->allowedTime(Carbon::parse($request->date_from)->format('H:i'), $time)) {
+                            $this->createActivity($request, $dateFrom, $dateFrom->format('Y-m-d').' '.$time);
+                        }else{
+                            return response()->json(['msg'=>'Please check your time. allowed time 8:00 AM - 8:00 PM', 'icon'  => 'warning'],500);
+                        }
                     }else{
                         if (!$dateFrom->isPast()) {
                             if ($this->checkForOverlappingSchedule($request->date_from,$dateFrom->format('Y-m-d').' '.$time )) {
-                                $this->createActivity($request, $dateFrom, $dateFrom->format('Y-m-d').' '.$time);
+                                if ($this->allowedTime(Carbon::parse($request->date_from)->format('H:i'), $time)) {
+                                    $this->createActivity($request, $dateFrom, $dateFrom->format('Y-m-d').' '.$time);
+                                }else{
+                                    return response()->json(['msg'=>'Please check your time. allowed time 8:00 AM - 8:00 PM', 'icon'  => 'warning'],500);
+                                }
                             }else{
                                 return response()->json(['msg'=>'Please check your CALENDAR for conflicts. Please check your date & time.', 'icon'  => 'warning'],500);
                             }
@@ -64,6 +74,10 @@ class ActivityController extends Controller
             return response()->json(['msg'=>'Your details have been saved', 'icon'  => 'success']);
         
 
+    }
+
+    public function allowedTime($timeFrom, $timeTo){
+        return ($timeFrom>= '08:00' && $timeTo <= '20:00');
     }
 
     public function createActivity($request, $dateFrom, $dateTo){

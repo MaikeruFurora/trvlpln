@@ -10,7 +10,7 @@
           </div>
           <div class="modal-body p-2">
             {{--  --}}
-            <form action="{{ route('authenticate.admin.report') }}" id="reportDateRangeForm" autocomplete="off">@csrf
+            <form action="{{ route('authenticate.supervisor.report') }}" id="reportDateRangeForm" autocomplete="off">@csrf
               <div class="form-group">
                 <div>
                     <div class="input-daterange input-group" id="date-range">

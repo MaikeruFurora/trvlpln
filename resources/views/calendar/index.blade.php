@@ -4,7 +4,7 @@
 @endsection
 @section('content')
 
-<div class="card m-1 shadow-lg border">
+<div class="card m-1 mb-0 shadow-lg border">
     <div class="card-header p-1">
         <ul class="list-group">
             <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -19,7 +19,8 @@
 
         <div class="row">
             <div class="col-xl-2 col-lg-3 col-md-4">
-                <h3 class="m-t-5 m-b-15 font-14 border-bottom lead">Create Activity</h3>
+               <div class="text-center"><img src="{{ asset('assets/images/logo-bg-1.png') }}" height="60" alt="logo"></div>
+                {{-- <h3 class="m-t-5 m-b-15 font-14 border-bottom lead">Create Activity</h3> --}}
                <x-activity-form :lists="$lists"/>
                 @include('calendar.parts.guide',['list'=>$lists])
             </div>

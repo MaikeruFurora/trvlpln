@@ -20,7 +20,7 @@ class AdminController extends Controller
 
     public function dashboard(){
      $data = Activity::with(['user:id,name,type,wrhs', 'activity_list:id,name,color,icon'])
-    // ->whereBetween('date_from', ['2024-02-20 8:00:00', '2024-02-20 18:00:00'])
+    // ->whereBetween('date_from', ['2024-03-02 8:00:00', '2024-03-02 18:00:00'])
     ->whereBetween('date_from', [date("Y-m-d").' 8:00:00', date("Y-m-d").' 18:00:00'])
     ->get()
     ->groupBy(['user.wrhs', 'user.name'])
