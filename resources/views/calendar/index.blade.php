@@ -1,6 +1,13 @@
 @extends('layout.app-bdo')
 @section('css')
 <link href="{{ asset('assets/css/calendar.css') }}" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css" />
+<style>
+    #map {
+        height: 90px;
+        width: 100%;
+    }
+</style>
 @endsection
 @section('content')
 
@@ -43,5 +50,7 @@
 @endsection
 
 @section('js')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
 <script src="{{ asset('assets/js/activity.js') }}"></script>
+<script src="{{ asset('assets/js/map.js') }}"></script>
 @endsection

@@ -62,29 +62,38 @@
                       <div class="card-header p-1 border" id="headingTwo">
                           <p class="mb-0 mt-0 ml-2"><i class="fas fa-comment-alt"></i> Sales Order</p>
                       </div>
-                      <div>
-                          <div class="card-body  p-2">
-                            <div class="form-group">
-                              <label class="sr-only" for="inlineFormInputGroup">OS NUM</label>
-                              <div class="input-group input-group-sm">
-                                <div class="input-group-prepend">
-                                  <div class="input-group-text">OS NUM</div>
-                                </div>
-                                <input type="text" name="osnum" class="getInput form-control form-control-sm" id="">
-                              </div>
+                      <div class="card-body  p-2">
+                        <div class="form-group">
+                          <label class="sr-only" for="inlineFormInputGroup">OS NUM</label>
+                          <div class="input-group input-group-sm">
+                            <div class="input-group-prepend">
+                              <div class="input-group-text">OS NUM</div>
                             </div>
-                            <div class="form-group mb-1">
-                              <small class="mb-0 label-text" for="">Notes / Remarks</small>
-                              <textarea name="note" class="getInput form-control mb-0" id="" cols="10" rows="6"></textarea>
-                            </div>
+                            <input type="text" name="osnum" class="getInput form-control form-control-sm" id="">
                           </div>
+                        </div>
+                        <div class="form-group mb-1">
+                          <small class="mb-0 label-text" for="">Notes / Remarks</small>
+                          <textarea name="note" class="getInput form-control mb-0" id="" cols="10" rows="6"></textarea>
+                        </div>
+                        <div class="form-row mb-0">
+                          <div class="form-group mb-0 col-lg-6 col-sm-12">
+                            <input type="hidden" class="form-control form-control-sm" name="latitude">
+                          </div>
+                          <div class="form-group mb-0 col-lg-6 col-sm-12">
+                            <input type="hidden" class="form-control form-control-sm" name="longitude">
+                          </div>
+                        </div>
                       </div>
                   </div>
                 </div>
                 @include('calendar.parts.view-activity-button')
               </form>  
               {{--  --}}
-            {{-- <div class="card-footer p-2"></div> --}}
+            <div class="card-footer p-0">
+              <small id="location" class="text-center"></small>
+              <div id="map"></div>
+            </div>
           </div>
         </div>
       </div>

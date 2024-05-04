@@ -44,7 +44,7 @@ $('.timepicker').datetimepicker({
 });
 
 var defaultView  = 'agendaWeek';
-var defaultView  = ($(window).width() <= 600) ? 'agendaDay' : 'agendaWeek';
+var defaultView  = ($(window).width() <= 600) ? 'basicDay' : 'agendaWeek';
 let Activity     = $("#Activity")
 let ActivityForm = $("#ActivityForm")
 let ActivityDate = $("#ActivityDate")
@@ -59,7 +59,7 @@ let settings     = (getDataURL) =>{
         eventLimit: true,
         eventLimitText: 'more',
         slotDuration: '00:20:00', // Set the slot duration to 20 minute intervals
-        scrollTime: '08:00:00', // Set the initial scroll of the calendar to 6 PM
+        scrollTime: '07:00:00', // Set the initial scroll of the calendar to 6 PM
         slotEventOverlap:false,
         eventOverlap:false,
         header: {
@@ -77,7 +77,7 @@ let settings     = (getDataURL) =>{
               buttonText: 'Basic Week' // Rename the button text
             },
         },
-        minTime: '08:00:00', // Set the minimum time to display (e.g., 8:00 AM)
+        minTime: '07:00:00', // Set the minimum time to display (e.g., 8:00 AM)
         maxTime: '20:00:00', // Set the maximum time to display (e.g., 6:00 PM)
         editable: true, 
         hiddenDays: [0],
@@ -200,6 +200,8 @@ let settings     = (getDataURL) =>{
             $('.tooltip').hide();
             let disablePastAndFuture =  moment().format('YYYY-MM-DD')!==moment(event.start).format('YYYY-MM-DD');
             disablePastAndFuture ? ActivityForm.find("button[name=delete]").hide() : ActivityForm.find("button[name=delete]").show()
+            getLocationAndInitMap()
+            document.getElementById('viewActivity').style.display = 'block';
             $('#viewActivity').modal('show');
             DateResched.hide()
             ActivityForm[0].reset()
