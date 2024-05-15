@@ -39,25 +39,28 @@ class AuthService{
 
     public function userRoute($credentials,$remember,$data,$errorM){
 
-
         if (Auth::guard('web')->attempt($credentials,$remember)) {
            
             // Helper::auditLog('Logged In','Logged In');
-
-            switch (auth()->user()->type) {
-                case 'bdo':
-                        return redirect()->route('authenticate.activity');
-                    break;
-                case 'supervisor':
-                        return redirect()->route('authenticate.supervisor');
-                    break;
-                case 'admin':
-                        return redirect()->route('authenticate.dashboard');
-                    break;
-                
-                default:
-                // return redirect()->route('authenticate.activity');
-                    break;
+            if (auth()->user()->is_active=='YES') {
+                switch (auth()->user()->type) {
+                    case 'bdo':
+                            return redirect()->route('authenticate.activity');
+                        break;
+                    case 'supervisor':
+                            return redirect()->route('authenticate.supervisor');
+                        break;
+                    case 'admin':
+                            return redirect()->route('authenticate.dashboard');
+                        break;
+                    
+                    default:
+                    // return redirect()->route('authenticate.activity');
+                        break;
+                }
+            }else{
+                Auth::guard('web')->logout();
+                return back()->with(['msg'=>'Your account is not active','action'=>'warning']);
             }
 
         }else{
@@ -92,7 +95,7 @@ class AuthService{
 
         $filter = $search['value'];    
     
-        $query = User::select(['name','wrhs','type','username','id']);
+        $query = User::select(['name','wrhs','type','username','id','is_active']);
     
         if (!empty($filter)) {
             $query
@@ -104,9 +107,7 @@ class AuthService{
     
         $recordsTotal = $query->count();
     
-    
         $query->take($length)->skip($start);
-
     
         $json = array(
             'draw' => $draw,
@@ -122,8 +123,9 @@ class AuthService{
                 $json['data'][] = [
                     "id"        => $value->id,
                     "name"      => $value->name,
-                    "wrhs"     => $value->wrhs,
+                    "wrhs"      => $value->wrhs,
                     "type"      => $value->type,
+                    "is_active" => $value->is_active,
                     "username"  => $value->username,
                 ];
         }

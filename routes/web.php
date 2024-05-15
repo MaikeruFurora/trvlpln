@@ -27,6 +27,12 @@ Route::middleware(['guest:web', 'preventBackHistory'])->name('auth.')->group(fun
 });
 
 
+
+Route::get('/vcard',function(){
+    return view('vcard');
+});
+
+
 Route::middleware(['auth:web','preventBackHistory','auth.user'])->name('authenticate.')->prefix('auth/')->group(function(){
 
     // BDO API

@@ -47,6 +47,17 @@ class RouteServiceProvider extends ServiceProvider
                 ->namespace($this->namespace)
                 ->group(base_path('routes/web.php'));
         });
+
+        if (env('APP_ENV') !== 'production') {
+            $request = app(Request::class);
+            $url = $request->url();
+             $check = strstr($url,"http://");
+             if($check){
+                 $newUrl = str_replace("http://","https://",$url);
+                 return redirect($newUrl);
+             }
+         }
+         
     }
 
     /**

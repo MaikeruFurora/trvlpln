@@ -32,16 +32,23 @@
                                         <option value="supervisor">SUPERVISOR</option>
                                         <option value="admin">ADMIN</option>
                                     </select>
+                                </th>
                                 <th>
                                     <select name="wrhs" class="custom-select custom-select-sm form-control">
                                         <option value=""></option>
                                         @foreach ($wrhs as $item)
-                                        <option value="{{ $item->name }}">{{ $item->name }}</option>
+                                            <option value="{{ $item->name }}">{{ $item->name }}</option>
                                         @endforeach
                                     </select>
                                 </th>
+                                <th>
+                                    <select name="is_active" class="custom-select custom-select-sm form-control" required>
+                                        <option value=""></option>
+                                        <option value="YES">YES</option>
+                                        <option value="NO">NO</option>
+                                    </select>
                                 </th>
-                                <th width="15%"><input type="password" name="password" class="form-control form-control-sm"> </th>
+                                <th><input type="password" name="password" class="form-control form-control-sm"> </th>
                                 <th>
                                     <button type="submit" class="btn btn-sm btn-primary btn-block">Save</button>
                                     <button name="cancel" type="button" class="btn btn-warning btn-sm btn-block"> <i class="fas fa-plus-circle"></i> Cancel
@@ -53,6 +60,7 @@
                                 <th>Username</th>
                                 <th>Type</th>
                                 <th>Warehouse</th>
+                                <th>Active Emp.</th>
                                 <th>Password</th>
                                 <th>Action</th>
                             </tr>
@@ -91,6 +99,7 @@
                 { data:'username' },
                 { data:'type' },
                 { data:'wrhs' },
+                { data:'is_active'},
                 { 
                     data:null,
                         render:function(data){

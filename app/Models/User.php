@@ -57,6 +57,10 @@ class User extends Authenticatable
 
     }
 
+    public function scopeGetActive($query){
+        return $query->where('is_active','YES');
+    }
+
     public function scopeTypeBDO($query){
         return $query->where('type',self::BDO);
     }
@@ -85,6 +89,7 @@ class User extends Authenticatable
             'email'     => $request->email,
             'wrhs'      => $request->wrhs,
             'type'      => $request->type,
+            'is_active' => $request->is_active,
             'password'  => !empty($request->password)?Hash::make($request->password):$oldpass->password,
         ];
 
