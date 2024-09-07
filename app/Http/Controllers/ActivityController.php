@@ -17,10 +17,13 @@ class ActivityController extends Controller
     }
 
     public function store(Request $request){
-        $time =   Carbon::createFromFormat('h:iA', $request->time_to)->format('H:i');
+
+        $timeFrom = Carbon::createFromFormat('h:iA', $request->time_from)->format('H:i'); #$dateFrom->format('H:i');
+        $timeTo   = Carbon::createFromFormat('h:iA', $request->time_to)->format('H:i');
         $dateFrom = Carbon::parse($request->date_from);
-        $timeFrom = $dateFrom->format('H:i');
-        if ($timeFrom > $time) {
+
+
+        if (Carbon::createFromFormat('h:iA', $request->time_from) > Carbon::createFromFormat('h:iA', $request->time_to)) {
             return response()->json(['msg'=>'Please check your time.', 'icon'  => 'warning'],500);
         }
        
@@ -28,16 +31,16 @@ class ActivityController extends Controller
             $startOfWeek = $dateFrom->startOfWeek();
             $dayOfWeek = ($dateFrom->dayOfWeek + 6) % 7;
             for ($i = $dayOfWeek; $i < 6; $i++) {
-                $dates = Carbon::parse($startOfWeek->copy()->addDays($i)->toDateString().$time);
+                $dates = Carbon::parse($startOfWeek->copy()->addDays($i)->toDateString().$timeTo);
                 if (!$dates->isPast()) {
                         $startDate = $startOfWeek->copy()->addDays($i)->toDateString();
                         $startTime = $timeFrom;
-                        $endTime = $time;
+                        $endTime = $timeTo;
                         $startDateTime = Carbon::parse($startDate . ' ' . $startTime);
                         $endDateTime = Carbon::parse($startDate . ' ' . $endTime);
 
                         if ($this->checkForOverlappingSchedule($startDateTime, $endDateTime)) {
-                            if ($this->allowedTime(Carbon::parse($request->date_from)->format('H:i'), $time)) {
+                            if ($this->allowedTime($timeFrom, $timeTo)) {
                                 $this->createActivity($request, $startDateTime, $endDateTime);
                             }
                         } else {
@@ -48,16 +51,16 @@ class ActivityController extends Controller
             } else {
                     $date_from = $dateFrom->format("Y-m-d");
                     if ($date_from==Carbon::now()->format("Y-m-d")) {
-                        if ($this->allowedTime(Carbon::parse($request->date_from)->format('H:i'), $time)) {
-                            $this->createActivity($request, $dateFrom, $dateFrom->format('Y-m-d').' '.$time);
+                        if ($this->allowedTime($timeFrom, $timeTo)) {
+                            $this->createActivity($request, $dateFrom->format('Y-m-d').' '.$timeFrom, $dateFrom->format('Y-m-d').' '.$timeTo);
                         }else{
                             return response()->json(['msg'=>'Please check your time. allowed time 8:00 AM - 8:00 PM', 'icon'  => 'warning'],500);
                         }
                     }else{
                         if (!$dateFrom->isPast()) {
-                            if ($this->checkForOverlappingSchedule($request->date_from,$dateFrom->format('Y-m-d').' '.$time )) {
-                                if ($this->allowedTime(Carbon::parse($request->date_from)->format('H:i'), $time)) {
-                                    $this->createActivity($request, $dateFrom, $dateFrom->format('Y-m-d').' '.$time);
+                            if ($this->checkForOverlappingSchedule($dateFrom->format('Y-m-d').' '.$timeFrom,$dateFrom->format('Y-m-d').' '.$timeTo )) {
+                                if ($this->allowedTime($timeFrom, $timeTo)) {
+                                    $this->createActivity($request, $dateFrom->format('Y-m-d').' '.$timeFrom, $dateFrom->format('Y-m-d').' '.$timeTo);
                                 }else{
                                     return response()->json(['msg'=>'Please check your time. allowed time 8:00 AM - 8:00 PM', 'icon'  => 'warning'],500);
                                 }
@@ -75,6 +78,7 @@ class ActivityController extends Controller
         
 
     }
+
 
     public function allowedTime($timeFrom, $timeTo){
         return ($timeFrom>= '07:00' && $timeTo <= '20:00');
@@ -193,6 +197,7 @@ class ActivityController extends Controller
 
     }
 
+
     public function checkForOverlappingSchedule($start, $end){
         $startTime = Carbon::parse($start);
         $endTime = Carbon::parse($end);
@@ -222,12 +227,30 @@ class ActivityController extends Controller
 
     public function updateInfo(Activity $activity, Request $request){
         $date_fromDB = Carbon::parse($activity->date_from);
-        $date_from   = Carbon::parse($request->date_from);
-        $date_to     = Carbon::parse($request->date_to);
-        if ($date_from->format("Y-m-d")==Carbon::now()->format("Y-m-d")) {
+        // $date_from   = Carbon::parse($request->date_from);
+        // $date_to     = Carbon::parse($request->date_to);
+
+        
+        $timeFrom = Carbon::createFromFormat('h:iA', $request->time_from)->format('H:i'); #$dateFrom->format('H:i');
+        $timeTo   = Carbon::createFromFormat('h:iA', $request->time_to)->format('H:i');
+        $date     = Carbon::parse($request->date_from);
+
+
+        if ($date->isPast()) {
+            return response()->json([
+                'msg'   => 'Not allowed due to past date',
+                'icon'  => 'warning'
+            ], 500);
+        }
+
+        if (Carbon::createFromFormat('h:iA', $request->time_from) > Carbon::createFromFormat('h:iA', $request->time_to)) {
+            return response()->json(['msg'=>'Please check your time.', 'icon'  => 'warning'],500);
+        }
+
+        if ($date->format("Y-m-d")==Carbon::now()->format("Y-m-d")) {
             $data =  $activity->update([
-                'date_from'         => $request->date_from,
-                'date_to'           => $request->date_to,
+                'date_from'         => $date->format('Y-m-d').' '.$timeFrom,
+                'date_to'           => $date->format('Y-m-d').' '.$timeTo,
                 'activity_list_id'  => $request->activity,
                 'client'            => $request->client,
                 'note'              => $request->note,
@@ -246,8 +269,8 @@ class ActivityController extends Controller
 
             if (!$date_fromDB->isPast()) {
                 $activity->update([
-                    'date_from' => $date_from,
-                    'date_to'   => $date_to,
+                    'date_from' => $date->format('Y-m-d').' '.$timeFrom,
+                    'date_to'   => $date->format('Y-m-d').' '.$timeTo,
                 ]);
                 return response()->json([
                     'msg' => 'Updated Activity Time Slot',

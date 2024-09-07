@@ -58,7 +58,7 @@
                     border-width: .01px !important;
                     border-style: solid !important;
                     border-color: rgb(69, 69, 69) !important;
-                    font-size: 10.5px !important;
+                    font-size: 14px !important;
                     background-color: red;
                     padding:0px;
                     -webkit-print-color-adjust:exact ;
@@ -67,7 +67,7 @@
                     border-width: .01px !important;
                     border-style: solid !important;
                     border-color: rgb(69, 69, 69) !important;
-                    font-size: 10.5px !important;
+                    font-size: 13px !important;
                     background-color: red;
                     padding:0px;
                     -webkit-print-color-adjust:exact ;
@@ -147,8 +147,8 @@
              $i=0;   
             @endphp
             {{-- <ol> --}}
-                <p style="font-size: 11px" class="mb-0">{{ strtoupper($item->name) }}</p>
-                <p style="font-size: 11px" class="mb-0">DATE: {{ date("m/d/Y",strtotime($start)) }}</p>
+                <p style="font-size: 12px" class="mb-0">{{ strtoupper($item->name) }}</p>
+                <p style="font-size: 12px" class="mb-0">DATE: {{ date("m/d/Y",strtotime($start)) }}</p>
                 @forelse ($item->activities->groupBy('activity_list.name') as $key => $value)
                     {{-- <li style="font-size: 11px"><p class="mb-0" >{{$key}}</p></li> --}}
                     <table class="table adjust table-bordered mb-2">
@@ -166,8 +166,8 @@
                        <tbody>
                             @foreach ($value as $key => $data)
                                 <tr>
-                                    <td width="33%">{{ $data->client }}</td>
-                                    <td width="52%">{{ $data->note }}</td>
+                                    <td width="25%">{{ $data->client }}</td>
+                                    <td width="60%">{{ $data->note }}</td>
                                     <td width="8%" class="text-center">{{ empty($data->osnum) ? '-' : strtoupper($data->osnum) }}</td>
                                     <td width="6%" class="text-center" style="font-size: 9px">{{ empty($data->sttus) ? 'NO.UPDATE' : strtoupper($data->sttus) }}</td>
                                 </tr>

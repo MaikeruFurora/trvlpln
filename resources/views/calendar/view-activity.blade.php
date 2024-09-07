@@ -14,16 +14,20 @@
                 <div class="form-row p-1">
                   <div class="form-group col-lg-6 col-sm-12">
                     <small class="label-text" for="">Date & time from</small>
-                    <input type="text" class="form-control form-control-sm getInput" name="date_from">
+                    <input type="text" class="form-control form-control-sm datepicker" name="date_from">
                   </div>
-                  <div class="form-group col-lg-6 col-sm-12">
-                    <small class="label-text" for="">Date & time to</small>
-                    <input type="text" class="form-control form-control-sm getInput" name="date_to">
+                  <div class="form-group col-lg-3 col-sm-12">
+                    <small class="label-text" for="">Time From</small>
+                    <input type="text" class="form-control form-control-sm timepicker" name="time_from">
+                  </div>
+                  <div class="form-group col-lg-3 col-sm-12">
+                    <small class="label-text" for="">Time to</small>
+                    <input type="text" class="form-control form-control-sm timepicker" name="time_to">
                   </div>
                 </div>
                 <input type="hidden" class="getInput" name="id">
                 <div id="accordion">
-                  <div class="card border mb-0">
+                  <div class="card border mb-1">
                       <div class="card-header border p-1" id="headingOne">
                         <p class="mb-0 mt-0 ml-2"><i class="fas fa-info-circle"></i> Activity Details</p>
                       </div>  
@@ -72,6 +76,44 @@
                             <input type="text" name="osnum" class="getInput form-control form-control-sm" id="">
                           </div>
                         </div>
+                        <div class="form-row p-">
+                          <div class="form-group col-lg-6 col-sm-12">
+                            <small class="label-text" for="">Item Description</small>
+                            <input type="text" class="form-control form-control-sm" name="item">
+                          </div>
+                          <div class="form-group col-lg-3 col-sm-12">
+                            <small class="label-text" for="">Quantity</small>
+                            <input type="number" class="form-control form-control-sm" name="qty">
+                          </div>
+                          <div class="form-group col-lg-3 col-sm-12">
+                            <small class="label-text" for="">Price</small>
+                            <input type="number" class="form-control form-control-sm" name="price">
+                          </div>
+                          <div class="form-group col-lg-6 col-sm-12">
+                            <small class="label-text" for=""></small>
+                            <button class="btn btn-success btn-sm">Add</button>
+                          </div>
+                        </div>
+                       <div class="table-responsive">
+                        <table class="table table-striped table-sm">
+                          <thead>
+                            <tr>
+                              <th>Item Description</th>
+                              <th>Quantity</th>
+                              <th>Price</th>
+                              <th>X</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <th>Item Description Description Description</th>
+                              <th>Quantity</th>
+                              <th>Price</th>
+                              <th>X</th>
+                            </tr>
+                          </tbody>
+                        </table>
+                       </div>
                         <div class="form-group mb-1">
                           <small class="mb-0 label-text" for="">Notes / Remarks</small>
                           <textarea name="note" class="getInput form-control mb-0" id="" cols="10" rows="6"></textarea>
@@ -90,11 +132,12 @@
                 @include('calendar.parts.view-activity-button')
               </form>  
               {{--  --}}
-            <div class="card-footer p-0">
+            {{-- <div class="card-footer p-0">
               <small id="location" class="text-center"></small>
               <div id="map"></div>
-            </div>
+            </div> --}}
           </div>
         </div>
+      </div>
       </div>
 </div>

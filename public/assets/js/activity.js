@@ -6,10 +6,13 @@ const aTime = [
 ]
 
 let dateTimeSetting = {
+    datepicker: true,
+    timepicker: false,
     minDate: moment(),
-    allowTimes: aTime,
-    formatTime: 'g:i A',
-    format: 'Y-m-d H:i',
+    format: 'Y-m-d',
+    // allowTimes: aTime,
+    // formatTime: 'g:i A',
+    // format: 'Y-m-d H:i',
     beforeShowDay: function(date) {
         if (date.getDay() === 0) { // if it's Sunday
             return [false, "", "Unavailable on Sundays"]; // mark as unavailable
@@ -26,7 +29,10 @@ let dateTimeSetting = {
     },
 }
 
-$('.datepicker').datetimepicker(dateTimeSetting).on('change', function(){
+
+$('input[name="date_from"]').datetimepicker(dateTimeSetting);
+
+$('input[name="time_from"]').on('change', function(){
     let dateFrom = $(this).datetimepicker('getValue');
     if (dateFrom) {
         $('input[name="time_to"]').datetimepicker({
@@ -35,6 +41,7 @@ $('.datepicker').datetimepicker(dateTimeSetting).on('change', function(){
         });
     }
 });
+
 $('.timepicker').datetimepicker({
     datepicker: false,
     allowTimes: aTime,
@@ -190,7 +197,7 @@ let settings     = (getDataURL) =>{
                         $('#calendar').fullCalendar('refetchEvents');
                     },
                     error:function (jqxHR, textStatus, errorThrown) {
-                        toasMessage(jqxHR.responseJSON.msg,"Error",jqxHR.responseJSON.icon)
+                        toasMessage(jqxHR.responseJSON.msg,"Warning",jqxHR.responseJSON.icon)
                         $('#calendar').fullCalendar('refetchEvents');
                     },
                 });
@@ -226,12 +233,13 @@ let settings     = (getDataURL) =>{
                     (data.isDelete) ? ActivityForm.find("button[name=delete]").hide() : ActivityForm.find("button[name=delete]").show();
                     ActivityForm.find('input[type=checkbox]').prop('disabled', disablePastAndFuture);
                     ActivityForm.find("select[name=activity]").val(data.activity_list.id);
-                    ActivityForm.find("input[name=date_from]").val(data.date_from).prop('readonly', false);
-                    ActivityForm.find("input[name=date_to]").val(data.date_to).prop('readonly', false);
+                    ActivityForm.find("input[name=date_from]").val(moment(data.date_from).format('YYYY-MM-DD')).prop('readonly', false);
+                    ActivityForm.find("input[name=time_from]").val(moment(data.date_from).format('h:m A')).prop('readonly', false);
+                    ActivityForm.find("input[name=time_to]").val(moment(data.date_to).format('h:m A')).prop('readonly', false);
                 },
                 error:function (jqxHR, textStatus, errorThrown) 
                 {
-                     toasMessage(jqxHR.responseJSON.msg,"Error",jqxHR.responseJSON.icon)
+                     toasMessage(jqxHR.responseJSON.msg,"Warning",jqxHR.responseJSON.icon)
                     $('#calendar').fullCalendar('refetchEvents');
                 },
             });
@@ -287,7 +295,7 @@ Activity.on('submit',function(e){
     }).fail(function(jqxHR, textStatus, errorThrown) {
         Activity.find("button[type=submit]").html('Save');
         $("#Activity *").prop("readonly", false);
-        toasMessage(jqxHR.responseJSON.msg, "Error", jqxHR.responseJSON.icon);
+        toasMessage(jqxHR.responseJSON.msg, "Warning", jqxHR.responseJSON.icon);
     });
 })
 
@@ -326,7 +334,7 @@ ActivityForm.on('submit',function(e){
 
 Activity.find("input[name=week]").on('click',function(){
     if (Activity.find("input[name=date_from]").val()=="") {
-        toasMessage('Please check date & time',"warning",'warning')
+        toasMessage('Please check date & time',"Warning",'warning')
         $(this).prop("checked",false)
     }
 })
@@ -356,7 +364,7 @@ ActivityForm.find("button[name=delete]").on('click',function(){
                 }
                 $('#viewActivity').modal('hide');
             }).fail(function (jqxHR, textStatus, errorThrown) {
-                toasMessage(jqxHR.responseJSON.msg,"Error",jqxHR.responseJSON.icon)
+                toasMessage(jqxHR.responseJSON.msg,"Warning",jqxHR.responseJSON.icon)
             })
         }
         return false
