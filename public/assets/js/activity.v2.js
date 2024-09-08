@@ -1,15 +1,12 @@
-const aTime = [
-    '08:00','08:20','08:40','09:00','09:20','09:40','10:00','10:20','10:40',
-    '11:00','11:20','11:40','12:00','12:20','12:40','13:00','13:20','13:40',
-    '14:00','14:20','14:40','15:00','15:20','15:40','16:00','16:20','16:40',
-    '17:00','17:20','17:40','18:00'
-]
+window.onload = function() {
+    CoreModel.defaultTime()
+};
 
 let dateTimeSetting = {
+    datepicker: true,
+    timepicker: false,
     minDate: moment(),
-    allowTimes: aTime,
-    formatTime: 'g:i A',
-    format: 'Y-m-d H:i',
+    format: 'Y-m-d',
     beforeShowDay: function(date) {
         if (date.getDay() === 0) { // if it's Sunday
             return [false, "", "Unavailable on Sundays"]; // mark as unavailable
@@ -26,22 +23,32 @@ let dateTimeSetting = {
     },
 }
 
-$('.datepicker').datetimepicker(dateTimeSetting).on('change', function(){
-    let dateFrom = $(this).datetimepicker('getValue');
-    if (dateFrom) {
-        $('input[name="time_to"]').datetimepicker({
-            value: new Date(dateFrom.getTime() + 30 * 60000),
-            format: 'h:i A'
-        });
-    }
-});
-$('.timepicker').datetimepicker({
-    datepicker: false,
-    allowTimes: aTime,
-    formatTime: 'g:i A',
-    format: 'g:i A',
-    validateOnBlur: false,
-});
+$('input[name="date_from"]').datetimepicker(dateTimeSetting);
+
+
+ // Get references to the time input fields
+ const timeFrom = document.getElementById('time_from');
+ const timeTo = document.getElementById('time_to');
+
+ // Function to add minutes to a given time
+ function addMinutesToTime(timeString, minutesToAdd) {
+     const [hours, minutes] = timeString.split(':').map(Number);
+     const date = new Date();
+     date.setHours(hours, minutes, 0, 0);
+     date.setMinutes(date.getMinutes() + minutesToAdd);
+     const newHours = date.getHours().toString().padStart(2, '0');
+     const newMinutes = date.getMinutes().toString().padStart(2, '0');
+     return `${newHours}:${newMinutes}`;
+ }
+
+ // Event listener for time_from input change
+ timeFrom.addEventListener('change', function() {
+     const timeFromValue = timeFrom.value;
+     if (timeFromValue) {
+         // Set time_to to 20 minutes after time_from
+         timeTo.value = addMinutesToTime(timeFromValue, 20);
+     }
+ });
 
 var defaultView  = 'agendaWeek';
 var defaultView  = ($(window).width() <= 600) ? 'basicDay' : 'agendaWeek';
@@ -79,18 +86,18 @@ let settings     = (getDataURL) =>{
         },
         minTime: '07:00:00', // Set the minimum time to display (e.g., 8:00 AM)
         maxTime: '20:00:00', // Set the maximum time to display (e.g., 6:00 PM)
-        editable: true, 
+        editable: true,  // Allow resizing
+        eventStartEditable: false,  // Disable dragging
         hiddenDays: [0],
         allDaySlot: false,
         selectable: true,
         // eventLimit: false, // allow "more" link when too many events
         events: {
-                url:  getDataURL,//clndr.attr("data-list"),
-                type:'POST',
-                data: {  
+            url:  getDataURL,//clndr.attr("data-list"),
+            type:'POST',
+            data: {  
                 _token
-                // date_from:
-                }
+            }
         },
         
         eventRender: function (info,element) {
@@ -224,8 +231,10 @@ let settings     = (getDataURL) =>{
                     (data.isDelete) ? ActivityForm.find("button[name=delete]").hide() : ActivityForm.find("button[name=delete]").show();
                     ActivityForm.find('input[type=checkbox]').prop('disabled', disablePastAndFuture);
                     ActivityForm.find("select[name=activity]").val(data.activity_list.id);
-                    ActivityForm.find("input[name=date_from]").val(data.date_from).prop('readonly', false);
-                    ActivityForm.find("input[name=date_to]").val(data.date_to).prop('readonly', false);
+                    ActivityForm.find("input[name=date_from]").val(moment(data.date_from).format('YYYY-MM-DD')).prop('readonly', false);
+                    ActivityForm.find("input[name=time_from]").val(moment(data.date_from).format('HH:mm')).prop('readonly', false);
+                    ActivityForm.find("input[name=time_to]").val(moment(data.date_to).format('HH:mm')).prop('readonly', false);
+                    
                 },
                 error:function (jqxHR, textStatus, errorThrown) 
                 {
@@ -281,6 +290,7 @@ Activity.on('submit',function(e){
             Activity.find("button[type=submit]").html('Save');
             toasMessage(data.msg, "success", data.icon);
             $('#calendar').fullCalendar('refetchEvents');
+            defaultTime()
         }
     }).fail(function(jqxHR, textStatus, errorThrown) {
         Activity.find("button[type=submit]").html('Save');
@@ -291,21 +301,15 @@ Activity.on('submit',function(e){
 
 ActivityForm.on('submit',function(e){
 
-    console.log(ActivityForm.find("input[name=date_from]").val());
-
-     // Verify that at least one checkbox is checked
-    // if (ActivityForm.find('input[type="checkbox"]:checked').length === 0) {
-    //     toasMessage("Please select least one option before saving.", "Error", 'error');
-    //     return false;
-    // }
-
     let id          = ActivityForm.find("input[name=id]").val()
     let updateUrl   = ActivityForm.attr("action").replace("param",id)
+    const formData = new FormData(ActivityForm[0])
+    formData.append('booking',JSON.stringify(CoreModel.booking))
     e.preventDefault()
     $.ajax({
         url:  updateUrl,
         type:'POST',
-        data: new FormData(this),
+        data: formData,
         processData: false,
         contentType: false,
         cache: false,
@@ -318,7 +322,7 @@ ActivityForm.on('submit',function(e){
             $('#calendar').fullCalendar('refetchEvents');
         }
     }).fail(function (jqxHR, textStatus, errorThrown) {
-        toasMessage(jqxHR.responseJSON.msg,"Error",jqxHR.responseJSON.icon)
+        toasMessage(jqxHR.responseJSON.msg,"warning",jqxHR.responseJSON.icon)
     })
 })
 
@@ -354,7 +358,7 @@ ActivityForm.find("button[name=delete]").on('click',function(){
                 }
                 $('#viewActivity').modal('hide');
             }).fail(function (jqxHR, textStatus, errorThrown) {
-                toasMessage(jqxHR.responseJSON.msg,"Error",jqxHR.responseJSON.icon)
+                toasMessage(jqxHR.responseJSON.msg,"warning",jqxHR.responseJSON.icon)
             })
         }
         return false
@@ -362,33 +366,7 @@ ActivityForm.find("button[name=delete]").on('click',function(){
 })
 
 
-ActivityForm.find("input[name=date_from]").on('change',function(){
-
-    let dateFrom = $(this).datetimepicker('getValue');
-    if (dateFrom) {
-        $('input[name="date_to"]').datetimepicker({
-            minDate: moment(),
-            value: new Date(dateFrom.getTime() + 30 * 60000),
-            format: 'Y-m-d H:i',
-            formatTime:'g:i A',
-        });
-    }
-
-}).datetimepicker(dateTimeSetting)
-
-
-DateResched.hide()
-
-$('input[type=checkbox]').click(function(){
-    // if ($(this).val()=="resched" && $(this).is(":checked")) {
-    //     DateResched.show()
-    // }else{
-    //     DateResched.hide()
-    // }
-});
-
-
-
 $(document).on('click', '.custom-control-input', function() {      
     $('input[type="checkbox"]').not(this).prop('checked', false);
 });
+

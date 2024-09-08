@@ -1,3 +1,7 @@
+window.onload = function() {
+    CoreModel.defaultTime()
+};
+
 let updateEventsURL = (newURL) => {
     $('#calendar').fullCalendar('removeEventSources');
     $('#calendar').fullCalendar('addEventSource',  {

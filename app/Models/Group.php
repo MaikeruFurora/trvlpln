@@ -5,17 +5,21 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Product extends Model
+class Group extends Model
 {
     use HasFactory;
 
     protected $guarded = [];
 
-    public function scopeStoreProduct($q,$request){
+    public function scopeActive($query){
+        return $query->where('active',1);
+    }
+
+    public function scopeStoreGroup($q,$request){
         return $q->create($this->requestInput($request));
     }
 
-    public function scopeUpdateProduct($q,$request){
+    public function scopeUpdateGroup($q,$request){
         return $q->whereId($request->id)->update($this->requestInput($request));
     }
 
@@ -23,8 +27,8 @@ class Product extends Model
         $oldpass = Static::find($request->id);
         return [
             'name'      => $request->name,
-            'code'      => $request->code,
-            'group_id'  => $request->group,
+            'active'  => $request->active ?? true,
         ];
+
     }
 }

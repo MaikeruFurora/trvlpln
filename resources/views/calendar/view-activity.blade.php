@@ -1,143 +1,152 @@
 <div>
-  <div class="modal fade" id="viewActivity" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="viewActivityLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-md">
+  <form action="{{ route('authenticate.activity.update.info',['param']) }}" id="ActivityForm" autocomplete="off">@csrf
+  <div class="modal fade" id="viewActivity" data-backdrop="static" data-keyboard="false" role="dialog" tabindex="-1" aria-labelledby="viewActivityLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
       <div class="modal-content">
-        <div class="modal-header p-2">
-          <p class="modal-title ml-1" id="viewActivityLabel">title</p>
-          {{-- <button type="button" class="close" style="font-size: 15px"  data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button> --}}
+        <div class="modal-header p-3 border-0">
+          <p class="modal-title ml-2" id="viewActivityLabel">title</p>
+          <button type="button" class="btn btn-sm btn-danger m-1" name="delete" data-delete="{{ route('authenticate.activity.destroy',['param']) }}" style="font-size: 11px">
+            <i class="fas fa-calendar-times"></i> Delete
+          </button>
         </div>
         <div class="modal-body p-2">
               {{--  --}}
-              <form action="{{ route('authenticate.activity.update.info',['param']) }}" id="ActivityForm" autocomplete="off">@csrf
-                <div class="form-row p-1">
-                  <div class="form-group col-lg-6 col-sm-12">
-                    <small class="label-text" for="">Date & time from</small>
-                    <input type="text" class="form-control form-control-sm datepicker" name="date_from">
-                  </div>
-                  <div class="form-group col-lg-3 col-sm-12">
-                    <small class="label-text" for="">Time From</small>
-                    <input type="text" class="form-control form-control-sm timepicker" name="time_from">
-                  </div>
-                  <div class="form-group col-lg-3 col-sm-12">
-                    <small class="label-text" for="">Time to</small>
-                    <input type="text" class="form-control form-control-sm timepicker" name="time_to">
-                  </div>
-                </div>
-                <input type="hidden" class="getInput" name="id">
-                <div id="accordion">
-                  <div class="card border mb-1">
-                      <div class="card-header border p-1" id="headingOne">
-                        <p class="mb-0 mt-0 ml-2"><i class="fas fa-info-circle"></i> Activity Details</p>
-                      </div>  
-                      <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
-                          <div class="card-body p-2 mb-0">
-                            <div class="row">
-                              <div class="col-8">
-                                <div class="form-group mb-1">
-                                  <small class="mb-0 label-text" for="">Activity</small>
-                                  <select name="activity" class="getInput custom-select custom-select-sm" id="">
-                                    <option value=""></option>
-                                    @foreach ($lists as $item)
-                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                    @endforeach
-                                  </select>
-                                </div>
-                                <div class="form-group">
-                                <small class="mb-0 label-text" for="">Client</small>
-                                  <input type="text" name="client" class="getInput form-control form-control-sm" id="">
-                                </div>
-                              </div>
-                              <div class="col-4">
-                                <br>
-                                @foreach ($sttus as $key => $item)
-                                <div class="custom-control mb-1">
-                                  <input type="checkbox" class="custom-control-input getInput sample{{$key}}"  name="sttus[]" id="customControlValidation1{{$item}}" value="{{ $item }}">
-                                  <label class="custom-control-label" for="customControlValidation1{{$item}}">{{ ucwords($item) }}</label>
-                                </div>
-                                @endforeach
-                              </div>
-                            </div>
+              <input type="hidden" class="getInput" name="id">
+              <!-- Nav tabs -->
+              <ul class="nav nav-pills my-2" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link active rounded-pill border-0 shadow-sm mx-1" id="details-tab" data-toggle="tab" href="#details" role="tab" aria-controls="details" aria-selected="true">
+                        Details
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link rounded-pill border-1 shadow-sm mx-1" id="booking-tab" data-toggle="tab" href="#booking" role="tab" aria-controls="booking" aria-selected="false">
+                        Booking
+                    </a>
+                </li>
+              </ul>
+            
+              <!-- Tab panes -->
+              <div class="tab-content">
+                <div class="tab-pane active" id="details" role="tabpanel" aria-labelledby="details-tab">
+                  <div class="card-body p-2 mb-0">
+                    <div class="row">
+                      <div class="col-lg-4 col-md-4 col-sm-12">
+                          <div class="mb-3">
+                            <label class="mb-2 label-text" for="">Date</label>
+                            <input type="text" class="form-control getInput datepicker" name="date_from">
                           </div>
                       </div>
-                  </div>
-                  <div class="card border mb-0">
-                      <div class="card-header p-1 border" id="headingTwo">
-                          <p class="mb-0 mt-0 ml-2"><i class="fas fa-comment-alt"></i> Sales Order</p>
+                      <div class="col-lg-4 col-md-4 col-sm-6">
+                          <div class="mb-3">
+                            <label class="mb-2 label-text" for="">Time From</label>
+                            <input type="time" class="form-control getInput " name="time_from"> <!--timepicker-->
+                          </div>
                       </div>
-                      <div class="card-body  p-2">
-                        <div class="form-group">
-                          <label class="sr-only" for="inlineFormInputGroup">OS NUM</label>
-                          <div class="input-group input-group-sm">
-                            <div class="input-group-prepend">
-                              <div class="input-group-text">OS NUM</div>
-                            </div>
-                            <input type="text" name="osnum" class="getInput form-control form-control-sm" id="">
-                          </div>
+                      <div class="col-lg-4 col-md-4 col-sm-6">
+                        <div class="mb-3">
+                          <label class="mb-2 label-text" for="">Time to</label>
+                          <input type="time" class="form-control getInput " name="time_to"> <!--timepicker-->
                         </div>
-                        <div class="form-row p-">
-                          <div class="form-group col-lg-6 col-sm-12">
-                            <small class="label-text" for="">Item Description</small>
-                            <input type="text" class="form-control form-control-sm" name="item">
-                          </div>
-                          <div class="form-group col-lg-3 col-sm-12">
-                            <small class="label-text" for="">Quantity</small>
-                            <input type="number" class="form-control form-control-sm" name="qty">
-                          </div>
-                          <div class="form-group col-lg-3 col-sm-12">
-                            <small class="label-text" for="">Price</small>
-                            <input type="number" class="form-control form-control-sm" name="price">
-                          </div>
-                          <div class="form-group col-lg-6 col-sm-12">
-                            <small class="label-text" for=""></small>
-                            <button class="btn btn-success btn-sm">Add</button>
-                          </div>
+                      </div>
+                    </div>
+                    <div class="mb-3">
+                      <label class="mb-2 label-text" for="">Activity</label>
+                      <select name="activity" class="getInput form-control" id="">
+                        <option value=""></option>
+                        @foreach ($lists as $item)
+                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                        @endforeach
+                      </select>
+                    </div>
+                    <div class="mb-4">
+                        <label class="mb-2 label-text" for="">Client</label>
+                        <input type="text" name="client" class="getInput form-control" id="">
+                    </div>
+                    <div class="col-12 mb-2 d-flex justify-content-end">
+                      @foreach ($sttus as $key => $item)
+                      <div class="form-check form-check-inline">
+                        <input type="checkbox" class="form-check-input getInput sample{{$key}}"  name="sttus[]" id="customControlValidation1{{$item}}" value="{{ $item }}">
+                        <label class="form-check-label" for="customControlValidation1{{$item}}">{{ ucwords($item) }}</label>
+                      </div>
+                      @endforeach
+                    </div>
+                    <div class=" mb-3">
+                      <label class="" for="">OS No.</label>
+                        <input type="text" name="osnum" class="getInput form-control" id="">
+                    </div>
+                    <div class=" mb-3">
+                      <label class="" for="">Notes / Remarks</label>
+                      <textarea name="note" class="getInput form-control mb-0" id="" cols="10" rows="6"></textarea>
+                    </div>
+                    <div class="form-row mb-0">
+                      <div class=" mb-3 col-lg-6 col-sm-12">
+                        <input type="hidden" class="form-control" name="latitude">
+                      </div>
+                      <div class=" mb-3 col-lg-6 col-sm-12">
+                        <input type="hidden" class="form-control" name="longitude">
+                      </div>
+                    </div>
+                    {{--  --}}   
+                    @include('calendar.parts.view-activity-button')
+                    {{--  --}}
+                  </div>
+              </div>
+              <div class="tab-pane" id="booking" role="tabpanel" aria-labelledby="booking-tab">
+                  {{--  --}}
+                    <!-- Product Form -->
+                  <div class="row mt-4 px-2">
+                      <div class="col-lg-6 col-sm-12 position-relative">
+                        <div class="mb-3">
+                            <label class="mb-2 label-text" for="">Product</label>
+                            <input type="text" name="product" id="product" class="form-control" placeholder="Search product">
+                            <ul id="suggestions_list" class="list-group"></ul>
                         </div>
-                       <div class="table-responsive">
-                        <table class="table table-striped table-sm">
+                      </div>
+                      <div class="col-lg-3 col-sm-12">
+                        <div class="mb-3">
+                            <label class="mb-2 label-text" for="">Quantity</label>
+                            <input type="number" id="qty" name="qty" class="form-control" placeholder="Quantity">
+                        </div>
+                      </div>
+                      <div class="col-lg-3 col-sm-12">
+                        <div class="mb-3">
+                          <label class="mb-2 label-text" for="">Price</label>
+                          <input type="number" id="price" name="price" class="form-control" placeholder="Price">
+                        </div>
+                    </div>
+                  </div>
+                  <div class="d-flex justify-content-end">
+                      <button id="addProduct" type="button" class="btn btn-success mr-2 my-3">Add Product</button>
+                  </div>
+                  <!-- Product Table -->
+                  <div class="table-responsive mb-5 px-3">
+                      <h6>Order</h6>
+                      <table id="productTable" class="table table-striped table-sm">
                           <thead>
-                            <tr>
-                              <th>Item Description</th>
-                              <th>Quantity</th>
-                              <th>Price</th>
-                              <th>X</th>
-                            </tr>
+                              <tr>
+                                  <th>Product</th>
+                                  <th>Quantity</th>
+                                  <th>Price</th>
+                                  <th width="10%">Actions</th>
+                              </tr>
                           </thead>
                           <tbody>
-                            <tr>
-                              <th>Item Description Description Description</th>
-                              <th>Quantity</th>
-                              <th>Price</th>
-                              <th>X</th>
-                            </tr>
+                              <!-- Rows will be dynamically added here -->
                           </tbody>
-                        </table>
-                       </div>
-                        <div class="form-group mb-1">
-                          <small class="mb-0 label-text" for="">Notes / Remarks</small>
-                          <textarea name="note" class="getInput form-control mb-0" id="" cols="10" rows="6"></textarea>
-                        </div>
-                        <div class="form-row mb-0">
-                          <div class="form-group mb-0 col-lg-6 col-sm-12">
-                            <input type="hidden" class="form-control form-control-sm" name="latitude">
-                          </div>
-                          <div class="form-group mb-0 col-lg-6 col-sm-12">
-                            <input type="hidden" class="form-control form-control-sm" name="longitude">
-                          </div>
-                        </div>
-                      </div>
+                      </table>
                   </div>
-                </div>
-                @include('calendar.parts.view-activity-button')
-              </form>  
+                  {{--  --}}
+              </div>
+              </div>
               {{--  --}}
-            {{-- <div class="card-footer p-0">
-              <small id="location" class="text-center"></small>
-              <div id="map"></div>
-            </div> --}}
+              {{-- <div class="card-footer p-0">
+                <small id="location" class="text-center"></small>
+                <div id="map"></div>
+              </div> --}}
           </div>
         </div>
       </div>
-      </div>
+    </div>
+  </form>  
 </div>

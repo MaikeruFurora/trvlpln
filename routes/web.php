@@ -4,8 +4,11 @@ use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\ActivityListController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\GroupController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SupervController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\WarehouseController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
@@ -58,6 +61,20 @@ Route::middleware(['auth:web','preventBackHistory','auth.user'])->name('authenti
     Route::post('actvty-list/store',[ActivityListController::class,'store'])->name('actvtylist.store');
     Route::get('actvty-list/list',[ActivityListController::class,'list'])->name('actvtylist.list');
     
+    Route::get('product',[ProductController::class,'index'])->name('product');
+    Route::post('product/store',[ProductController::class,'store'])->name('product.store');
+    Route::get('product/list',[ProductController::class,'list'])->name('product.list');
+    Route::get('product/search', [ProductController::class, 'search']);
+
+    Route::get('group',[GroupController::class,'index'])->name('group');
+    Route::post('group/store',[GroupController::class,'store'])->name('group.store');
+    Route::get('group/list',[GroupController::class,'list'])->name('group.list');
+
+    Route::get('warehouse',[WarehouseController::class,'index'])->name('warehouse');
+    Route::post('warehouse/store',[WarehouseController::class,'store'])->name('warehouse.store');
+    Route::get('warehouse/list',[WarehouseController::class,'list'])->name('warehouse.list');
+
+
     Route::get('audit',[AdminController::class,'audit'])->name('audit');
     Route::get('audit/list',[AdminController::class,'auditList'])->name('audit.list');
 
