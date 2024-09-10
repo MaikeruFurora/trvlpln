@@ -15,7 +15,7 @@ class ActivityController extends Controller
     public function index(){
         $lists = ActivityList::getActive()->get(['id','name','color','icon']);
         $sttus = ['success','failed'];
-        return view('calendar.index',compact('lists','sttus'));
+        return view('bdo.index',compact('lists','sttus'));
     }
 
     public function store(Request $request){
@@ -64,8 +64,11 @@ class ActivityController extends Controller
                         if (!$date->isPast()) {
                             if ($this->checkForOverlappingSchedule($date->format('Y-m-d').' '.$timeFrom,$date->format('Y-m-d').' '.$timeTo )) {
                                 if ($this->allowedTime($timeFrom, $timeTo)) {
-                                    
-                                    $this->createActivity($request, $dateTimeFrom, $dateTimeTo);
+                                    if (!$this->isSunday($date_from)) {
+                                        $this->createActivity($request, $dateTimeFrom, $dateTimeTo);
+                                    }else{
+                                        return response()->json(['msg'=>'Date is Sunday', 'icon'  => 'warning'],500);
+                                    }
                                 }else{
                                     return response()->json(['msg'=>'Please check your time. allowed time 8:00 AM - 8:00 PM', 'icon'  => 'warning'],500);
                                 }
@@ -84,6 +87,10 @@ class ActivityController extends Controller
 
     }
 
+    
+    public function isSunday($date){
+        return (Carbon::parse($date)->dayOfWeek == Carbon::SUNDAY);
+    }
 
     public function allowedTime($timeFrom, $timeTo){
         return ($timeFrom>= '07:00' && $timeTo <= '20:00');
@@ -250,7 +257,9 @@ class ActivityController extends Controller
         $dateTimeTo   = Carbon::parse($request->date_from.' '.$timeTo);
         $booking      = json_decode($request->booking);
 
-
+        if($request->has('booking')){
+            $this->booking($booking,$activity);
+        }
 
         if($this->checkTime($timeFrom,$timeTo)){
             return response()->json(['msg'=>'Please check your time.', 'icon'  => 'warning'],500);
@@ -275,9 +284,7 @@ class ActivityController extends Controller
                 'sttus'             => $request->sttus[0] ?? null,
             ]);
 
-            if($request->has('products')){
-                $this->booking($booking);
-            }
+          
 
             if($data){
                 return response()->json([
@@ -328,15 +335,44 @@ class ActivityController extends Controller
         }
     }
 
-    public function info(Activity $activity){
-        // return $activity->load(['activity_list:id,name,color']);
-        // Assuming you want to add a key to the array returned by the info method
-        $activityDetails = $activity->load(['activity_list:id,name,color']);
-        $activityDetails['isDelete'] = Carbon::parse($activity->date_from)->isPast(); // Replace 'key' and 'value' with the actual key-value pair you want to add
-        return $activityDetails;
-        
-        
+    public function info(Activity $activity)
+    {
+        // Load the related data
+        $activityDetails = $activity->load([
+            'activity_list:id,name,color',
+            'bookings:id,activity_id,product_id,free_type,price,qty',
+            'bookings.product:id,name'
+        ]);
+    
+        $data = [
+            'activity_list_id'    => $activityDetails->activity_list?->id,
+            'activity_list_name'  => $activityDetails->activity_list?->name,
+            'activity_list_color' => $activityDetails->activity_list?->color,
+            'activity_id'         => $activityDetails->id,
+            'client'              => $activityDetails->client,
+            'date_from'           => $activityDetails->date_from,
+            'date_to'             => $activityDetails->date_to,
+            'note'                => $activityDetails->note,
+            'osnum'               => $activityDetails->osnum,
+            'user_id'             => $activityDetails->user_id,
+            'id'                  => $activityDetails->id,
+            'sttus'               => $activityDetails->sttus,
+            'isDelete'            => Carbon::parse($activityDetails->date_from)->isPast(),
+            'booking'             => $activityDetails->bookings->map(function ($booking) {
+                return [
+                    'id'           => $booking->id,
+                    'product_id'   => $booking->product?->id,
+                    'name'         => $booking->product?->name ?? $booking->free_type,
+                    'free_type'    => $booking->free_type ??  $booking->product?->name ,
+                    'price'        => $booking->price,
+                    'qty'          => $booking->qty,
+                ];
+            })->toArray()
+        ];
+    
+        return response()->json($data);
     }
+    
 
     public function destroy(Activity $activity){
         $date = Carbon::parse($activity->date_from);
@@ -354,19 +390,51 @@ class ActivityController extends Controller
             ], 500);
         }
     }
-    
-    public function booking($data){
-        
-        if(is_array($data)){
 
-            // DB::transaction(function () {
-             
-            //     Booking::insert($data); // Bulk insert
-            
-            //     // Insert related records or perform other operations
-            // }); 
+    public function destroyBooking(Booking $booking){
+        $date = Carbon::parse($booking->date_from);
+        if($booking->delete()){
+            return response()->json([
+                'msg' => 'Deleted Activity',
+                'icon'  => 'success'
+            ], 200);
         }
-    
     }
+    
+    public function booking(array $data, Activity $activity)
+    {
+        $existingIds = []; // Array to track processed IDs
+
+        $data = array_filter($data, function ($item) {
+            // Retain only objects without an 'id' key
+            return !isset($item->id);
+        });
+        
+        $data = array_map(function ($item) use ($activity) {
+            // If product_id is empty, set free_type to name
+            if (empty($item->product_id)) {
+                $item->free_type = $item->name;
+            } else {
+                $item->free_type = null;
+            }
+        
+            unset($item->name); // Remove the 'name' key if it exists
+        
+            // Handle potential null values and ensure activity_id is set
+            $item->product_id = $item->product_id ?? null;
+            $item->price = $item->price;
+            $item->qty = $item->qty;
+            $item->activity_id = $activity->id;
+        
+            return (array) $item; // Convert the item to an array
+        }, $data);
+        
+        $data;
+        
+        DB::transaction(function () use ($data) {
+            Booking::insert($data); // Bulk insert
+        });
+    }
+
 }
 

@@ -1,94 +1,41 @@
-<div class="header-bg">
-    <!-- Navigation Bar-->
-    <header id="topnav">
-        <div class="topbar-main">
-            <div class="container-fluid">
-
-                <!-- Logo-->
-                <div>
-                    
-                    <a href="#" class="logo">
-                        <img src="{{ asset('assets/images/logo.png') }}" alt="" height="30"> 
-                    </a>
-
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand bold " href="#">Beat Plan</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarText">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+            <a class="nav-link" href="{{ auth()->user()->type=="admin"?route('authenticate.admin') : route('authenticate.supervisor') }}"> Activity Callendar</a>
+        </li>
+        @if (auth()->user()->type=="admin")
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('authenticate.dashboard') }}">Dashboard</a>
+        </li>
+        @endif
+        @if (auth()->user()->type=="admin" && auth()->user()->wrhs==NULL)
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Config
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="{{ route('authenticate.user') }}"> Users</a>
+                    <a class="dropdown-item" href="{{ route('authenticate.actvtylist') }}">Activity</a>
+                    <a class="dropdown-item" href="{{ route('authenticate.product') }}">Product</a>
+                    <a class="dropdown-item" href="{{ route('authenticate.group') }}">Group</a>
+                    <a class="dropdown-item" href="{{ route('authenticate.warehouse') }}">Warehouse/Cluster</a>
+                    <a class="dropdown-item" href="{{ route('authenticate.audit') }}">Audit Trail</a>
                 </div>
-                <!-- End Logo-->
-
-                <div class="menu-extras topbar-custom navbar p-0">
-
-                    <ul class="list-inline ml-auto mb-0">
-                
-                        <li class="menu-item list-inline-item">
-                            <!-- Mobile menu toggle-->
-                            <a class="navbar-toggle nav-link">
-                                <div class="lines">
-                                    <span></span>
-                                    <span></span>
-                                    <span></span>
-                                </div>
-                            </a>
-                            <!-- End mobile menu toggle-->
-                        </li>
-
-                    </ul>
-
-                </div>
-                <!-- end menu-extras -->
-
-                <div class="clearfix"></div>
-
-            </div> <!-- end container -->
-        </div>
-        <!-- end topbar-main -->
-
-        <!-- MENU Start -->
-        <div class="navbar-custom">
-            <div class="container-fluid">
-                
-                <div id="navigation">
-
-                    <!-- Navigation Menu-->
-                    <ul class="navigation-menu">
-
-                        <li class="has-submenu">
-                            <a href="{{ auth()->user()->type=="admin"?route('authenticate.admin') : route('authenticate.supervisor') }}"><i class="far fa-calendar-alt"></i> Activity Callendar</a>
-                        </li>
-                        @if (auth()->user()->type=="admin")
-                        <li class="has-submenu">
-                            <a href="{{ route('authenticate.dashboard') }}"><i class="fas fa-poll"></i> Dashboard</a>
-                        </li>
-                        @endif
-                        @if (auth()->user()->type=="admin" && auth()->user()->wrhs==NULL)
-                            <li class="has-submenu">
-                                <a href="{{ route('authenticate.user') }}"><i class="fas fa-users"></i> Users</a>
-                            </li>
-                            <li class="has-submenu">
-                                <a href="{{ route('authenticate.actvtylist') }}"><i class="fas fa-th-list"></i> Activity</a>
-                            </li>
-                            <li class="has-submenu">
-                                <a href="{{ route('authenticate.product') }}"><i class="fas fa-th-list"></i> Product</a>
-                            </li>
-                            <li class="has-submenu">
-                                <a href="{{ route('authenticate.group') }}"><i class="fas fa-th-list"></i> Group</a>
-                            </li>
-                            <li class="has-submenu">
-                                <a href="{{ route('authenticate.warehouse') }}"><i class="fas fa-th-list"></i> Warehouse/Cluster</a>
-                            </li>
-                            <li class="has-submenu">
-                                <a href="{{ route('authenticate.audit') }}"><i class="fas fa-th-list"></i> Audit Trail</a>
-                            </li>
-                            @endif
-                            <li class="has-submenu">
-                                <a class="text-danger" style="cursor:pointer"
-                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="dripicons-exit"></i>Sign out</a>
-                                <form id="logout-form" action="{{ route('authenticate.signout') }}" method="POST" class="d-none">@csrf</form>
-                            </li>
-                        </ul>
-                        <!-- End navigation menu -->
-                </div> <!-- end #navigation -->
-            </div> <!-- end container -->
-        </div> <!-- end navbar-custom -->
-    </header>
-    <!-- End Navigation Bar-->
-
-</div>
+            </li>
+        @endif
+        <li class="nav-item">
+          <a  class="nav-link text-danger" style="cursor: pointer"
+          onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Log out</a>
+          <form id="logout-form" action="{{ route('authenticate.signout') }}" method="POST" class="d-none">@csrf</form>
+        </li>
+      </ul>
+      <span class="navbar-text">
+        {{ strtoupper(auth()->user()->name) }}
+      </span>
+    </div>
+  </nav>

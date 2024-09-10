@@ -27,4 +27,10 @@ class Product extends Model
             'group_id'  => $request->group,
         ];
     }
+
+    public function booking(){
+        return $this->hasMany(Booking::class);
+    }
+   
+    
 }

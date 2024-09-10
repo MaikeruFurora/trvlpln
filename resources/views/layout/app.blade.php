@@ -15,6 +15,8 @@
         <link rel="shortcut icon" href="assets/images/favicon.ico">
         <link rel="stylesheet" href="{{ asset('plugins/jquery-toast/jquery.toast.css') }}">
         <!--calendar css-->
+        <!-- Google Fonts: Poppins -->
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
         <!-- App css -->
         <link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
         <link href="{{ asset('assets/css/icons.css') }}" rel="stylesheet" type="text/css" />
@@ -24,6 +26,11 @@
         <link href="{{ asset('plugins/datetimepicker/jquery.datetimepicker.min.css') }}" rel="stylesheet">
         <link href="{{ asset('plugins/alertify/css/alertify.css') }}" rel="stylesheet">
         <link href="{{ asset('plugins/select2/select2.min.css') }}" rel="stylesheet" />
+        <style>
+            html, body{
+                font-family: 'poppins', sans-serif;
+            }
+        </style>
         @yield('css')
     </head>
 
@@ -34,11 +41,8 @@
         @include('layout.loader')
         <!-- header-bg -->
         @include('layout.header')
-        <div class="wrapper">
             <div class="container-fluid">
-                <div class="row">
-                    @yield('content')
-                </div>
+                @yield('content')
             </div> <!-- end container-fluid -->
         </div>
 

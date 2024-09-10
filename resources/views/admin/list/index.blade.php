@@ -34,7 +34,7 @@
                                 <th><input type="text" name="icon" class="form-control form-control-sm" maxlength="30"></th>
                                 <th></th>
                                 </th>
-                                <th>
+                                <th width="7%">
                                     <button type="submit" class="btn btn-sm btn-primary btn-block">Save</button>
                                     <button name="cancel" type="button" class="btn btn-warning btn-sm btn-block"> <i class="fas fa-plus-circle"></i> Cancel</button>
                                 </th>

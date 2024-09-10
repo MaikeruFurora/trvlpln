@@ -12,6 +12,8 @@ let _token = $("meta[name='_token']").attr("content")
 
 
 const CoreModel = {
+    currentDateTime:null,
+    calendar: $("#calendar"),
     booking:[],
     loadToPrint:(url) =>{
         $("<iframe>")             // create a new iframe element
@@ -39,6 +41,18 @@ const CoreModel = {
             timeToInput.value = CoreModel.getTimePlusMinutes(20, timeFrom);
         });
     },
+    // Fetching time from a public time API
+    fetchTime : () => {
+        fetch('http://worldtimeapi.org/api/timezone/Etc/UTC')
+        .then(response => response.json())
+        .then(data => {
+            let currentTime = moment(data.utc_datetime);
+            return moment(data.utc_datetime);
+        })
+        .catch(error => {
+            console.error('Error fetching time:', error);
+        });
+    },
     getTimePlusMinutes: (addMinutes, baseTime) => {
         const now = baseTime ? new Date(`1970-01-01T${baseTime}:00`) : new Date();
         now.setMinutes(now.getMinutes() + addMinutes);
@@ -46,6 +60,108 @@ const CoreModel = {
         const minutes = String(now.getMinutes()).padStart(2, '0');
         return `${hours}:${minutes}`;
     },
+    // Function to add minutes to a given time
+    addMinutesToTime: (timeString, minutesToAdd) => {
+        const [hours, minutes] = timeString.split(':').map(Number);
+        const date = new Date();
+        date.setHours(hours, minutes, 0, 0);
+        date.setMinutes(date.getMinutes() + minutesToAdd);
+        const newHours = date.getHours().toString().padStart(2, '0');
+        const newMinutes = date.getMinutes().toString().padStart(2, '0');
+        return `${newHours}:${newMinutes}`;
+    },
+    dateTimeSetting :{
+        datepicker: true,
+        timepicker: false,
+        minDate: moment(),
+        format: 'Y-m-d',
+        beforeShowDay: function(date) {
+            if (date.getDay() === 0) { // if it's Sunday
+                return [false, "", "Unavailable on Sundays"]; // mark as unavailable
+            } else {
+                return [true, ""]; // mark as available
+            }
+        },
+        onSelectDate: function(ct, $i) {
+            if (ct.getDay() === 0) { // if selected date is Sunday
+                this.setOptions({
+                    minDate: ct.add(1, 'day') // set minDate to next day, Monday
+                });
+            }
+        },
+    },
+    calendarSettings:(getDataURL,defaultView = 'basicWeek') => {
+        return {
+            displayEventTime: false,
+            themeSystem: 'bootstrap',
+            timeZone: 'UTC',
+            defaultView:defaultView,//agendaWeek
+            aspectRatio: 1.5, // Adjust as needed
+            height: 800, // or a specific value like 'auto', 'parent', or a number    
+            eventLimit: false,
+            // eventLimitText: 'more',
+            slotDuration: '00:20:00', // Set the slot duration to 20 minute intervals
+            scrollTime: '07:00:00', // Set the initial scroll of the calendar to 6 PM
+            slotEventOverlap:false,
+            eventOverlap:false,
+            header: {
+                left: 'prev,next',
+                center: 'title',
+                right: 'month,agendaWeek,agendaDay,basicWeek'
+            },
+            views: {
+                agendaWeek: { // Customize the agendaWeek view
+                    type: 'agendaWeek', // Use the timeGridWeek view type
+                    buttonText: 'Agenda Week' // Rename the button text
+                },
+                basicWeek: { // Customize the basicWeek view
+                    buttonText: 'Basic Week' // Rename the button text
+                },
+                agendaDay:{
+                    buttonText: 'Today', // Rename the button text
+                }
+            },
+            minTime: '07:00:00', // Set the minimum time to display (e.g., 8:00 AM)
+            maxTime: '20:00:00', // Set the maximum time to display (e.g., 6:00 PM)
+            editable: true,  // Allow resizing
+            eventStartEditable: false,  // Disable dragging
+            hiddenDays: [0],
+            allDaySlot: false,
+            selectable: true,
+            events: {
+                url:  getDataURL,
+                type:'POST',
+                data: {  
+                    _token
+                }
+            },
+            businessHours: {
+                start: moment().format('HH:mm'), /* Current Hour/Minute 24H format */
+                end: '20:00', // 5pm? set to whatever
+                dow: [0,1,2,3,4,5,6] // Day of week. If you don't set it, Sat/Sun are gray too
+            },
+            eventRender: function(event, element) {
+                element.popover({
+                    title: event.start.format('h:mma') + ' - ' + event.end.format('h:mma'),
+                    content: event.title+ (event.note === null ? '' : ' - '+event.note),
+                    trigger: 'hover',
+                    placement: 'top',
+                    container: 'body'
+                });
     
+                // Display full event title with time
+                element.find('.fc-title').html(event.title);
+            }, 
+            eventContent: function(arg) {
+                // Create a custom element to display only the title
+                let title = document.createElement('div');
+                title.innerHTML = arg.event.title;  // Show only the title
+            
+                return { domNodes: [title] };  // Return only the title, no details
+              },
+        }
+    }   
 }
+console.log(CoreModel.fetchTime());
 
+$('.datepicker').datetimepicker(CoreModel.dateTimeSetting);

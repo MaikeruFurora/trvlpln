@@ -20,7 +20,7 @@ class AdminController extends Controller
     {
         $this->auditService = $auditService;
         $this->monday       = Carbon::now()->startOfWeek()->format('Y-m-d'); 
-        $this->saturday     = Carbon::now()->endOfWeek()->subDay()->format('Y-m-d');
+        $this->saturday     = Carbon::now()->endOfWeek()->format('Y-m-d');
     }
 
     public function dashboard(){

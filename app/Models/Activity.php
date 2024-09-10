@@ -31,4 +31,8 @@ class Activity extends Model implements Auditable
         return $this->hasMany(History::class);
     }
 
+    public function bookings(){
+        return $this->hasMany(Booking::class);
+    }
+
 }

@@ -58,10 +58,11 @@ suggestionsList.addEventListener('click', function(event) {
     if (event.target.tagName === 'LI') {
         searchInput.value = event.target.textContent; // Set the input field to the clicked item
         selectedProduct = {
-            id: event.target.dataset.id,
-            name: event.target.textContent
+            product_id: event.target.dataset.id ?? '',
+            name: event.target.textContent.toUpperCase()
         }; // Store the selected product details
         suggestionsList.style.display = 'none'; // Hide the suggestions list
+        
     }
 });
 
@@ -69,11 +70,12 @@ suggestionsList.addEventListener('click', function(event) {
 function addProduct() {
     const qty = qtyInput.value;
     const price = priceInput.value;
+    const item = searchInput.value;
 
-    if (selectedProduct && qty && price) {
+    if (qty && price) {
         CoreModel.booking.push({
-            id: selectedProduct.id, 
-            item: selectedProduct.name, 
+            product_id: selectedProduct?.product_id ?? '', 
+            name: selectedProduct?.name ?? item.toUpperCase(), 
             qty: qty, 
             price: price
         });
@@ -85,17 +87,18 @@ function addProduct() {
 }
 
 // Render table from CoreModel.booking array
-function renderTable() {
+function renderTable(disabled = false) {
     productTableBody.innerHTML = '';
     CoreModel.booking.forEach((product, index) => {
         const row = productTableBody.insertRow();
-        row.insertCell(0).textContent = product.item;
+        id = product.id ?? '';
+        row.insertCell(0).textContent = product.name;
         row.insertCell(1).textContent = product.qty;
         row.insertCell(2).textContent = product.price;
 
         const actionsCell = row.insertCell(3);
         actionsCell.innerHTML = `
-            <button class="btn btn-dark btn-sm deleteBtn" data-index="${index}">Remove</button>
+            <button class="btn btn-dark btn-sm deleteBtn m-0 ${disabled ? 'disabled' : ''}" data-index="${index}" data-id="${id}">Remove</button>
         `;
     });
     addRowEventListeners();
@@ -106,8 +109,12 @@ function addRowEventListeners() {
     const deleteButtons = document.querySelectorAll('.deleteBtn');
     deleteButtons.forEach(button => {
         button.addEventListener('click', (e) => {
+            const id = e.target.dataset.id;
             const index = e.target.dataset.index;
             CoreModel.booking.splice(index, 1);
+            if (id) {
+                removeProduct(id)
+            }
             renderTable();
         });
     });
@@ -119,6 +126,21 @@ function clearInputs() {
     qtyInput.value = '';
     priceInput.value = '';
     selectedProduct = null; // Clear the selected product
+}
+
+
+function removeProduct(id) {
+    $.ajax({
+        url: `/auth/activity/destroy/booking/${id}`,
+        type: 'DELETE',
+        data:{
+            _token
+        }
+    }).done(response => {
+        toasMessage(data.msg, "success", data.icon);
+    }).fail(error => {
+        console.error(error.responseJSON);
+    });
 }
 
 // Add product button click event

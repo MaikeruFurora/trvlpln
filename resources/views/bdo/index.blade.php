@@ -20,6 +20,7 @@
 @endsection
 
 @section('js')
-<script src="{{ asset('assets/js/activity.v2.js') }}"></script>
 <script src="{{ asset('assets/js/booking.js') }}"></script>
+{{-- <script src="{{ asset('assets/js/activity.v2.js') }}"></script> --}}
+<script src="{{ asset('assets/js/bdo.js') }}"></script>
 @endsection

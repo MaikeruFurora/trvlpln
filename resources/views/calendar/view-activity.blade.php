@@ -99,7 +99,7 @@
                       <div class="col-lg-6 col-sm-12 position-relative">
                         <div class="mb-3">
                             <label class="mb-2 label-text" for="">Product</label>
-                            <input type="text" name="product" id="product" class="form-control" placeholder="Search product">
+                            <input type="text" name="product" id="product" class="form-control" placeholder="Search product" style="text-transform: uppercase">
                             <ul id="suggestions_list" class="list-group"></ul>
                         </div>
                       </div>

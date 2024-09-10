@@ -1,57 +1,25 @@
+
 window.onload = function() {
     CoreModel.defaultTime()
 };
 
-let dateTimeSetting = {
-    datepicker: true,
-    timepicker: false,
-    minDate: moment(),
-    format: 'Y-m-d',
-    beforeShowDay: function(date) {
-        if (date.getDay() === 0) { // if it's Sunday
-            return [false, "", "Unavailable on Sundays"]; // mark as unavailable
-        } else {
-            return [true, ""]; // mark as available
-        }
-    },
-    onSelectDate: function(ct, $i) {
-        if (ct.getDay() === 0) { // if selected date is Sunday
-            this.setOptions({
-                minDate: ct.add(1, 'day') // set minDate to next day, Monday
-            });
-        }
-    },
-}
 
-$('input[name="date_from"]').datetimepicker(dateTimeSetting);
-
-
- // Get references to the time input fields
+// Get references to the time input fields
  const timeFrom = document.getElementById('time_from');
  const timeTo = document.getElementById('time_to');
 
- // Function to add minutes to a given time
- function addMinutesToTime(timeString, minutesToAdd) {
-     const [hours, minutes] = timeString.split(':').map(Number);
-     const date = new Date();
-     date.setHours(hours, minutes, 0, 0);
-     date.setMinutes(date.getMinutes() + minutesToAdd);
-     const newHours = date.getHours().toString().padStart(2, '0');
-     const newMinutes = date.getMinutes().toString().padStart(2, '0');
-     return `${newHours}:${newMinutes}`;
- }
 
  // Event listener for time_from input change
  timeFrom.addEventListener('change', function() {
      const timeFromValue = timeFrom.value;
      if (timeFromValue) {
          // Set time_to to 20 minutes after time_from
-         timeTo.value = addMinutesToTime(timeFromValue, 20);
+         timeTo.value = CoreModel.addMinutesToTime(timeFromValue, 20);
      }
  });
 
-var defaultView  = 'agendaWeek';
-var defaultView  = ($(window).width() <= 600) ? 'basicDay' : 'agendaWeek';
+var defaultView  = 'basicWeek';
+var defaultView  = ($(window).width() <= 600) ? 'basicDay' : 'basicWeek';
 let Activity     = $("#Activity")
 let ActivityForm = $("#ActivityForm")
 let ActivityDate = $("#ActivityDate")
@@ -59,12 +27,14 @@ let clndr        = $('#calendar')
 let DateResched  = ActivityForm.find("#DateResched")
 let settings     = (getDataURL) =>{
     return {
+        displayEventTime: false,
+        themeSystem: 'bootstrap',
         timeZone: 'UTC',
         defaultView:defaultView,//agendaWeek
         aspectRatio: 1.5, // Adjust as needed
         height: 800, // or a specific value like 'auto', 'parent', or a number    
-        eventLimit: true,
-        eventLimitText: 'more',
+        eventLimit: false,
+        // eventLimitText: 'more',
         slotDuration: '00:20:00', // Set the slot duration to 20 minute intervals
         scrollTime: '07:00:00', // Set the initial scroll of the calendar to 6 PM
         slotEventOverlap:false,
@@ -73,7 +43,6 @@ let settings     = (getDataURL) =>{
             left: 'prev,next',
             center: 'title',
             right: 'month,agendaWeek,agendaDay,basicWeek'
-            // right: 'month,basicWeek,agendaDay'
         },
         views: {
             agendaWeek: { // Customize the agendaWeek view
@@ -83,6 +52,9 @@ let settings     = (getDataURL) =>{
             basicWeek: { // Customize the basicWeek view
               buttonText: 'Basic Week' // Rename the button text
             },
+            agendaDay:{
+                buttonText: 'Day' // Rename the button text
+            }
         },
         minTime: '07:00:00', // Set the minimum time to display (e.g., 8:00 AM)
         maxTime: '20:00:00', // Set the maximum time to display (e.g., 6:00 PM)
@@ -91,44 +63,24 @@ let settings     = (getDataURL) =>{
         hiddenDays: [0],
         allDaySlot: false,
         selectable: true,
-        // eventLimit: false, // allow "more" link when too many events
         events: {
-            url:  getDataURL,//clndr.attr("data-list"),
+            url:  getDataURL,
             type:'POST',
             data: {  
                 _token
             }
         },
-        
-        eventRender: function (info,element) {
-            element.find('.fc-title').each(function () {
-                $(this).insertBefore($(this).prev('.fc-time'));
+        eventRender: function(event, element) {
+            element.popover({
+                title: event.start.format('h:mma') + ' - ' + event.end.format('h:mma'),
+                content: event.title+ (event.note === null ? '' : ' - '+event.note),
+                trigger: 'hover',
+                placement: 'top',
+                container: 'body'
             });
-            $(info.el).css("border-color", "#20232a");
-            element.find('.fc-title').css('color', info.textColor).css('font-size','11px').css('font-weight', '800'); // Set text color for each event
-            element.find('.fc-time').css('color', info.textColor).css('font-size','11px').css('margin-left','2px')
-            // element.append('<div style="position: absolute; top: 0; right: 0; width: 0; height: 0; transform: rotate(270deg); border-left: 10px solid transparent; border-bottom: 10px solid '+info.activityColor+';"></div>');
-            if (info.title && info.title.length > 20) {
-                element.find('.fc-title').text(info.title.substring(0, 20) + '...'); // Truncate title and add ellipsis if longer than 20 characters
-            }
-            element.find('.fc-content').prepend('<i style="color:black; position: absolute; top: 1px; right: 1px;" class="'+info.icon+'"></i>');
-            element.tooltip({ 
-                title: function() {
-                    return `<div class="event-tooltip text-left" style="font-size:13px">
-                                <p class="mb-1"><b>Client:</b> ${info.title}</p>
-                                ${info.osnum?`<p class="mb-1"><b>OS:</b> ${info.osnum}</p>`:''}
-                                ${info.note ? `<p class="mb-1"><b>Note:</b> ${info.note.length > 80 ? info.note.substring(0, 80) + '<a href="#" onclick="event.preventDefault(); $(this).parent().text(info.note);">...click to see more</a>' : info.note}</p>` : ''}
-                                ${info.sttus?`<p class="mb-1"><b>Status:</b> ${info.sttus}</p>`:''}
-                                ${info.activity?`<p class="mb-1"><b>Activity:</b> ${info.activity}</p>`:''}
-                                <p class="mb-1"><b>Date:</b> ${info.start.format('MMM DD, YYYY')}</p>
-                                <p class="mb-1"><b>Time:</b> ${info.start.format('h:mm A')} - ${info.end ? info.end.format('h:mm A') : 'N/A'}</p>
-                            </div>`;
-                },
-                html: true,
-                placement: "top",
-                trigger: "hover",
-                container: "body"
-            });
+
+            // Display full event title with time
+            element.find('.fc-title').html(event.title);
         },
         businessHours: {
             start: moment().format('HH:mm'), /* Current Hour/Minute 24H format */
@@ -164,6 +116,14 @@ let settings     = (getDataURL) =>{
                 },
             })
         },
+
+        eventContent: function(arg) {
+            // Create a custom element to display only the title
+            let title = document.createElement('div');
+            title.innerHTML = arg.event.title;  // Show only the title
+        
+            return { domNodes: [title] };  // Return only the title, no details
+          },
         
         eventDropStart: function(event, jsEvent, ui, view) {
             // Hide tooltip when resizing starts
@@ -217,23 +177,32 @@ let settings     = (getDataURL) =>{
                 type:"GET",
                 dataType:'json',
                 success: function(data) {
+                    CoreModel.booking = data.booking;
+                    renderTable(disablePastAndFuture)
                     ActivityForm.find("input[name=id]").val(data.id);
                     $("#ActivityForm .getInput").each(function() {
                         var name = this.name;
                         if(name !== 'sttus[]') {
                             var $elem = ActivityForm.find("[name=" + name + "]");
+                            
                             $elem.val(data[name]).prop('readonly', disablePastAndFuture);
                         }
                     });
+                    
                     ActivityForm.find("input[type=checkbox]").prop('checked', false).filter(function() {
                         return this.value == data.sttus;
                     }).prop('checked', true);
                     (data.isDelete) ? ActivityForm.find("button[name=delete]").hide() : ActivityForm.find("button[name=delete]").show();
                     ActivityForm.find('input[type=checkbox]').prop('disabled', disablePastAndFuture);
-                    ActivityForm.find("select[name=activity]").val(data.activity_list.id);
+                    ActivityForm.find("select[name=activity]").val(data.activity_list_id);
                     ActivityForm.find("input[name=date_from]").val(moment(data.date_from).format('YYYY-MM-DD')).prop('readonly', false);
                     ActivityForm.find("input[name=time_from]").val(moment(data.date_from).format('HH:mm')).prop('readonly', false);
                     ActivityForm.find("input[name=time_to]").val(moment(data.date_to).format('HH:mm')).prop('readonly', false);
+                    //booking field and button
+                    ActivityForm.find('input[name=product]').prop('readonly', disablePastAndFuture);
+                    ActivityForm.find('input[name=qty]').prop('readonly', disablePastAndFuture);
+                    ActivityForm.find('input[name=price]').prop('readonly', disablePastAndFuture);
+                    ActivityForm.find('button[id=addProduct]').prop('disabled', disablePastAndFuture);
                     
                 },
                 error:function (jqxHR, textStatus, errorThrown) 
@@ -264,13 +233,6 @@ clndr.fullCalendar(settings(DefaultURL));
 
 Activity.on('submit',function(e){
     e.preventDefault();
-    // const startTime = Activity.find('input[name="date_from"]').datetimepicker('getValue');
-    // const endTime = Activity.find('input[name="time_to"]').datetimepicker('getValue');
-    // console.log(startTime,endTime);
-    // if (startTime >= endTime) {
-    //     toasMessage("Start time must be less than end time", "Error", 'error');
-    //     return false;
-    // }
     $("#Activity *").prop("readonly", true);
     $.ajax({
         url: Activity.attr("action"),
@@ -290,17 +252,16 @@ Activity.on('submit',function(e){
             Activity.find("button[type=submit]").html('Save');
             toasMessage(data.msg, "success", data.icon);
             $('#calendar').fullCalendar('refetchEvents');
-            defaultTime()
+            CoreModel.defaultTime()
         }
     }).fail(function(jqxHR, textStatus, errorThrown) {
         Activity.find("button[type=submit]").html('Save');
         $("#Activity *").prop("readonly", false);
-        toasMessage(jqxHR.responseJSON.msg, "Error", jqxHR.responseJSON.icon);
+        toasMessage(jqxHR.responseJSON.msg, "warning", jqxHR.responseJSON.icon);
     });
 })
 
 ActivityForm.on('submit',function(e){
-
     let id          = ActivityForm.find("input[name=id]").val()
     let updateUrl   = ActivityForm.attr("action").replace("param",id)
     const formData = new FormData(ActivityForm[0])
@@ -319,6 +280,9 @@ ActivityForm.on('submit',function(e){
             ActivityForm[0].reset()
             Activity.find('input[name=id]').val('')
             toasMessage(data.msg,"success",data.icon)
+            $("#productTable tbody").find("tr").remove()
+            
+            CoreModel.booking = []
             $('#calendar').fullCalendar('refetchEvents');
         }
     }).fail(function (jqxHR, textStatus, errorThrown) {
@@ -364,7 +328,6 @@ ActivityForm.find("button[name=delete]").on('click',function(){
         return false
 
 })
-
 
 $(document).on('click', '.custom-control-input', function() {      
     $('input[type="checkbox"]').not(this).prop('checked', false);

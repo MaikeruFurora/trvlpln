@@ -23,8 +23,6 @@ return new class extends Migration
             $table->string('sttus',20)->nullable();
             $table->text('note')->nullable();
             $table->string('osnum',100)->nullable();
-            $table->double('qty')->nullable();
-            $table->double('price')->nullable();
             $table->dateTime('date_from');
             $table->dateTime('date_to')->nullable();
             $table->timestamps();

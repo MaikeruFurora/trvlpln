@@ -85,6 +85,26 @@
             .modal-open {
                 overflow: hidden;
             }
+
+            .fc-event .fc-title {
+                white-space: normal; /* Allow text wrapping */
+                word-wrap: break-word; /* Ensure long words are wrapped */
+                font-size: 11px; /* Adjust font size if necessary */
+                padding: 1px; /* Adjust padding for readability */
+            }
+            .fc-time {
+                display: inline-block;
+            }
+            .fc-event {
+                min-height: 20px; /* Ensure events have enough space */
+                padding: 1px; /* Adjust padding if text is being cut off */
+            }
+            .fc-row {
+                margin-bottom: 6px; /* Reduce this value or remove it entirely */
+            }
+            .fc-event {
+                padding: 6px; /* Reduce this value or remove it entirely */
+            }
         </style>
     </head>
    
@@ -100,8 +120,17 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarText">
           <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-              <a class="nav-link" href="#">Report <span class="sr-only">(current)</span></a>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Report
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="#" data-url="{{ route('authenticate.activity.weekly.beatplan.printout') }}">BeatPlan Weekly</a>
+                    <a class="dropdown-item" href="#" data-url="{{ route('authenticate.activity.weekly.printout') }}">Weekly Report</a>
+                    <a class="dropdown-item" href="#" data-url="{{ route('authenticate.activity.daily.printout') }}">Today ({{ date('l') }})</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="#">Other Report</a>
+                </div>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="#">Guide</a>
@@ -119,7 +148,7 @@
       </nav>
         <!-- header-bg -->
         {{-- <div class="wrapper-bdo"> --}}
-            <div class="container-fluid">
+            <div class="mx-3">
                 <div class="mt-2">
                     @yield('content')
                 </div>

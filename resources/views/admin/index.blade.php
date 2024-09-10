@@ -54,6 +54,5 @@
     @include('calendar.modal-daterange-admin',['wrhs'=>$wrhs])
 @endsection
 @section('js')
-<script src="{{ asset('assets/js/activity.js') }}"></script>
-<script src="{{ asset('assets/js/admin.js') }}"></script>
+<script src="{{ asset('assets/js/admin.v2.js') }}"></script>
 @endsection

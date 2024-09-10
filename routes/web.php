@@ -4,6 +4,7 @@ use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\ActivityListController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BDOController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SupervController;
@@ -47,6 +48,10 @@ Route::middleware(['auth:web','preventBackHistory','auth.user'])->name('authenti
     Route::post('activity/update/date/{activity}',[ActivityController::class,'updateDate'])->name('activity.update.date');
     Route::get('activity/info/{activity}',[ActivityController::class,'info'])->name('activity.info');
     Route::delete('activity/destroy/{activity}',[ActivityController::class,'destroy'])->name('activity.destroy');
+    Route::delete('activity/destroy/booking/{booking}',[ActivityController::class,'destroyBooking'])->name('activity.booking.destroy');
+    Route::get('activity/weekly/printout',[BDOController::class,'weeklyPrintout'])->name('activity.weekly.printout');
+    Route::get('activity/daily/printout',[BDOController::class,'todayPrintout'])->name('activity.daily.printout');
+    Route::get('activity/weekly/beatplan/printout',[BDOController::class,'beatplanWeeklyPrintout'])->name('activity.weekly.beatplan.printout');
 
     // ADMIN API
     Route::get('dashboard',[AdminController::class,'dashboard'])->name('dashboard');

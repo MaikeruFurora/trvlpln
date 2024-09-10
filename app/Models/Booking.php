@@ -11,4 +11,11 @@ class Booking extends Model
 
     protected $guarded = [];
 
+    public function activity(){
+        return $this->belongsTo(Activity::class);
+    }
+
+    public function product(){
+        return $this->belongsTo(Product::class);
+    }
 }
