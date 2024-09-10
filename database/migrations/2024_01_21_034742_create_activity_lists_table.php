@@ -19,6 +19,9 @@ return new class extends Migration
             $table->boolean('is_disabled')->default(false);
             $table->string('color',100);
             $table->string('icon',50);
+            $table->string('created_by',100)->nullable();
+            $table->string('modified_by',100)->nullable();
+            $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
         });
     }

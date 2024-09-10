@@ -15,7 +15,7 @@
 </style>
 @endsection
 @section('content')
-    <div class="col-12 mt-4">
+    <div class="col-12">
         <div class="card">
             <div class="card-body">
                 <form id="UserForm" action="{{ route('authenticate.user.store') }}" autocomplete="off">@csrf <input type="hidden" class="form-control" name="id">
@@ -157,12 +157,12 @@
                         if (data.msg) {
                             UserForm[0].reset()
                             UserForm.find('input[name=id]').val('')
-                            toasMessage(data.msg,"success",'success')
+                            CoreModel.toasMessage(data.msg,"success",'success')
                             UserDataTable.ajax.reload()
                             UserForm.find("button[name=cancel]").hide()
                         }
                     }).fail(function (jqxHR, textStatus, errorThrown) {
-                        toasMessage("Error","Error",'error')
+                        CoreModel.toasMessage("Error","Error",'error')
                     })
             }
         })

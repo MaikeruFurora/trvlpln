@@ -20,15 +20,12 @@ class AuthService{
 
         ]);
         
-        $remember = $request->input('remember_token');
 
         $credentials = $request->only($fieldType, 'password');
 
         return $this->userRoute(
 
             $credentials,
-
-            $remember,
 
             ['_token','_method'],
 
@@ -37,9 +34,9 @@ class AuthService{
 
     }
 
-    public function userRoute($credentials,$remember,$data,$errorM){
+    public function userRoute($credentials,$data,$errorM){
 
-        if (Auth::guard('web')->attempt($credentials,$remember)) {
+        if (Auth::guard('web')->attempt($credentials)) {
            
             // Helper::auditLog('Logged In','Logged In');
             if (auth()->user()->is_active=='YES') {

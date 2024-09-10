@@ -15,7 +15,7 @@
 </style>
 @endsection
 @section('content')
-    <div class="col-12 mt-4">
+    <div class="col-12">
         <div class="card">
             <div class="card-body">
                 <form id="GroupForm" action="{{ route('authenticate.group.store') }}" autocomplete="off">@csrf <input type="hidden" class="form-control" name="id">
@@ -124,13 +124,17 @@
                 if (data.msg) {
                     GroupForm[0].reset()
                     GroupForm.find('input[name=id]').val('')
-                    toasMessage(data.msg,"success",'success')
+                    CoreModel.toasMessage(data.msg,"success",'success')
                     GroupDataTable.ajax.reload()
                     GroupForm.find("button[name=cancel]").hide()
                 }
-            }).fail(function (jqxHR, textStatus, errorThrown) {
-                toasMessage("Error","Error",'error')
-            })
+            }).fail(CoreModel.handleAjaxError)
+            .always(function() {
+                UserForm[0].reset()
+                UserForm.find('input[name=id]').val('')
+                UserDataTable.ajax.reload()
+                UserForm.find("button[name=cancel]").hide()
+            });
         })
     </script>
 @endsection

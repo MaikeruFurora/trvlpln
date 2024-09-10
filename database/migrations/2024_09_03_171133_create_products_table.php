@@ -18,6 +18,9 @@ return new class extends Migration
             $table->string('code');
             $table->string('name');
             $table->integer('group_id')->unsigned();
+            $table->string('created_by',100)->nullable();
+            $table->string('modified_by',100)->nullable();
+            $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
         });
     }

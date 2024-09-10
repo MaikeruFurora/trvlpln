@@ -93,7 +93,7 @@ class ActivityController extends Controller
     }
 
     public function allowedTime($timeFrom, $timeTo){
-        return ($timeFrom>= '07:00' && $timeTo <= '20:00');
+        return ($timeFrom>= '07:00' && $timeTo <= '21:00');
     }
 
     public function createActivity($request, $dateFrom, $dateTo){

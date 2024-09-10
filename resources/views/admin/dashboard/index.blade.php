@@ -1,7 +1,7 @@
 @extends('layout.app')
 @section('content')
 
-<div class="col-12 mt-3">
+<div class="col-12">
        {{--  --}}
    <div class="row">
     <div class="col-xl-12">

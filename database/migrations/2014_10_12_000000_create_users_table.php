@@ -24,6 +24,9 @@ return new class extends Migration
             $table->string('type',10);
             $table->string('wrhs',20)->nullable();
             $table->string('group',20)->nullable();
+            $table->string('created_by',100)->nullable();
+            $table->string('modified_by',100)->nullable();
+            $table->timestamp('deleted_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

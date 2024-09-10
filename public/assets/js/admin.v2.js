@@ -24,35 +24,40 @@ let updateEventsURL = (newURL) => {
 
 CoreModel.calendar.fullCalendar('off', 'eventClick');
 CoreModel.calendar.fullCalendar('on', 'eventClick', function(event, jsEvent, view) {
-     $("#readOnlyActivity").modal("show");
-     $("#readOnlyActivityLabel").text("View Activity");
-     let updateUrl  = CoreModel.calendar.attr("data-info").replace("param",event.id)
-         $.ajax({
-             url: updateUrl,
-             type:"GET",
-             dataType:'json',
-             success:function(data){
-                 for (const key in data) {
-                     if (data.hasOwnProperty(key)) { // This check is to ensure that the key belongs to the object itself and not its prototype chain
-                         const element = data[key];
-                         $("."+key).each(function() {
-                            if (element === null) {
-                                    $(this).html(`<strong>${key.toUpperCase()}:</strong> <span class="highlight">N/A</span>`);
-                            } else if (moment.isMoment(element) || (typeof element === 'object' && moment(element, moment.ISO_8601, true).isValid())) {
-                                $(this).html(`<strong>${key.toUpperCase()}:</strong> <span class="highlight">${moment(element).format('MM/DD/YYYY h:mm')}</span>`);
-                            } else {
-                                $(this).html(`<strong>${key.toUpperCase()}:</strong> <span class="highlight">${element.toString().toUpperCase()}</span>`);
-                            }
-                        });
+    $("#readOnlyActivity").modal("show");
+    $("#readOnlyActivityLabel").text("View Activity");
+
+    let updateUrl = CoreModel.calendar.attr("data-info").replace("param", event.id);
+
+    $.ajax({
+        url: updateUrl,
+        type: "GET",
+        dataType: 'json'
+    })
+    .done(function(data) {
+        for (const key in data) {
+            if (data.hasOwnProperty(key)) {
+                const element = data[key];
+                $("." + key).each(function() {
+                    if (element === null) {
+                        $(this).html(`<strong>${key.toUpperCase()}:</strong> <span class="highlight">N/A</span>`);
+                    } else if (moment.isMoment(element) || (typeof element === 'object' && moment(element, moment.ISO_8601, true).isValid())) {
+                        $(this).html(`<strong>${key.toUpperCase()}:</strong> <span class="highlight">${moment(element).format('MM/DD/YYYY h:mm')}</span>`);
+                    } else {
+                        $(this).html(`<strong>${key.toUpperCase()}:</strong> <span class="highlight">${element.toString().toUpperCase()}</span>`);
                     }
-                 }
-                 $("#readOnlyActivity").find(".activity_list").html(`<strong>Activity:</strong> <span class="highlight">${data.activity_list_name}</span>`);
-             },
-             error:function (jqxHR, textStatus, errorThrown){
-                  toasMessage(jqxHR.responseJSON.msg,"Error",jqxHR.responseJSON.icon)
-                CoreModel.calendar.fullCalendar('refetchEvents');
-             },
-         });
+                });
+            }
+        }
+        $("#readOnlyActivity").find(".activity_list").html(`<strong>Activity:</strong> <span class="highlight">${data.activity_list_name}</span>`);
+    })
+    .fail(function(jqxHR) {
+        CoreModel.toasMessage(jqxHR.responseJSON.msg, "Error", jqxHR.responseJSON.icon);
+    })
+    .always(function() {
+        CoreModel.calendar.fullCalendar('refetchEvents');
+    });
+
  });
 
 //  CoreModel.calendar.fullCalendar('option', 'responsive', {

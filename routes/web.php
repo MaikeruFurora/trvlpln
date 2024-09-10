@@ -6,9 +6,11 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BDOController;
 use App\Http\Controllers\GroupController;
+use App\Http\Controllers\HandleGroupController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SupervController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\UserGroupController;
 use App\Http\Controllers\WarehouseController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
@@ -70,6 +72,15 @@ Route::middleware(['auth:web','preventBackHistory','auth.user'])->name('authenti
     Route::post('product/store',[ProductController::class,'store'])->name('product.store');
     Route::get('product/list',[ProductController::class,'list'])->name('product.list');
     Route::get('product/search', [ProductController::class, 'search']);
+
+    Route::get('handle-group/index',[HandleGroupController::class,'handelGroupIndex'])->name('handle.group');
+    Route::post('handle-group/store',[HandleGroupController::class,'store'])->name('handle.group.store');
+    Route::get('handle-group/list',[HandleGroupController::class,'list'])->name('handle.group.list');
+
+    Route::get('user-group',[UserGroupController::class,'index'])->name('user.group');
+    Route::post('user-group/store',[UserGroupController::class,'store'])->name('user.group.store');
+    Route::get('user-group/list',[UserGroupController::class,'list'])->name('user.group.list');
+
 
     Route::get('group',[GroupController::class,'index'])->name('group');
     Route::post('group/store',[GroupController::class,'store'])->name('group.store');

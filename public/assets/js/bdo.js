@@ -1,8 +1,3 @@
-
-window.onload = function() {
-    CoreModel.defaultTime()
-};
-
 // Get references to the time input fields
  const timeFrom = document.getElementById('time_from');
  const timeTo = document.getElementById('time_to');
@@ -16,7 +11,6 @@ window.onload = function() {
      }
  });
 
-var defaultView  = 'basicWeek';
 var defaultView  = ($(window).width() <= 600) ? 'basicDay' : 'basicWeek';
 let Activity     = $("#Activity")
 let ActivityForm = $("#ActivityForm")
@@ -25,35 +19,36 @@ let DateResched  = ActivityForm.find("#DateResched")
 let DefaultURL = CoreModel.calendar.attr("data-list").replace("user",CoreModel.calendar.attr("data-id"))
 CoreModel.calendar.fullCalendar(CoreModel.calendarSettings(DefaultURL,defaultView));
 
-Activity.on('submit',function(e){
+Activity.on('submit', function(e) {
     e.preventDefault();
+
+    // Set UI elements to readonly and show loading spinner
     $("#Activity *").prop("readonly", true);
+    Activity.find("button[type=submit]").html('<i class="fa fa-spinner fa-spin"></i>');
+
     $.ajax({
         url: Activity.attr("action"),
         type: 'POST',
         data: new FormData(this),
         processData: false,
         contentType: false,
-        cache: false,
-        beforeSend:function(){
-            Activity.find("button[type=submit]").html('<i class="fa fa-spinner fa-spin"></i>');
-        }
+        cache: false
     }).done(function(data) {
         if (data.msg) {
-            $("#Activity *").prop("readonly", false);
+            CoreModel.toasMessage(data.msg, "success", data.icon);
             Activity[0].reset();
-            Activity.find('input[name=id]').val('');
-            Activity.find("button[type=submit]").html('Save');
-            toasMessage(data.msg, "success", data.icon);
-            CoreModel.calendar.fullCalendar('refetchEvents');
-            CoreModel.defaultTime()
         }
-    }).fail(function(jqxHR, textStatus, errorThrown) {
-        Activity.find("button[type=submit]").html('Save');
+    }).fail(CoreModel.handleAjaxError)
+    .always(function() {
+        // Reset UI elements and form state
         $("#Activity *").prop("readonly", false);
-        toasMessage(jqxHR.responseJSON.msg, "warning", jqxHR.responseJSON.icon);
+        Activity.find('input[name=id]').val('');
+        Activity.find("button[type=submit]").html('Save');
+        CoreModel.calendar.fullCalendar('refetchEvents');
+        CoreModel.defaultTime();
     });
-})
+});
+
 
 ActivityForm.on('submit',function(e){
     let id          = ActivityForm.find("input[name=id]").val()
@@ -69,23 +64,24 @@ ActivityForm.on('submit',function(e){
         contentType: false,
         cache: false,
     }).done(function(data){
-        $('#viewActivity').modal('hide');
         if (data.msg) {
-            ActivityForm[0].reset()
-            Activity.find('input[name=id]').val('')
-            toasMessage(data.msg,"success",data.icon)
-            $("#productTable tbody").find("tr").remove()
-            CoreModel.booking = []
-            CoreModel.calendar.fullCalendar('refetchEvents');
+            CoreModel.toasMessage(data.msg,"success",data.icon)
         }
-    }).fail(function (jqxHR, textStatus, errorThrown) {
-        toasMessage(jqxHR.responseJSON.msg,"warning",jqxHR.responseJSON.icon)
+    }).fail(CoreModel.handleAjaxError)
+    .always(function(){
+        ActivityForm[0].reset()
+        Activity.find('input[name=id]').val('')
+        $('#viewActivity').modal('hide');
+        $("#productTable tbody").find("tr").remove()
+        CoreModel.booking = []
+        CoreModel.calendar.fullCalendar('refetchEvents');
+        
     })
 })
 
 Activity.find("input[name=week]").on('click',function(){
     if (Activity.find("input[name=date_from]").val()=="") {
-        toasMessage('Please check date & time',"warning",'warning')
+        CoreModel.toasMessage('Please check date & time',"warning",'warning')
         $(this).prop("checked",false)
     }
 })
@@ -106,16 +102,16 @@ ActivityForm.find("button[name=delete]").on('click',function(){
                 url:  updateUrl,
                 type:'DELETE',
                 data:{
-                    _token
+                    token:CoreModel.token
                 }
             }).done(function(data){
                 if (data.msg) {
-                    toasMessage(data.msg,"success",data.icon)
-                    CoreModel.calendar.fullCalendar('refetchEvents');
+                    CoreModel.toasMessage(data.msg,"success",data.icon)
                 }
                 $('#viewActivity').modal('hide');
-            }).fail(function (jqxHR, textStatus, errorThrown) {
-                toasMessage(jqxHR.responseJSON.msg,"warning",jqxHR.responseJSON.icon)
+            }).fail(CoreModel.handleAjaxError)
+            .always(function(){
+                CoreModel.calendar.fullCalendar('refetchEvents');
             })
         }
         return false
@@ -138,43 +134,51 @@ CoreModel.calendar.fullCalendar('on', 'eventClick', function(event, jsEvent, vie
     let updateUrl   = CoreModel.calendar.attr("data-info").replace("param",event.id)
     $.ajax({
         url: updateUrl,
-        type:"GET",
-        dataType:'json',
-        success: function(data) {
-            CoreModel.booking = data.booking;
-            renderTable(disablePastAndFuture)
-            ActivityForm.find("input[name=id]").val(data.id);
-            $("#ActivityForm .getInput").each(function() {
-                var name = this.name;
-                if(name !== 'sttus[]') {
-                    var $elem = ActivityForm.find("[name=" + name + "]");
-                    
-                    $elem.val(data[name]).prop('readonly', disablePastAndFuture);
-                }
-            });
-            
-            ActivityForm.find("input[type=checkbox]").prop('checked', false).filter(function() {
-                return this.value == data.sttus;
-            }).prop('checked', true);
-            (data.isDelete) ? ActivityForm.find("button[name=delete]").hide() : ActivityForm.find("button[name=delete]").show();
-            ActivityForm.find('input[type=checkbox]').prop('disabled', disablePastAndFuture);
-            ActivityForm.find("select[name=activity]").val(data.activity_list_id);
-            ActivityForm.find("input[name=date_from]").val(moment(data.date_from).format('YYYY-MM-DD')).prop('readonly', false);
-            ActivityForm.find("input[name=time_from]").val(moment(data.date_from).format('HH:mm')).prop('readonly', false);
-            ActivityForm.find("input[name=time_to]").val(moment(data.date_to).format('HH:mm')).prop('readonly', false);
-            //booking field and button
-            ActivityForm.find('input[name=product]').prop('readonly', disablePastAndFuture);
-            ActivityForm.find('input[name=qty]').prop('readonly', disablePastAndFuture);
-            ActivityForm.find('input[name=price]').prop('readonly', disablePastAndFuture);
-            ActivityForm.find('button[id=addProduct]').prop('disabled', disablePastAndFuture);
-            
-        },
-        error:function (jqxHR, textStatus, errorThrown) 
-        {
-             toasMessage(jqxHR.responseJSON.msg,"Error",jqxHR.responseJSON.icon)
-            $('#calendar').fullCalendar('refetchEvents');
-        },
+        type: "GET",
+        dataType: 'json'
+    })
+    .done(function(data) {
+        // Update CoreModel with fetched data
+        CoreModel.booking = data.booking;
+    
+        // Render table with data
+        renderTable(disablePastAndFuture);
+    
+        // Update form fields with data
+        ActivityForm.find("input[name=id]").val(data.id);
+        $("#ActivityForm .getInput").each(function() {
+            var name = this.name;
+            if (name !== 'sttus[]') {
+                var $elem = ActivityForm.find("[name=" + name + "]");
+                $elem.val(data[name]).prop('readonly', disablePastAndFuture);
+            }
+        });
+    
+        // Update checkbox states
+        ActivityForm.find("input[type=checkbox]")
+            .prop('checked', false)
+            .filter(function() { return this.value == data.sttus; })
+            .prop('checked', true);
+    
+        // Show/hide delete button
+        ActivityForm.find("button[name=delete]").toggle(!data.isDelete);
+    
+        // Set form field properties based on disablePastAndFuture
+        ActivityForm.find("input[type=checkbox]").prop('disabled', disablePastAndFuture);
+        ActivityForm.find("select[name=activity]").val(data.activity_list_id);
+        ActivityForm.find("input[name=date_from]").val(moment(data.date_from).format('YYYY-MM-DD')).prop('readonly', false);
+        ActivityForm.find("input[name=time_from]").val(moment(data.date_from).format('HH:mm')).prop('readonly', false);
+        ActivityForm.find("input[name=time_to]").val(moment(data.date_to).format('HH:mm')).prop('readonly', false);
+    
+        // Set readonly and disabled properties for booking fields
+        ActivityForm.find('input[name=product], input[name=qty], input[name=price]').prop('readonly', disablePastAndFuture);
+        ActivityForm.find('button[id=addProduct]').prop('disabled', disablePastAndFuture);
+    })
+    .fail(CoreModel.handleAjaxError)
+    .always(function() {
+        $('#calendar').fullCalendar('refetchEvents');
     });
+    
  });
 
 

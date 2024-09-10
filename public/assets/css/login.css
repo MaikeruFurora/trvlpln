@@ -1,0 +1,25 @@
+body, html {
+    height: 100%; /* Ensure body and html take full height */
+    background-color: #f7f7f7;
+}
+
+.d-flex {
+    height: 100vh; /* Full height of the viewport */
+}
+
+.card {
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.logo img {
+    max-height: 70px;
+}
+
+.form-control {
+    border-radius: 30px;
+}
+
+.btn-primary {
+    border-radius: 30px;
+}

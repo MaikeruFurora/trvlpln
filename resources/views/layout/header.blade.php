@@ -1,3 +1,4 @@
+
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand bold " href="#">Beat Plan</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
@@ -25,8 +26,16 @@
                     <a class="dropdown-item" href="{{ route('authenticate.group') }}">Group</a>
                     <a class="dropdown-item" href="{{ route('authenticate.warehouse') }}">Warehouse/Cluster</a>
                     <a class="dropdown-item" href="{{ route('authenticate.audit') }}">Audit Trail</a>
+                    <div class="dropdown-submenu">
+                      <a class="dropdown-item dropdown-toggle" href="#">Handled User</a>
+                      <div class="dropdown-menu">
+                        <a class="dropdown-item" href="{{ route('authenticate.handle.group') }}">User Group Type</a>
+                        <a class="dropdown-item" href="{{ route('authenticate.user.group') }}#">Handled Users</a>
+                      </div>
+                    </div>
                 </div>
             </li>
+           
         @endif
         <li class="nav-item">
           <a  class="nav-link text-danger" style="cursor: pointer"

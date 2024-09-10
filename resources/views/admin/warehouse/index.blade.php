@@ -124,13 +124,17 @@
                 if (data.msg) {
                     WarehouseForm[0].reset()
                     WarehouseForm.find('input[name=id]').val('')
-                    toasMessage(data.msg,"success",'success')
+                    CoreModel.toasMessage(data.msg,"success",'success')
                     WarehouseDataTable.ajax.reload()
                     WarehouseForm.find("button[name=cancel]").hide()
                 }
-            }).fail(function (jqxHR, textStatus, errorThrown) {
-                toasMessage("Error","Error",'error')
-            })
+            }).fail(CoreModel.handleAjaxError)
+            .always(function() {
+                UserForm[0].reset()
+                UserForm.find('input[name=id]').val('')
+                UserDataTable.ajax.reload()
+                UserForm.find("button[name=cancel]").hide()
+            });
         })
     </script>
 @endsection

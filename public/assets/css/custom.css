@@ -1,0 +1,128 @@
+#overlay {
+    background: #ffffff;
+    color: #666666;
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    z-index: 5000;
+    top: 0;
+    left: 0;
+    float: left;
+    text-align: center;
+    padding-top: 25%;
+    opacity: .70;
+    display: none; /* Initial state */
+  }
+
+  .spinner {
+    margin: 0 auto;
+    height: 44px;
+    width: 44px;
+    animation: rotate 0.8s infinite linear;
+    border: 5px solid firebrick;
+    border-right-color: transparent;
+    border-radius: 50%;
+  }
+  @keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+  }
+
+html, body{
+    font-family: 'poppins', sans-serif;
+    background: white
+}
+/* Fullscreen modal for mobile view */
+@media (max-width: 767.98px) { /* Adjust the max-width if needed */
+  .modal-dialog {
+    max-width: 100%;
+    margin: 0;
+    height: 100%;
+    width: 100%;
+  }
+
+  .modal-content {
+    height: 100%;
+    border-radius: 0;
+  }
+
+  .modal-body {
+    overflow-y: auto; /* Add scrolling if content is too long */
+  }
+}
+/* Ensure the parent element has position relative */
+.position-relative {
+    position: relative;
+}
+
+#suggestions_list {
+    position: absolute;
+    z-index: 1000;
+    background-color: white;
+    border: 1px solid #ccc;
+    width: 100%; /* Match the width of the input */
+    max-height: 200px; /* Limit the height of the list */
+    overflow-y: auto; /* Scroll if the list is too long */
+    list-style: none; /* Remove bullets */
+    padding: 0;
+    margin: 0;
+    display: none; /* Hidden by default */
+}
+
+#suggestions_list li {
+    font-size: 12px;
+    padding: 5px;
+    border-bottom: 1px solid #ccc;
+    cursor: pointer;
+    width: 100%; /* Ensure each list item has the same width */
+}
+
+#suggestions_list li:hover {
+    background-color: #f1f1f1;
+}
+
+.modal-open {
+    overflow: hidden;
+}
+
+.fc-event .fc-title {
+    white-space: normal; /* Allow text wrapping */
+    word-wrap: break-word; /* Ensure long words are wrapped */
+    font-size: 11px; /* Adjust font size if necessary */
+    padding: 1px; /* Adjust padding for readability */
+}
+.fc-time {
+    display: inline-block;
+}
+.fc-event {
+    min-height: 20px; /* Ensure events have enough space */
+    padding: 1px; /* Adjust padding if text is being cut off */
+}
+.fc-row {
+    margin-bottom: 6px; /* Reduce this value or remove it entirely */
+}
+.fc-event {
+    padding: 6px; /* Reduce this value or remove it entirely */
+}
+
+
+  /* Custom CSS for nested dropdowns */
+  .dropdown-submenu {
+    position: relative;
+}
+
+.dropdown-submenu .dropdown-menu {
+    top: 0;
+    left: 100%;
+    margin-top: 0;
+    margin-left: 0;
+    display: none;
+}
+
+.dropdown-submenu:hover .dropdown-menu {
+    display: block;
+}

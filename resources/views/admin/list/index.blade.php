@@ -15,7 +15,7 @@
 </style>
 @endsection
 @section('content')
-    <div class="col-12 mt-4">
+    <div class="col-12">
         <div class="card">
             <div class="card-body">
                 <form id="UserForm" action="{{ route('authenticate.actvtylist.store') }}" autocomplete="off">@csrf <input type="hidden" class="form-control" name="id">
@@ -133,15 +133,15 @@
                 cache: false,
             }).done(function(data){
                 if (data.msg) {
-                    UserForm[0].reset()
-                    UserForm.find('input[name=id]').val('')
-                    toasMessage(data.msg,"success",'success')
-                    UserDataTable.ajax.reload()
-                    UserForm.find("button[name=cancel]").hide()
+                    CoreModel.toasMessage(data.msg,"success",'success')
                 }
-            }).fail(function (jqxHR, textStatus, errorThrown) {
-                toasMessage("Error","Error",'error')
-            })
+            }).fail(CoreModel.handleAjaxError)
+            .always(function() {
+                UserForm[0].reset()
+                UserForm.find('input[name=id]').val('')
+                UserDataTable.ajax.reload()
+                UserForm.find("button[name=cancel]").hide()
+            });
         })
     </script>
 @endsection

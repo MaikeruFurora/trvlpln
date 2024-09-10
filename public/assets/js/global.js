@@ -1,43 +1,40 @@
-const toasMessage = (heading,text,icon) =>{
-    $.toast({
-        heading,text,icon,
-        loader: true,        // Change it to false to disable loader
-        loaderBg: '#9EC600',  // To change the background
-        position: 'top-right',
-        icon:icon.toLowerCase()
-    })
-}
-
-let _token = $("meta[name='_token']").attr("content")
-
-
 const CoreModel = {
     currentDateTime:null,
+    token: $("meta[name='_token']").attr("content"), //token
     calendar: $("#calendar"),
     booking:[],
+    toasMessage : (heading,text,icon) =>{
+        $.toast({
+            heading,text,icon,
+            loader: true,        // Change it to false to disable loader
+            loaderBg: '#9EC600',  // To change the background
+            position: 'top-right',
+            icon:icon.toLowerCase()
+        })
+    },
     loadToPrint:(url) =>{
         $("<iframe>")             // create a new iframe element
             .hide()               // make it invisible
             .attr("src", url)     // point the iframe to the page you want to print
             .appendTo("body");    // add iframe to the DOM to cause it to load the page
-    },
-    defaultTime: () => {
-        // Get current time
-        const now = new Date();
-        const hours = String(now.getHours()).padStart(2, '0');  // Ensure 2 digits
-        const minutes = String(now.getMinutes()).padStart(2, '0');  // Ensure 2 digits
-    
-        // Set default value of time_from to current time
-        const timeFromInput = document.getElementById('time_from');
-        timeFromInput.value = `${hours}:${minutes}`;
-    
-        // Automatically set time_to 20 minutes after time_from
-        const timeToInput = document.getElementById('time_to');
-        timeToInput.value = CoreModel.getTimePlusMinutes(20);  // Adds 20 minutes to the current time
-    
-        // Update time_to when time_from is changed
-        timeFromInput.addEventListener('change', function() {
-            const timeFrom = this.value;
+        },
+        defaultTime: () => {
+            // Get current time
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');  // Ensure 2 digits
+            const minutes = String(now.getMinutes()).padStart(2, '0');  // Ensure 2 digits
+            
+            // Set default value of time_from to current time
+            const timeFromInput = document.getElementById('time_from');
+            timeFromInput.value = `${hours}:${minutes}`;
+            
+            // Automatically set time_to 20 minutes after time_from
+            const timeToInput = document.getElementById('time_to');
+            timeToInput.value = CoreModel.getTimePlusMinutes(20);  // Adds 20 minutes to the current time
+            
+            // Update time_to when time_from is changed
+            timeFromInput.addEventListener('change', function() {
+                const timeFrom = this.value;
             timeToInput.value = CoreModel.getTimePlusMinutes(20, timeFrom);
         });
     },
@@ -97,7 +94,7 @@ const CoreModel = {
             timeZone: 'UTC',
             defaultView:defaultView,//agendaWeek
             aspectRatio: 1.5, // Adjust as needed
-            height: 800, // or a specific value like 'auto', 'parent', or a number    
+            height: 750, // or a specific value like 'auto', 'parent', or a number    
             eventLimit: false,
             // eventLimitText: 'more',
             slotDuration: '00:20:00', // Set the slot duration to 20 minute intervals
@@ -132,7 +129,7 @@ const CoreModel = {
                 url:  getDataURL,
                 type:'POST',
                 data: {  
-                    _token
+                    _token: CoreModel.token
                 }
             },
             businessHours: {
@@ -160,8 +157,30 @@ const CoreModel = {
                 return { domNodes: [title] };  // Return only the title, no details
               },
         }
-    }   
+    },
+    handleAjaxError:(jqxHR) =>{
+        if (jqxHR.status === 419 || jqxHR.status === 401) {
+            alert('Your session has expired. You will be redirected to the login page.');
+            window.location.href = '/'; // Replace with your login page URL
+        } else {
+            CoreModel.toasMessage(jqxHR.responseJSON.msg, "warning", jqxHR.responseJSON.icon);
+        }
+    }
 }
 console.log(CoreModel.fetchTime());
+
+window.onload = function() {
+    CoreModel.defaultTime()
+
+    let overlay = document.getElementById('overlay');
+
+    // Show the overlay
+    overlay.style.display = 'block';
+
+    // Hide the overlay after 2 seconds
+    setTimeout(function() {
+        overlay.style.display = 'none';
+    }, 2000);
+};
 
 $('.datepicker').datetimepicker(CoreModel.dateTimeSetting);

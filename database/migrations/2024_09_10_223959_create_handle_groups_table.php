@@ -13,13 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('user_types', function (Blueprint $table) {
+        Schema::create('handle_groups', function (Blueprint $table) {
             $table->id();
-            $table->string('name',50);
+            $table->string('name',100);
             $table->boolean('active',50)->default(true);
-            $table->string('created_by',100)->nullable();
-            $table->string('modified_by',100)->nullable();
-            $table->timestamp('deleted_at')->nullable();
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
         });
     }
@@ -31,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_types');
+        Schema::dropIfExists('handle_groups');
     }
 };

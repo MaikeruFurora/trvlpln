@@ -6,6 +6,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
 
@@ -48,6 +49,8 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'created_at' => 'datetime:M d, Y ~ h:i A',
+        'updated_at' => 'datetime:M d, Y ~ h:i A',
     ];
 
 
@@ -99,5 +102,26 @@ class User extends Authenticatable
         if ($type=='supervisor') {
             return $q->where('type','bdo')->where('wrhs',$wrhs);
         }
+    }
+
+    public function setNameAttribute($value)
+    {
+        $this->attributes['name'] = strtoupper($value);
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        // Set created_by and modified_by during creation
+        static::creating(function ($model) {
+            $model->created_by = Auth::id();
+            $model->modified_by = Auth::id();
+        });
+
+        // Set modified_by during update
+        static::updating(function ($model) {
+            $model->modified_by = Auth::id();
+        });
     }
 }

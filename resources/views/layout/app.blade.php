@@ -21,6 +21,7 @@
         <link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
         <link href="{{ asset('assets/css/icons.css') }}" rel="stylesheet" type="text/css" />
         <link href="{{ asset('assets/css/style.css') }}" rel="stylesheet" type="text/css" />
+        <link href="{{ asset('assets/css/custom.css') }}" rel="stylesheet" type="text/css" />
         <link href="{{ asset('plugins/fullcalendar/css/fullcalendar.css') }}" rel="stylesheet" />
         <link href="{{ asset('plugins/timepicker/jquery.timepicker.css') }}" rel="stylesheet" />
         <link href="{{ asset('plugins/datetimepicker/jquery.datetimepicker.min.css') }}" rel="stylesheet">
@@ -41,9 +42,13 @@
         @include('layout.loader')
         <!-- header-bg -->
         @include('layout.header')
-            <div class="container-fluid">
-                @yield('content')
-            </div> <!-- end container-fluid -->
+            {{-- <div class="container-fluid"> --}}
+            <div class="mx-3">
+                <div class="mt-2">
+                    @yield('content')
+                </div>
+            </div>
+             <!-- end container-fluid -->
         </div>
 
         <!-- end wrapper -->

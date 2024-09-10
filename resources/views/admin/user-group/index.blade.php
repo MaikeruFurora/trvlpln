@@ -18,31 +18,35 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <form id="ProductForm" action="{{ route('authenticate.product.store') }}" autocomplete="off">@csrf <input type="hidden" class="form-control" name="id">
+                <form id="GroupForm" action="{{ route('authenticate.user.group.store') }}" autocomplete="off">@csrf <input type="hidden" class="form-control" name="id">
                <div class="table-responsive">
-                <table id="ProductTable" data-url="{{ route('authenticate.product.list') }}" class="table table-bordered table-sm adjust"  style="border-collapse: collapse; border-spacing: 0; width: 100%;font-size:13px">
+                <table id="GroupTable" data-url="{{ route('authenticate.user.group.list') }}" class="table table-bordered table-sm adjust"  style="border-collapse: collapse; border-spacing: 0; width: 100%;font-size:13px">
                     <thead>
                             <tr>
-                                <th><input type="text" name="code" class="form-control form-control-sm" required> </th>
-                                <th><input type="text" name="name" class="form-control form-control-sm" required> </th>
                                 <th>
-                                    <select name="group" class="custom-select custom-select-sm form-control" required>
+                                    <select name="user_id" class="custom-select custom-select-sm form-control" required>
                                         <option value=""></option>
-                                        @foreach ($groups as $group)
-                                            <option value="{{ $group->id }}">{{ $group->name }}</option>
+                                        @foreach ($users as $item)
+                                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </th>
+                                <th>
+                                    <select name="handle_group_id" class="custom-select custom-select-sm form-control" required>
+                                        <option value=""></option>
+                                        @foreach ($handleGroups as $item)
+                                            <option value="{{ $item->id }}">{{ $item->name }}</option>
                                         @endforeach
                                     </select>
                                 </th>
                                 <th width="7%">
                                     <button type="submit" class="btn btn-sm btn-primary btn-block">Save</button>
-                                    <button name="cancel" type="button" class="btn btn-warning btn-sm btn-block"> <i class="fas fa-plus-circle"></i> Cancel
-                                    </button>
+                                    <button name="cancel" type="button" class="btn btn-warning btn-sm btn-block"> <i class="fas fa-plus-circle"></i> Cancel</button>
                                 </th>
                             </tr>
                             <tr>
-                                <th>Code</th>
-                                <th>Name</th>
-                                <th>Group</th>
+                                <th>Group Name</th>
+                                <th>User</th>
                                 <th>Action</th>
                             </tr>
                        
@@ -63,22 +67,34 @@
     <script src="{{ asset('plugins/datatables/dataTables.responsive.min.js') }}"></script>
     <script src="{{ asset('plugins/datatables/responsive.bootstrap4.min.js') }}"></script>
     <script>
-        let ProductForm  = $("#ProductForm") 
-        let ProductTable = $("#ProductTable");
-        let ProductDataTable = $("#ProductTable").DataTable({
+        let GroupForm  = $("#GroupForm") 
+        let GroupTable = $("#GroupTable");
+        let GroupDataTable = $("#GroupTable").DataTable({
             "initComplete": function(settings, json) {
                 $('.dataTables_scrollBody thead tr').css({visibility:'collapse'});
             },
             serverSide: true,
             paging:true,
             ajax: {
-                url: ProductTable.attr("data-url"),
+                url: GroupTable.attr("data-url"),
                 method: "get"
             },
             columns:[
-                { data:'code' },
-                { data:'name' },
-                { data:'group_name' },
+                { data:'group_handle_id',
+                    render:function(data, type, row, meta){
+                        return row.group_handle_name;
+                    }
+                },
+                { data:'user_id',
+                    render:function(data, type, row, meta){
+                        return row.user_name;
+                    }
+                },
+                { data:'active',
+                    render:function(data){
+                        return data? 'YES' : 'NO'
+                    }
+                },
                 { 
                     data:null,
                     render:function(data){
@@ -95,28 +111,28 @@
             ]
         })
 
-        ProductForm.find("button[name=cancel]").on('click',function(){
-            ProductForm[0].reset()
-            ProductForm.find('input[name=id]').val('')
+        GroupForm.find("button[name=cancel]").on('click',function(){
+            GroupForm[0].reset()
+            GroupForm.find('input[name=id]').val('')
             $(this).hide()
         }).hide()
 
         $(document).on('click','button[name=edit]',function(){
-            ProductForm.find("button[name=cancel]").show()
-            let data = ProductDataTable.row( $(this).closest('tr') ).data()
-            $.each($('#ProductForm .form-control'),(ind, value) => {
+            GroupForm.find("button[name=cancel]").show()
+            let data = GroupDataTable.row( $(this).closest('tr') ).data()
+            $.each($('#GroupForm .form-control'),(ind, value) => {
                 if (value.name!="") {
-                    ProductForm.find("input[name="+value.name+"]").val(data[value.name]);
-                    ProductForm.find("select[name="+value.name+"]").val(data[value.name]);
+                    GroupForm.find("input[name="+value.name+"]").val(data[value.name]);
+                    GroupForm.find("select[name="+value.name+"]").val(data[value.name]);
                 }
-                // ProductForm.table.find("select[name=description]").append(new Option(data.description, data.description, true, true)).trigger('change');
+                // GroupForm.table.find("select[name=description]").append(new Option(data.description, data.description, true, true)).trigger('change');
             });
         })
         
-        ProductForm.on('submit',function(e){
+        GroupForm.on('submit',function(e){
             e.preventDefault()
             $.ajax({
-                url:  ProductForm.attr("action"),
+                url:  GroupForm.attr("action"),
                 type:'POST',
                 data: new FormData(this),
                 processData: false,
@@ -124,11 +140,11 @@
                 cache: false,
             }).done(function(data){
                 if (data.msg) {
-                    ProductForm[0].reset()
-                    ProductForm.find('input[name=id]').val('')
+                    GroupForm[0].reset()
+                    GroupForm.find('input[name=id]').val('')
                     CoreModel.toasMessage(data.msg,"success",'success')
-                    ProductDataTable.ajax.reload()
-                    ProductForm.find("button[name=cancel]").hide()
+                    GroupDataTable.ajax.reload()
+                    GroupForm.find("button[name=cancel]").hide()
                 }
             }).fail(CoreModel.handleAjaxError)
             .always(function() {

@@ -21,6 +21,9 @@ return new class extends Migration
             $table->string('free_type',100)->nullable();
             $table->string('qty',50);
             $table->string('price',50);
+            $table->string('created_by',100)->nullable();
+            $table->string('modified_by',100)->nullable();
+            $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
         });
     }

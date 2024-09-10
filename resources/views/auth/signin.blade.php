@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
-    <title>Travel Plan</title>
+    <title>Beat Plan</title>
     <meta content="Admin Dashboard" name="description" />
     <meta content="ThemeDesign" name="author" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -17,40 +17,20 @@
 
     <!-- Custom CSS -->
     <link href="assets/css/style.css" rel="stylesheet" type="text/css" />
-
-    <style>
-        body {
-            background-color: #f7f7f7;
-        }
-        .card {
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        .logo img {
-            max-height: 70px;
-        }
-        .form-control {
-            border-radius: 30px;
-        }
-        .btn-primary {
-            border-radius: 30px;
-        }
-        .bg-image {
-            background-image: url('assets/images/background.jpg');
-            background-size: cover;
-            background-position: center;
-            height: 100vh;
-        }
-    </style>
+    <link href="assets/css/custom.css" rel="stylesheet" type="text/css" />
+    <link href="assets/css/login.css" rel="stylesheet" type="text/css" />
 </head>
-
+<div id="overlay" style="display:none;">
+    <div class="spinner"></div>
+    <br/>
+    Loading...
+</div>
 <body>
-
-<div class="bg-image d-flex justify-content-center align-items-center">
+<div class="d-flex justify-content-center align-items-center">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-4 col-md-8">
-                <div class="card mt-5 p-4">
+                <div class="card p-4">
                     <div class="text-center">
                         <a href="#" class="logo logo-admin">
                             <img src="{{ asset('assets/images/logo-bg-1.png') }}" height="50" alt="logo">
@@ -80,10 +60,6 @@
                                 <small class="text-danger">{{ $message }}</small>
                                 @enderror
                             </div>
-                            <div class="form-check mb-3">
-                                <input type="checkbox" class="form-check-input" id="rememberMe" name="remember_token">
-                                <label class="form-check-label" for="rememberMe">Remember me</label>
-                            </div>
                             <div class="d-grid">
                                 <button class="btn btn-primary btn-block" type="submit">Log In</button>
                             </div>
@@ -102,6 +78,18 @@
 <!-- Bootstrap 4 JS -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    window.onload = function() {
+        let overlay = document.getElementById('overlay');
 
+        // Show the overlay
+        overlay.style.display = 'block';
+
+        // Hide the overlay after 2 seconds
+        setTimeout(function() {
+            overlay.style.display = 'none';
+        }, 2000);
+    };
+</script>
 </body>
 </html>

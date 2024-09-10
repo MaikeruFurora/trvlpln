@@ -18,6 +18,9 @@ return new class extends Migration
             $table->string('name',50)->nullable();
             $table->boolean('active')->default(true);
             $table->boolean('is_show')->default(true);
+            $table->string('created_by',100)->nullable();
+            $table->string('modified_by',100)->nullable();
+            $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
         });
     }

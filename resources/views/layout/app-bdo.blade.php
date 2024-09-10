@@ -19,6 +19,7 @@
         <link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
         <link href="{{ asset('assets/css/icons.css') }}" rel="stylesheet" type="text/css" />
         <link href="{{ asset('assets/css/style.css') }}" rel="stylesheet" type="text/css" />
+        <link href="{{ asset('assets/css/custom.css') }}" rel="stylesheet" type="text/css" />
         <link href="{{ asset('plugins/fullcalendar/css/fullcalendar.css') }}" rel="stylesheet" />
         <link href="{{ asset('plugins/timepicker/jquery.timepicker.css') }}" rel="stylesheet" />
         <link href="{{ asset('plugins/datetimepicker/jquery.datetimepicker.min.css') }}" rel="stylesheet">
@@ -28,84 +29,6 @@
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 
         @yield('css')
-        <style>
-            html, body{
-                font-family: 'poppins', sans-serif;
-                background: white
-            }
-            /* Fullscreen modal for mobile view */
-            @media (max-width: 767.98px) { /* Adjust the max-width if needed */
-              .modal-dialog {
-                max-width: 100%;
-                margin: 0;
-                height: 100%;
-                width: 100%;
-              }
-
-              .modal-content {
-                height: 100%;
-                border-radius: 0;
-              }
-
-              .modal-body {
-                overflow-y: auto; /* Add scrolling if content is too long */
-              }
-            }
-            /* Ensure the parent element has position relative */
-            .position-relative {
-                position: relative;
-            }
-
-            #suggestions_list {
-                position: absolute;
-                z-index: 1000;
-                background-color: white;
-                border: 1px solid #ccc;
-                width: 100%; /* Match the width of the input */
-                max-height: 200px; /* Limit the height of the list */
-                overflow-y: auto; /* Scroll if the list is too long */
-                list-style: none; /* Remove bullets */
-                padding: 0;
-                margin: 0;
-                display: none; /* Hidden by default */
-            }
-
-            #suggestions_list li {
-                font-size: 12px;
-                padding: 5px;
-                border-bottom: 1px solid #ccc;
-                cursor: pointer;
-                width: 100%; /* Ensure each list item has the same width */
-            }
-
-            #suggestions_list li:hover {
-                background-color: #f1f1f1;
-            }
-
-            .modal-open {
-                overflow: hidden;
-            }
-
-            .fc-event .fc-title {
-                white-space: normal; /* Allow text wrapping */
-                word-wrap: break-word; /* Ensure long words are wrapped */
-                font-size: 11px; /* Adjust font size if necessary */
-                padding: 1px; /* Adjust padding for readability */
-            }
-            .fc-time {
-                display: inline-block;
-            }
-            .fc-event {
-                min-height: 20px; /* Ensure events have enough space */
-                padding: 1px; /* Adjust padding if text is being cut off */
-            }
-            .fc-row {
-                margin-bottom: 6px; /* Reduce this value or remove it entirely */
-            }
-            .fc-event {
-                padding: 6px; /* Reduce this value or remove it entirely */
-            }
-        </style>
     </head>
    
     <body>
