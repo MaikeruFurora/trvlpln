@@ -7,7 +7,7 @@ let updateEventsURL = (newURL) => {
              url:  newURL,
              type:'POST',
              data: {  
-                 _token
+                _token: CoreModel.token
              }
      });
  }
@@ -26,7 +26,7 @@ CoreModel.calendar.fullCalendar('off', 'eventClick');
 CoreModel.calendar.fullCalendar('on', 'eventClick', function(event, jsEvent, view) {
     $("#readOnlyActivity").modal("show");
     $("#readOnlyActivityLabel").text("View Activity");
-
+    $(this).popover('hide');
     let updateUrl = CoreModel.calendar.attr("data-info").replace("param", event.id);
 
     $.ajax({
@@ -51,9 +51,7 @@ CoreModel.calendar.fullCalendar('on', 'eventClick', function(event, jsEvent, vie
         }
         $("#readOnlyActivity").find(".activity_list").html(`<strong>Activity:</strong> <span class="highlight">${data.activity_list_name}</span>`);
     })
-    .fail(function(jqxHR) {
-        CoreModel.toasMessage(jqxHR.responseJSON.msg, "Error", jqxHR.responseJSON.icon);
-    })
+    .fail(CoreModel.handleAjaxError)
     .always(function() {
         CoreModel.calendar.fullCalendar('refetchEvents');
     });

@@ -15,7 +15,6 @@ var defaultView  = ($(window).width() <= 600) ? 'basicDay' : 'basicWeek';
 let Activity     = $("#Activity")
 let ActivityForm = $("#ActivityForm")
 let ActivityDate = $("#ActivityDate")
-let DateResched  = ActivityForm.find("#DateResched")
 let DefaultURL = CoreModel.calendar.attr("data-list").replace("user",CoreModel.calendar.attr("data-id"))
 CoreModel.calendar.fullCalendar(CoreModel.calendarSettings(DefaultURL,defaultView));
 
@@ -36,6 +35,7 @@ Activity.on('submit', function(e) {
     }).done(function(data) {
         if (data.msg) {
             CoreModel.toasMessage(data.msg, "success", data.icon);
+            CoreModel.defaultTime();
             Activity[0].reset();
         }
     }).fail(CoreModel.handleAjaxError)
@@ -45,7 +45,6 @@ Activity.on('submit', function(e) {
         Activity.find('input[name=id]').val('');
         Activity.find("button[type=submit]").html('Save');
         CoreModel.calendar.fullCalendar('refetchEvents');
-        CoreModel.defaultTime();
     });
 });
 
@@ -102,7 +101,7 @@ ActivityForm.find("button[name=delete]").on('click',function(){
                 url:  updateUrl,
                 type:'DELETE',
                 data:{
-                    token:CoreModel.token
+                    _token: CoreModel.token
                 }
             }).done(function(data){
                 if (data.msg) {
@@ -124,11 +123,10 @@ $(document).on('click', '.custom-control-input', function() {
 
 CoreModel.calendar.fullCalendar('off', 'eventClick');
 CoreModel.calendar.fullCalendar('on', 'eventClick', function(event, jsEvent, view) {
-    $('.tooltip').hide();
+    $(this).popover('hide');
     let disablePastAndFuture =  moment().format('YYYY-MM-DD')!==moment(event.start).format('YYYY-MM-DD');
     disablePastAndFuture ? ActivityForm.find("button[name=delete]").hide() : ActivityForm.find("button[name=delete]").show()
     $('#viewActivity').modal('show');
-    DateResched.hide()
     ActivityForm[0].reset()
     $('#viewActivityLabel').text(event.title);
     let updateUrl   = CoreModel.calendar.attr("data-info").replace("param",event.id)

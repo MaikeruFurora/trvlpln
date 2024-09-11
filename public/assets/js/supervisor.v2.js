@@ -1,7 +1,3 @@
-window.onload = function() {
-    CoreModel.defaultTime()
-};
-
 CoreModel.calendar.fullCalendar(CoreModel.calendarSettings(DefaultURL,defaultView));
 
 let updateEventsURL = (newURL) => {
@@ -10,8 +6,9 @@ let updateEventsURL = (newURL) => {
             url:  newURL,
             type:'POST',
             data: {  
-            _token
-    }});
+                _token: CoreModel.token
+            }
+    });
 }
 $(".getBDO").on('click',function(e){
     e.preventDefault()

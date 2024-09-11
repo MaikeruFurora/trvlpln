@@ -67,4 +67,29 @@ class BDOController extends Controller
         
         return view('calendar.print.daily-printout', compact('activities', 'user','categories'));
     }
+
+
+    public function beatplanNextWeekPrintout(){
+
+        // Get the next week range (Monday to Saturday)
+        $monday   = Carbon::now()->addWeek()->startOfWeek()->format('Y-m-d');
+        $saturday = Carbon::now()->addWeek()->endOfWeek()->format('Y-m-d');
+    
+        // Fetch the current authenticated user
+        $user = User::find(auth()->user()->id);
+    
+        // Get all activities for the current user within the Monday to Saturday date range
+        $activities = $user->activities()
+                           ->whereBetween('date_from', [$monday, $saturday])
+                           ->with('activity_list:id,name,color,icon')
+                           ->get()
+                           ->groupBy(function ($activity) {
+                               // Group activities by day of the week (Monday, Tuesday, etc.)
+                               return Carbon::parse($activity->date_from)->format('l');
+                           });
+    
+        // Pass data to the view
+        return view('calendar.print.nextweek-beatplan-printout', compact('activities', 'user', 'monday', 'saturday'));
+
+    }
 }

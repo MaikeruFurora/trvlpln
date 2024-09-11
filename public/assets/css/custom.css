@@ -126,3 +126,30 @@ html, body{
 .dropdown-submenu:hover .dropdown-menu {
     display: block;
 }
+
+@media (max-width: 768px) {
+  .fc-toolbar { /* Target the toolbar (header) of FullCalendar */
+      display: flex;
+      flex-direction: column; /* Stack the buttons and title vertically */
+      align-items: center; /* Center-align the content horizontally */
+      justify-content: center; /* Center-align the content vertically */
+  }
+
+  .fc-left, .fc-right {
+      float: none; /* Remove the float to align items in the center */
+      text-align: center;
+      width: 100%;
+      margin-bottom: 10px; /* Add spacing between buttons */
+  }
+
+  .fc-center {
+      text-align: center; /* Center-align the title */
+      margin-bottom: 10px; /* Space between title and buttons */
+  }
+
+  .fc-toolbar .fc-button-group {
+      font-size: 10px;
+      display: flex;
+      justify-content: center; /* Center the buttons */
+  }
+}

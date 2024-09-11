@@ -9,12 +9,15 @@
         <li class="nav-item">
             <a class="nav-link" href="{{ auth()->user()->type=="admin"?route('authenticate.admin') : route('authenticate.supervisor') }}"> Activity Callendar</a>
         </li>
-        @if (auth()->user()->type=="admin")
+        {{-- @if (auth()->user()->type=="admin")
         <li class="nav-item">
             <a class="nav-link" href="{{ route('authenticate.dashboard') }}">Dashboard</a>
         </li>
-        @endif
+        @endif --}}
         @if (auth()->user()->type=="admin" && auth()->user()->wrhs==NULL)
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('authenticate.dashboard') }}">Dashboard</a>
+            </li>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Config
@@ -24,13 +27,13 @@
                     <a class="dropdown-item" href="{{ route('authenticate.actvtylist') }}">Activity</a>
                     <a class="dropdown-item" href="{{ route('authenticate.product') }}">Product</a>
                     <a class="dropdown-item" href="{{ route('authenticate.group') }}">Group</a>
-                    <a class="dropdown-item" href="{{ route('authenticate.warehouse') }}">Warehouse/Cluster</a>
+                    <a class="dropdown-item" href="{{ route('authenticate.warehouse') }}">Warehouse</a>
                     <a class="dropdown-item" href="{{ route('authenticate.audit') }}">Audit Trail</a>
                     <div class="dropdown-submenu">
                       <a class="dropdown-item dropdown-toggle" href="#">Handled User</a>
                       <div class="dropdown-menu">
-                        <a class="dropdown-item" href="{{ route('authenticate.handle.group') }}">User Group Type</a>
-                        <a class="dropdown-item" href="{{ route('authenticate.user.group') }}#">Handled Users</a>
+                        <a class="dropdown-item" href="{{ route('authenticate.handle.group') }}">Set Group Name</a>
+                        <a class="dropdown-item" href="{{ route('authenticate.user.group') }}#">User Group</a>
                       </div>
                     </div>
                 </div>

@@ -48,9 +48,10 @@
                     Report
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="#" data-url="{{ route('authenticate.activity.weekly.beatplan.printout') }}">BeatPlan Weekly</a>
-                    <a class="dropdown-item" href="#" data-url="{{ route('authenticate.activity.weekly.printout') }}">Weekly Report</a>
-                    <a class="dropdown-item" href="#" data-url="{{ route('authenticate.activity.daily.printout') }}">Today ({{ date('l') }})</a>
+                    <a class="dropdown-item" href="#" data-url="{{ route('authenticate.activity.weekly.beatplan.printout') }}">Beat Plan Weekly Summary</a>
+                    <a class="dropdown-item" href="#" data-url="{{ route('authenticate.activity.nextweek.beatplan.printout') }}">Beat Plan Next Week Summary</a>
+                    <a class="dropdown-item" href="#" data-url="{{ route('authenticate.activity.weekly.printout') }}">Weekly Details Report</a>
+                    <a class="dropdown-item" href="#" data-url="{{ route('authenticate.activity.daily.printout') }}">Today Daily ({{ date('l') }})</a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="#">Other Report</a>
                 </div>

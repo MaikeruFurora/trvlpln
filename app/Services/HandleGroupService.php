@@ -23,12 +23,19 @@ class HandleGroupService{
 
         $filter = $search['value'];    
     
-        $query = HandleGroup::select(['handle_groups.id','handle_groups.name','handle_groups.active','handle_groups.created_at','user_id','users.name as user_name'])->join('users','handle_groups.user_id','users.id');
+        $query = HandleGroup::select([
+            'handle_groups.id',
+            'handle_groups.name',
+            'handle_groups.active',
+            'handle_groups.created_at',
+            'handle_groups.user_id',
+            'users.name as user_name'
+        ])->join('users','handle_groups.user_id','users.id');
     
         if (!empty($filter)) {
             $query
-            ->orWhere('name', 'like', '%'.$filter.'%')
-            ->orWhere('active', 'like', '%'.$filter.'%');
+            ->orWhere('handle_groups.name', 'like', '%'.$filter.'%')
+            ->orWhere('handle_groups.active', 'like', '%'.$filter.'%');
         }
     
         $recordsTotal = $query->count();

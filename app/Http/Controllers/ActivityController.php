@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 class ActivityController extends Controller
 {
     public function index(){
-        $lists = ActivityList::getActive()->get(['id','name','color','icon']);
+        $lists = ActivityList::getActive()->orderBy('name')->get(['id','name','color','icon']);
         $sttus = ['success','failed'];
         return view('bdo.index',compact('lists','sttus'));
     }
@@ -112,11 +112,15 @@ class ActivityController extends Controller
 
         if ($user!="all") {
             $data = User::find($user);
-            $activities = $data->activities()
-                        ->whereBetween('date_from', [$request->start, $request->end])
-                        ->with('activity_list:id,name,color,icon')
-                        ->get();
-            return $this->renderActivity($activities);
+            if ($data) {
+                $activities = $data->activities()
+                    ->whereBetween('date_from', [$request->start, $request->end])
+                    ->with('activity_list:id,name,color,icon')
+                    ->get();
+                return $this->renderActivity($activities);
+            } else {
+                return response()->json(['msg' => 'User not found', 'icon' => 'warning'], 404);
+            }
         }else{
             // $data = Activity::with(['activity_list:id,name,color,icon'])->whereBetween('date_from', [$request->start, $request->end])->get();
             $data = Activity::with(['activity_list:id,name,color,icon'])
@@ -126,7 +130,6 @@ class ActivityController extends Controller
         }
        
     }
-
 
     public function renderActivity($data){
         $events = array();
@@ -237,7 +240,6 @@ class ActivityController extends Controller
     public function isPastDate($date) {
         $givenDate = Carbon::parse($date);
         $currentDate = Carbon::now()->startOfDay(); // Set time to 00:00:00 for comparison
-        
         return $givenDate->isBefore($currentDate);
     }
 

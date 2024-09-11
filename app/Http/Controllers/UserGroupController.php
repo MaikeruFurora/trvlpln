@@ -26,8 +26,8 @@ class UserGroupController extends Controller
 
     public function index(){
 
-        $users = User::getActive()->typeVisor()->typeBDO()->get(['id','name']);
-        $handleGroups = HandleGroup::getActive()->get(['id','name']);
+        $users = User::getActive()->bothBDOAndVisor()->orderBy('name')->get(['id','name']);
+        $handleGroups = HandleGroup::getActive()->orderBy('name')->get(['id','name']);
         return view('admin.user-group.index',compact('users','handleGroups'));
 
     }
@@ -50,5 +50,11 @@ class UserGroupController extends Controller
 
         return $this->userGroupService->list($request);
 
+    }
+
+    public function delete(UserGroup $userGroup){
+        if ($userGroup->delete()) {
+            return response()->json(['msg'=>'Successfully delete data']);
+        }
     }
 }

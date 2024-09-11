@@ -43,6 +43,7 @@ class ProductController extends Controller
     {
         $query = $request->get('query');
         $products = Product::where('name', 'like', "%{$query}%")
+            ->where('group_id', auth()->user()->group_id)
             ->limit(5)
             ->get(['id', 'name']); // Adjust fields as necessary
 

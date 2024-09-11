@@ -33,7 +33,7 @@ class RedirectIfAuthenticated
                                 return redirect()->route('authenticate.supervisor');
                             break;
                         case 'admin':
-                                return redirect()->route('authenticate.dashboard');
+                                return redirect()->route('authenticate.admin');
                             break;
                         
                         default:

@@ -34,10 +34,18 @@
                                     </select>
                                 </th>
                                 <th>
-                                    <select name="wrhs" class="custom-select custom-select-sm form-control">
+                                    <select name="wrhs_id" class="custom-select custom-select-sm form-control">
                                         <option value=""></option>
                                         @foreach ($wrhs as $item)
-                                            <option value="{{ $item->name }}">{{ $item->name }}</option>
+                                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </th>
+                                <th>
+                                    <select name="group_id" class="custom-select custom-select-sm form-control">
+                                        <option value=""></option>
+                                        @foreach ($groups as $item)
+                                            <option value="{{ $item->id }}">{{ $item->name }}</option>
                                         @endforeach
                                     </select>
                                 </th>
@@ -60,6 +68,7 @@
                                 <th>Username</th>
                                 <th>Type</th>
                                 <th>Warehouse</th>
+                                <th>Group</th>
                                 <th>Active Emp.</th>
                                 <th>Password</th>
                                 <th>Action</th>
@@ -97,7 +106,16 @@
                 { data:'name' },
                 { data:'username' },
                 { data:'type' },
-                { data:'wrhs' },
+                { data:'wrhs_id',
+                    render:function(data, type, row, meta){
+                        return row.wrhs;
+                    }
+                 },
+                { data:'group_id',
+                render:function(data, type, row, meta){
+                        return row.group_name;
+                    }
+                },
                 { data:'is_active'},
                 { 
                     data:null,
@@ -146,10 +164,13 @@
             if (id=="" && pass=="") {
                 alert("Required password for creation of user account")
             }else{
+                var formData = new FormData(this);
+                formData.append('wrhs', UserForm.find("select[name=wrhs_id] :selected").text());
+            
                 $.ajax({
                         url:  UserForm.attr("action"),
                         type:'POST',
-                        data: new FormData(this),
+                        data: formData,
                         processData: false,
                         contentType: false,
                         cache: false,

@@ -4,11 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Activity;
 use App\Models\ActivityList;
+use App\Models\HandleGroup;
 use App\Models\User;
+use App\Models\UserGroup;
 use App\Models\Wrhs;
 use App\Services\AuditService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
@@ -82,7 +85,44 @@ class AdminController extends Controller
         $users = $this->listBdo();
         $lists = ActivityList::getActive()->get(['id','name','color','icon']);
         $wrhs = Wrhs::active()->get(['id','name']);
-        return view('admin.index',compact('users','lists','wrhs'));
+        $groupedArray = $this->userGroup();
+        return view('admin.index',compact('users','lists','wrhs','groupedArray'));
+    }
+
+    public function userGroup(){
+        $results = UserGroup::select([
+            'user_groups.id',
+            'handle_groups.name as handle_group_name',
+            'handle_groups.user_id as handle_group_user_id',
+            'handle_groups.id as handle_group_id',
+            'handle_groups.created_at',
+            'user_groups.user_id',
+            'users.name as user_name'
+        ])
+        ->join('users', 'user_groups.user_id', 'users.id')
+        ->join('handle_groups', 'user_groups.handle_group_id', 'handle_groups.id')
+        ->where('users.is_active', 'YES')
+        ->where('handle_groups.user_id', auth()->user()->id)
+        ->get();
+        
+        // Group by handle_group_name
+        $groupedResults = $results->groupBy('handle_group_name')->map(function ($group) {
+            return $group->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'user_id' => $item->user_id,
+                    'user_name' => $item->user_name,
+                    'created_at' => $item->created_at,
+                ];
+            });
+        });
+        
+        // Convert to array if necessary
+        $groupedArray = $groupedResults->toArray();
+        
+        return $groupedArray;
+        
+        
     }
 
     public function listBdo(){

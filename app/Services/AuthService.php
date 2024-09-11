@@ -48,7 +48,7 @@ class AuthService{
                             return redirect()->route('authenticate.supervisor');
                         break;
                     case 'admin':
-                            return redirect()->route('authenticate.dashboard');
+                            return redirect()->route('authenticate.admin');
                         break;
                     
                     default:
@@ -92,11 +92,21 @@ class AuthService{
 
         $filter = $search['value'];    
     
-        $query = User::select(['name','wrhs','type','username','id','is_active']);
+        $query = User::select([
+            'users.name',
+            'wrhs',
+            'type',
+            'username',
+            'users.id',
+            'is_active',
+            'wrhs_id',
+            'groups.name as group_name',
+            'groups.id as group_id'
+        ])->leftjoin('groups','users.group_id','groups.id');
     
         if (!empty($filter)) {
             $query
-            ->orWhere('name', 'like', '%'.$filter.'%')
+            ->orWhere('users.name', 'like', '%'.$filter.'%')
             ->orWhere('wrhs', 'like', '%'.$filter.'%')
             ->orWhere('type', 'like', '%'.$filter.'%')
             ->orWhere('username', 'like', '%'.$filter.'%'); 
@@ -118,12 +128,15 @@ class AuthService{
         foreach ($products as $value) {
            
                 $json['data'][] = [
-                    "id"        => $value->id,
-                    "name"      => $value->name,
-                    "wrhs"      => $value->wrhs,
-                    "type"      => $value->type,
-                    "is_active" => $value->is_active,
-                    "username"  => $value->username,
+                    "id"            => $value->id,
+                    "name"          => $value->name,
+                    "wrhs"          => $value->wrhs,
+                    "wrhs_id"       => $value->wrhs_id,
+                    "type"          => $value->type,
+                    "group_name"    => $value->group_name,
+                    "group_id"      => $value->group_id,
+                    "is_active"     => $value->is_active,
+                    "username"      => $value->username,
                 ];
         }
 

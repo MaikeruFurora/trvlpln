@@ -39,7 +39,7 @@
             <input type="text" class="form-control datepicker" name="date_to"/>
         </div> --}}
         <div class="mb-3">
-            <label class="label-text" for="">Client</label>
+            <label class="label-text" for="">Client / Remarks</label>
             <textarea class="form-control text-uppercase" id="" rows="3" name="client" maxlength="100" required></textarea>
         </div> 
         <button type="submit" class="btn w-100 btn-dark mb-3">Submit</button>

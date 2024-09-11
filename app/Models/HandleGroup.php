@@ -11,6 +11,10 @@ class HandleGroup extends Model
 
     protected $guarded = [];
 
+    public function users(){
+        return $this->belongsTo(User::class,'group_id','id');
+    }
+
     public function scopeGetActive($query){
         return $query->where('active',1);
     }

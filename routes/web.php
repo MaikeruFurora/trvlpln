@@ -54,6 +54,7 @@ Route::middleware(['auth:web','preventBackHistory','auth.user'])->name('authenti
     Route::get('activity/weekly/printout',[BDOController::class,'weeklyPrintout'])->name('activity.weekly.printout');
     Route::get('activity/daily/printout',[BDOController::class,'todayPrintout'])->name('activity.daily.printout');
     Route::get('activity/weekly/beatplan/printout',[BDOController::class,'beatplanWeeklyPrintout'])->name('activity.weekly.beatplan.printout');
+    Route::get('activity/nextweek/beatplan/printout',[BDOController::class,'beatplanNextWeekPrintout'])->name('activity.nextweek.beatplan.printout');
 
     // ADMIN API
     Route::get('dashboard',[AdminController::class,'dashboard'])->name('dashboard');
@@ -73,13 +74,14 @@ Route::middleware(['auth:web','preventBackHistory','auth.user'])->name('authenti
     Route::get('product/list',[ProductController::class,'list'])->name('product.list');
     Route::get('product/search', [ProductController::class, 'search']);
 
-    Route::get('handle-group/index',[HandleGroupController::class,'handelGroupIndex'])->name('handle.group');
+    Route::get('handle-group/index',[HandleGroupController::class,'index'])->name('handle.group');
     Route::post('handle-group/store',[HandleGroupController::class,'store'])->name('handle.group.store');
     Route::get('handle-group/list',[HandleGroupController::class,'list'])->name('handle.group.list');
 
     Route::get('user-group',[UserGroupController::class,'index'])->name('user.group');
     Route::post('user-group/store',[UserGroupController::class,'store'])->name('user.group.store');
     Route::get('user-group/list',[UserGroupController::class,'list'])->name('user.group.list');
+    Route::delete('user-group/destroy/{userGroup}',[UserGroupController::class,'delete'])->name('user.group.destroy');
 
 
     Route::get('group',[GroupController::class,'index'])->name('group');

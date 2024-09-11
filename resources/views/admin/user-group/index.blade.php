@@ -20,9 +20,17 @@
             <div class="card-body">
                 <form id="GroupForm" action="{{ route('authenticate.user.group.store') }}" autocomplete="off">@csrf <input type="hidden" class="form-control" name="id">
                <div class="table-responsive">
-                <table id="GroupTable" data-url="{{ route('authenticate.user.group.list') }}" class="table table-bordered table-sm adjust"  style="border-collapse: collapse; border-spacing: 0; width: 100%;font-size:13px">
+                <table id="GroupTable" data-url="{{ route('authenticate.user.group.list') }}" data-urlRemove="{{ route('authenticate.user.group.destroy',['param']) }}" class="table table-bordered table-sm adjust"  style="border-collapse: collapse; border-spacing: 0; width: 100%;font-size:13px">
                     <thead>
                             <tr>
+                                <th>
+                                    <select name="handle_group_id" class="custom-select custom-select-sm form-control" required>
+                                        <option value=""></option>
+                                        @foreach ($handleGroups as $item)
+                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </th>
                                 <th>
                                     <select name="user_id" class="custom-select custom-select-sm form-control" required>
                                         <option value=""></option>
@@ -31,17 +39,10 @@
                                         @endforeach
                                     </select>
                                 </th>
-                                <th>
-                                    <select name="handle_group_id" class="custom-select custom-select-sm form-control" required>
-                                        <option value=""></option>
-                                        @foreach ($handleGroups as $item)
-                                            <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </th>
                                 <th width="7%">
                                     <button type="submit" class="btn btn-sm btn-primary btn-block">Save</button>
                                     <button name="cancel" type="button" class="btn btn-warning btn-sm btn-block"> <i class="fas fa-plus-circle"></i> Cancel</button>
+                                    <button name="remove" type="button" class="btn btn-danger btn-sm btn-block"> <i class="fas fa-minus-circle"></i> Remove</button>
                                 </th>
                             </tr>
                             <tr>
@@ -80,19 +81,14 @@
                 method: "get"
             },
             columns:[
-                { data:'group_handle_id',
+                { data:'handle_group_id',
                     render:function(data, type, row, meta){
-                        return row.group_handle_name;
+                        return row.handle_group_name;
                     }
                 },
                 { data:'user_id',
                     render:function(data, type, row, meta){
                         return row.user_name;
-                    }
-                },
-                { data:'active',
-                    render:function(data){
-                        return data? 'YES' : 'NO'
                     }
                 },
                 { 
@@ -115,10 +111,37 @@
             GroupForm[0].reset()
             GroupForm.find('input[name=id]').val('')
             $(this).hide()
+            GroupForm.find("button[name=remove]").hide()
+        }).hide()
+
+        GroupForm.find("button[name=remove]").on('click',function(){
+            GroupForm[0].reset()
+            let id = GroupForm.find('input[name=id]').val()
+            let deleteURL = GroupTable.attr("data-urlRemove").replace("param",id)
+            GroupForm.find('input[name=id]').val('')
+            if (confirm("Are you sure you want delete this record?")) {
+            $.ajax({
+                url:  deleteURL,
+                type:'DELETE',
+                data:{
+                    _token: CoreModel.token
+                }
+            }).done(function(data){
+                if (data.msg) {
+                    CoreModel.toasMessage(data.msg,"success",data.icon)
+                    GroupDataTable.ajax.reload()
+                }
+            }).fail(CoreModel.handleAjaxError)
+            .always(function(){
+                GroupDataTable.ajax.reload()
+            })
+        }
+        return false
         }).hide()
 
         $(document).on('click','button[name=edit]',function(){
             GroupForm.find("button[name=cancel]").show()
+            GroupForm.find("button[name=remove]").show()
             let data = GroupDataTable.row( $(this).closest('tr') ).data()
             $.each($('#GroupForm .form-control'),(ind, value) => {
                 if (value.name!="") {
@@ -140,18 +163,15 @@
                 cache: false,
             }).done(function(data){
                 if (data.msg) {
-                    GroupForm[0].reset()
-                    GroupForm.find('input[name=id]').val('')
                     CoreModel.toasMessage(data.msg,"success",'success')
                     GroupDataTable.ajax.reload()
-                    GroupForm.find("button[name=cancel]").hide()
                 }
             }).fail(CoreModel.handleAjaxError)
             .always(function() {
-                UserForm[0].reset()
-                UserForm.find('input[name=id]').val('')
-                UserDataTable.ajax.reload()
-                UserForm.find("button[name=cancel]").hide()
+                GroupForm[0].reset()
+                GroupForm.find('input[name=id]').val('')
+                GroupForm.find("button[name=cancel]").hide()
+                GroupForm.find("button[name=remove]").hide()
             });
         })
     </script>

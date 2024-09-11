@@ -23,7 +23,8 @@ return new class extends Migration
             $table->string('password');
             $table->string('type',10);
             $table->string('wrhs',20)->nullable();
-            $table->string('group',20)->nullable();
+            $table->string('wrhs_id',30)->nullable();
+            $table->string('group_id',30)->nullable();
             $table->string('created_by',100)->nullable();
             $table->string('modified_by',100)->nullable();
             $table->timestamp('deleted_at')->nullable();

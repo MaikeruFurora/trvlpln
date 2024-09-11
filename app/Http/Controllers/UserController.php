@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Group;
 use App\Models\User;
 use App\Models\Wrhs;
 use App\Services\AuthService;
@@ -18,8 +19,9 @@ class UserController extends Controller
     }
 
     public function index(){
-        $wrhs = Wrhs::active()->orderBy('name')->get(['id','name']);
-        return view('admin.user.index',compact('wrhs'));
+        $groups = Group::active()->orderBy('name')->orderBy('name')->get(['id','name']);
+        $wrhs = Wrhs::active()->orderBy('name')->orderBy('name')->get(['id','name']);
+        return view('admin.user.index',compact('wrhs','groups'));
     }
 
     public function Apilist(){

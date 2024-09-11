@@ -120,8 +120,9 @@ const CoreModel = {
             },
             minTime: '07:00:00', // Set the minimum time to display (e.g., 8:00 AM)
             maxTime: '20:00:00', // Set the maximum time to display (e.g., 6:00 PM)
-            editable: true,  // Allow resizing
+            editable: false,  // Allow resizing
             eventStartEditable: false,  // Disable dragging
+            droppable: false,
             hiddenDays: [0],
             allDaySlot: false,
             selectable: true,
@@ -139,7 +140,7 @@ const CoreModel = {
             },
             eventRender: function(event, element) {
                 element.popover({
-                    title: event.start.format('h:mma') + ' - ' + event.end.format('h:mma'),
+                    title: 'Details',
                     content: event.title+ (event.note === null ? '' : ' - '+event.note),
                     trigger: 'hover',
                     placement: 'top',
@@ -148,6 +149,9 @@ const CoreModel = {
     
                 // Display full event title with time
                 element.find('.fc-title').html(event.title);
+
+                // Store the popover in event data to access it later
+                event.popover = element.popover();
             }, 
             eventContent: function(arg) {
                 // Create a custom element to display only the title
@@ -178,9 +182,9 @@ window.onload = function() {
     overlay.style.display = 'block';
 
     // Hide the overlay after 2 seconds
-    setTimeout(function() {
+    // setTimeout(function() {
         overlay.style.display = 'none';
-    }, 2000);
+    // }, 2000);
 };
 
 $('.datepicker').datetimepicker(CoreModel.dateTimeSetting);

@@ -72,6 +72,10 @@ class User extends Authenticatable
         return $query->where('type', self::SUPERVISOR);
     }
 
+    public function scopeBothBDOAndVisor($query){
+        return $query->whereNotIn('type', [self::ADMIN]);
+    }
+
     public function scopeNotAdmin($query){
         return $query->whereNot('type', self::ADMIN);
     }
@@ -90,7 +94,9 @@ class User extends Authenticatable
             'name'      => $request->name,
             'username'  => $request->username,
             'email'     => $request->email,
-            'wrhs'      => $request->wrhs,
+            'wrhs'      => trim($request->wrhs),
+            'wrhs_id'   => $request->wrhs_id,
+            'group_id'  => $request->group_id,
             'type'      => $request->type,
             'is_active' => $request->is_active,
             'password'  => !empty($request->password)?Hash::make($request->password):$oldpass->password,
@@ -123,5 +129,9 @@ class User extends Authenticatable
         static::updating(function ($model) {
             $model->modified_by = Auth::id();
         });
+    }
+
+    public function handleGroup(){
+        return $this->hasMany(Group::class,'group_id');
     }
 }
