@@ -70,7 +70,7 @@
         <script src="{{ asset('plugins/jquery-toast/jquery.toast.js') }}"></script>
         <script src="{{ asset('plugins/moment/moment.js') }}"></script>
         <script src="{{ asset('plugins/select2/select2.min.js') }}"></script>
-        <script src="{{ asset('assets/js/global.js') }}"></script>
+        <script src="{{ asset('assets/js/global.js') }}?v={{ time() }}"></script>
         @yield('js')
         <!-- App js -->
         <script src="{{ asset('assets/js/app.js') }}"></script>

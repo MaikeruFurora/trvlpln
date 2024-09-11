@@ -58,7 +58,7 @@
 @endsection
 
 @section('js')
-<script src="{{ asset('assets/js/booking.js') }}"></script>
-<script src="{{ asset('assets/js/bdo.js') }}"></script>
-<script src="{{ asset('assets/js/supervisor.v2.js') }}"></script>
+<script src="{{ asset('assets/js/booking.js') }}?v={{ time() }}"></script>
+<script src="{{ asset('assets/js/bdo.js') }}?v={{ time() }}"></script>
+<script src="{{ asset('assets/js/supervisor.v2.js') }}?v={{ time() }}"></script>
 @endsection

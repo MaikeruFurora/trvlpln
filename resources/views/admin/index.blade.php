@@ -97,5 +97,5 @@
 @include('calendar.modal-daterange-admin',['wrhs'=>$wrhs])
 @endsection
 @section('js')
-<script src="{{ asset('assets/js/admin.v2.js') }}"></script>
+<script src="{{ asset('assets/js/admin.v2.js') }}?v={{ time() }}"></script>
 @endsection
