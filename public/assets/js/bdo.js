@@ -105,7 +105,7 @@ ActivityForm.find("button[name=delete]").on('click',function(){
                 }
             }).done(function(data){
                 if (data.msg) {
-                    CoreModel.toasMessage(data.msg,"success",data.icon)
+                   CoreModel.toasMessage(data.msg,"success",data.icon)
                 }
                 $('#viewActivity').modal('hide');
             }).fail(CoreModel.handleAjaxError)
@@ -124,7 +124,7 @@ $(document).on('click', '.custom-control-input', function() {
 CoreModel.calendar.fullCalendar('off', 'eventClick');
 CoreModel.calendar.fullCalendar('on', 'eventClick', function(event, jsEvent, view) {
     $(this).popover('hide');
-    let disablePastAndFuture =  moment().format('YYYY-MM-DD')!==moment(event.start).format('YYYY-MM-DD');
+    let disablePastAndFuture =  moment(getTime()).format('YYYY-MM-DD')!==moment(event.start).format('YYYY-MM-DD');
     disablePastAndFuture ? ActivityForm.find("button[name=delete]").hide() : ActivityForm.find("button[name=delete]").show()
     $('#viewActivity').modal('show');
     ActivityForm[0].reset()

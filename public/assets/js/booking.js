@@ -134,10 +134,10 @@ function removeProduct(id) {
         url: `/auth/activity/destroy/booking/${id}`,
         type: 'DELETE',
         data:{
-            _token
+            _token: CoreModel.token
         }
     }).done(response => {
-        toasMessage(data.msg, "success", data.icon);
+        CoreModel.toasMessage(data.msg, "success", data.icon);
     }).fail(error => {
         console.error(error.responseJSON);
     });

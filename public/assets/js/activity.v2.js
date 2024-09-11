@@ -108,10 +108,10 @@ let settings     = (getDataURL) =>{
             data:{ date_from, date_to, _token },
                 success:function(data){
                     $('#calendar').fullCalendar('refetchEvents');
-                    toasMessage(data.msg,"success",'success')
+                    CoreModel.toasMessage(data.msg,"success",'success')
                 },
                 error:function(error){
-                    toasMessage("Not allowed activity","warning",'warning')
+                    CoreModel.toasMessage("Not allowed activity","warning",'warning')
                     $('#calendar').fullCalendar('refetchEvents');
                 },
             })
@@ -153,11 +153,11 @@ let settings     = (getDataURL) =>{
                     dataType:'json',
                     data:{ date_from, date_to, _token },
                     success:function(data){
-                        toasMessage(data.msg,"success",data.icon)
+                        CoreModel.toasMessage(data.msg,"success",data.icon)
                         $('#calendar').fullCalendar('refetchEvents');
                     },
                     error:function (jqxHR, textStatus, errorThrown) {
-                        toasMessage(jqxHR.responseJSON.msg,"Error",jqxHR.responseJSON.icon)
+                        CoreModel.toasMessage(jqxHR.responseJSON.msg,"Error",jqxHR.responseJSON.icon)
                         $('#calendar').fullCalendar('refetchEvents');
                     },
                 });
@@ -207,7 +207,7 @@ let settings     = (getDataURL) =>{
                 },
                 error:function (jqxHR, textStatus, errorThrown) 
                 {
-                     toasMessage(jqxHR.responseJSON.msg,"Error",jqxHR.responseJSON.icon)
+                     CoreModel.toasMessage(jqxHR.responseJSON.msg,"Error",jqxHR.responseJSON.icon)
                     $('#calendar').fullCalendar('refetchEvents');
                 },
             });
@@ -250,14 +250,14 @@ Activity.on('submit',function(e){
             Activity[0].reset();
             Activity.find('input[name=id]').val('');
             Activity.find("button[type=submit]").html('Save');
-            toasMessage(data.msg, "success", data.icon);
+            CoreModel.toasMessage(data.msg, "success", data.icon);
             $('#calendar').fullCalendar('refetchEvents');
             CoreModel.defaultTime()
         }
     }).fail(function(jqxHR, textStatus, errorThrown) {
         Activity.find("button[type=submit]").html('Save');
         $("#Activity *").prop("readonly", false);
-        toasMessage(jqxHR.responseJSON.msg, "warning", jqxHR.responseJSON.icon);
+        CoreModel.toasMessage(jqxHR.responseJSON.msg, "warning", jqxHR.responseJSON.icon);
     });
 })
 
@@ -279,20 +279,20 @@ ActivityForm.on('submit',function(e){
         if (data.msg) {
             ActivityForm[0].reset()
             Activity.find('input[name=id]').val('')
-            toasMessage(data.msg,"success",data.icon)
+            CoreModel.toasMessage(data.msg,"success",data.icon)
             $("#productTable tbody").find("tr").remove()
             
             CoreModel.booking = []
             $('#calendar').fullCalendar('refetchEvents');
         }
     }).fail(function (jqxHR, textStatus, errorThrown) {
-        toasMessage(jqxHR.responseJSON.msg,"warning",jqxHR.responseJSON.icon)
+        CoreModel.toasMessage(jqxHR.responseJSON.msg,"warning",jqxHR.responseJSON.icon)
     })
 })
 
 Activity.find("input[name=week]").on('click',function(){
     if (Activity.find("input[name=date_from]").val()=="") {
-        toasMessage('Please check date & time',"warning",'warning')
+        CoreModel.toasMessage('Please check date & time',"warning",'warning')
         $(this).prop("checked",false)
     }
 })
@@ -317,12 +317,12 @@ ActivityForm.find("button[name=delete]").on('click',function(){
                 }
             }).done(function(data){
                 if (data.msg) {
-                    toasMessage(data.msg,"success",data.icon)
+                    CoreModel.toasMessage(data.msg,"success",data.icon)
                     $('#calendar').fullCalendar('refetchEvents');
                 }
                 $('#viewActivity').modal('hide');
             }).fail(function (jqxHR, textStatus, errorThrown) {
-                toasMessage(jqxHR.responseJSON.msg,"warning",jqxHR.responseJSON.icon)
+                CoreModel.toasMessage(jqxHR.responseJSON.msg,"warning",jqxHR.responseJSON.icon)
             })
         }
         return false

@@ -86,9 +86,9 @@
         overlay.style.display = 'block';
 
         // Hide the overlay after 2 seconds
-        // setTimeout(function() {
+        setTimeout(function() {
             overlay.style.display = 'none';
-        // }, 2000);
+        }, 1000);
     };
 </script>
 </body>

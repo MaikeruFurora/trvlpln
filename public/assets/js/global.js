@@ -39,16 +39,17 @@ const CoreModel = {
         });
     },
     // Fetching time from a public time API
-    fetchTime : () => {
-        fetch('http://worldtimeapi.org/api/timezone/Etc/UTC')
-        .then(response => response.json())
-        .then(data => {
-            let currentTime = moment(data.utc_datetime);
-            return moment(data.utc_datetime);
-        })
-        .catch(error => {
-            console.error('Error fetching time:', error);
-        });
+    fetchTime: () => {
+        return fetch('https://worldtimeapi.org/api/timezone/Etc/UTC')
+            .then(response => response.json())
+            .then(data => {
+                let currentTime = moment(data.utc_datetime);
+                return currentTime;  // Return the moment object with the fetched time
+            })
+            .catch(error => {
+                console.error('Error fetching time:', error);
+                return null;  // Return null or handle the error properly
+            });
     },
     getTimePlusMinutes: (addMinutes, baseTime) => {
         const now = baseTime ? new Date(`1970-01-01T${baseTime}:00`) : new Date();
@@ -120,9 +121,9 @@ const CoreModel = {
             },
             minTime: '07:00:00', // Set the minimum time to display (e.g., 8:00 AM)
             maxTime: '20:00:00', // Set the maximum time to display (e.g., 6:00 PM)
-            editable: false,  // Allow resizing
+            editable: false,  // Disable event resizing
             eventStartEditable: false,  // Disable dragging
-            droppable: false,
+            droppable: false,  // Disable dragging external items
             hiddenDays: [0],
             allDaySlot: false,
             selectable: true,
@@ -147,6 +148,9 @@ const CoreModel = {
                     container: 'body'
                 });
     
+                // Ensure the cursor is set to pointer
+                element.css('cursor', 'pointer');
+
                 // Display full event title with time
                 element.find('.fc-title').html(event.title);
 
@@ -171,7 +175,17 @@ const CoreModel = {
         }
     }
 }
-console.log(CoreModel.fetchTime());
+
+const getTime = async () => {
+    let currentTime = await CoreModel.fetchTime();
+    return currentTime
+    // Do something with currentTime
+}
+
+console.log('current date',moment(getTime()).format('YYYY-MM-DD'));
+
+
+
 
 window.onload = function() {
     CoreModel.defaultTime()
@@ -182,9 +196,9 @@ window.onload = function() {
     overlay.style.display = 'block';
 
     // Hide the overlay after 2 seconds
-    // setTimeout(function() {
+    setTimeout(function() {
         overlay.style.display = 'none';
-    // }, 2000);
+    }, 1000);
 };
 
 $('.datepicker').datetimepicker(CoreModel.dateTimeSetting);
