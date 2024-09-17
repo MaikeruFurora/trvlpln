@@ -117,7 +117,7 @@ ActivityForm.find("button[name=delete]").on('click',function(){
 
 })
 
-$(document).on('click', '.custom-control-input', function() {      
+$(document).on('click', '.form-check-input', function() {      
     $('input[type="checkbox"]').not(this).prop('checked', false);
 });
 

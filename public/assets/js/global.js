@@ -156,6 +156,16 @@ const CoreModel = {
 
                 // Store the popover in event data to access it later
                 event.popover = element.popover();
+                
+                // Add icon to the title
+                let icon = document.createElement('i');
+                icon.className = event.icon ?? 'fas fa-user-circle';
+                icon.style.marginRight = '5px'; // Add space between icon and title
+                icon.style.marginLeft = '5px'; // Add space between icon and title
+                element.find('.fc-title').prepend(icon);
+                element.find('.fc-title').css('display', 'flex');
+                element.find('.fc-title').css('align-items', 'center'); // Align icon and title vertically
+                element.find('.fc-title').css('justify-content', 'flex-start'); // Align icon and title to the left
             }, 
             eventContent: function(arg) {
                 // Create a custom element to display only the title
