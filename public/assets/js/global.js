@@ -140,47 +140,58 @@ const CoreModel = {
                 dow: [0,1,2,3,4,5,6] // Day of week. If you don't set it, Sat/Sun are gray too
             },
             eventDropStart: function(event, jsEvent, ui, view) {
-                // Hide tooltip when resizing starts
-                $('.tooltip').hide();
+                // Hide and destroy any visible popover to prevent stacking
+                $('.popover').popover('hide');
+                $('.popover').remove(); // Completely remove the popover elements
             },
             eventDropStop: function(event, jsEvent, ui, view) {
-                // Hide tooltip when resizing starts
-                $('.tooltip').hide();
+                // Hide and destroy any visible popover after dragging ends
+                $('.popover').popover('hide');
+                $('.popover').remove(); // Completely remove the popover elements
             },
             eventRender: function(event, element) {
+                // First, destroy any existing popover for this element (just in case)
                 element.popover({
+                    trigger: 'manual',
+                    placement: 'top',
+                    container: 'body',
+                    animation: false,
+                    delay: { show: 500, hide: 10 },
                     title: 'Details',
                     content: event.title+ (event.note === null ? '' : ' - '+event.note),
-                    trigger: 'hover',
-                    placement: 'top',
-                    container: 'body'
                 });
-    
+                
                 // Ensure the cursor is set to pointer
                 element.css('cursor', 'pointer');
-
+                
                 // Display full event title with time
                 element.find('.fc-title').html(event.title);
-
+                
                 // Store the popover in event data to access it later
                 event.popover = element.popover();
                 
-                // Add icon to the title
-                let icon = document.createElement('i');
-                icon.className = event.icon ?? 'fas fa-user-circle';
-                icon.style.marginRight = '5px'; // Add space between icon and title
-                icon.style.marginLeft = '5px'; // Add space between icon and title
-                element.find('.fc-title').prepend(icon);
-                element.find('.fc-title').css('display', 'flex');
-                element.find('.fc-title').css('align-items', 'center'); // Align icon and title vertically
-                element.find('.fc-title').css('justify-content', 'flex-start'); // Align icon and title to the left
+                // Add delay before showing the popover
+                element.on('mouseenter', function () {
+                    event.popover = setTimeout(function () {
+                        element.popover('show');
+                    }, 500);
+                });
+
+                // Clean up when leaving
+                element.on('mouseleave', function () {
+                    clearTimeout(event.popover);
+                    element.popover('hide');
+                });
             }, 
             eventContent: function(arg) {
+                $('.popover').popover('hide');
+                $('.popover').remove();
                 // Create a custom element to display only the title
                 let title = document.createElement('div');
                 title.innerHTML = arg.event.title;  // Show only the title
             
                 return { domNodes: [title] };  // Return only the title, no details
+
               },
         }
     },

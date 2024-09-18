@@ -35,7 +35,7 @@ Activity.on('submit', function(e) {
     }).done(function(data) {
         if (data.msg) {
             CoreModel.toasMessage(data.msg, "success", data.icon);
-            CoreModel.defaultTime();
+            CoreModel.defaultTime();            
             Activity[0].reset();
         }
     }).fail(CoreModel.handleAjaxError)
