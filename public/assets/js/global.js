@@ -121,9 +121,9 @@ const CoreModel = {
             },
             minTime: '07:00:00', // Set the minimum time to display (e.g., 8:00 AM)
             maxTime: '20:00:00', // Set the maximum time to display (e.g., 6:00 PM)
-            editable: false,  // Disable event resizing
-            eventStartEditable: false,  // Disable dragging
-            droppable: false,  // Disable dragging external items
+            editable: true,  // Disable event resizing
+            // eventStartEditable: false,  // Disable dragging
+            // droppable: false,  // Disable dragging external items
             hiddenDays: [0],
             allDaySlot: false,
             selectable: true,
@@ -138,6 +138,14 @@ const CoreModel = {
                 start: moment().format('HH:mm'), /* Current Hour/Minute 24H format */
                 end: '20:00', // 5pm? set to whatever
                 dow: [0,1,2,3,4,5,6] // Day of week. If you don't set it, Sat/Sun are gray too
+            },
+            eventDropStart: function(event, jsEvent, ui, view) {
+                // Hide tooltip when resizing starts
+                $('.tooltip').hide();
+            },
+            eventDropStop: function(event, jsEvent, ui, view) {
+                // Hide tooltip when resizing starts
+                $('.tooltip').hide();
             },
             eventRender: function(event, element) {
                 element.popover({

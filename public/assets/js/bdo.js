@@ -65,6 +65,7 @@ ActivityForm.on('submit',function(e){
     }).done(function(data){
         if (data.msg) {
             CoreModel.toasMessage(data.msg,"success",data.icon)
+            CoreModel.defaultTime()
         }
     }).fail(CoreModel.handleAjaxError)
     .always(function(){
@@ -179,6 +180,32 @@ CoreModel.calendar.fullCalendar('on', 'eventClick', function(event, jsEvent, vie
     
  });
 
+ CoreModel.calendar.fullCalendar('off', 'eventDrop');
+ CoreModel.calendar.fullCalendar('on', 'eventDrop', function(event, delta, revertFunc) {
+    $('.tooltip').hide();
+    let id          = event.id;
+    let date_from   = moment(event.start).format('YYYY-MM-DD HH:mm:ss')
+    let date_to     = moment(event.end).format('YYYY-MM-DD HH:mm:ss')
+    let updateUrl   = CoreModel.calendar.attr("data-update").replace("param",id)
+        $.ajax({
+            url: updateUrl,
+            type:"POST",
+            dataType:'json',
+            data:{ 
+                date_from, 
+                date_to, 
+                _token: CoreModel.token
+            },
+            success:function(data){
+                CoreModel.toasMessage(data.msg,"success",data.icon)
+                CoreModel.calendar.fullCalendar('refetchEvents');
+            },
+            error:function (jqxHR, textStatus, errorThrown) {
+                CoreModel.toasMessage(jqxHR.responseJSON.msg,"Error",jqxHR.responseJSON.icon)
+                CoreModel.calendar.fullCalendar('refetchEvents');
+            },
+        });
+ });
 
  $(document).on('click', '.dropdown-item', function(e) {
     e.preventDefault();
