@@ -43,7 +43,7 @@ Activity.on('submit', function(e) {
         // Reset UI elements and form state
         $("#Activity *").prop("readonly", false);
         Activity.find('input[name=id]').val('');
-        Activity.find("button[type=submit]").html('Save');
+        Activity.find("button[type=submit]").html('Submit');
         CoreModel.calendar.fullCalendar('refetchEvents');
     });
 });
