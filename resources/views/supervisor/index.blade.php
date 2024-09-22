@@ -34,7 +34,7 @@
             @endif
         </div>
        
-        {{-- @include('calendar.parts.guide',['list'=>$lists]) --}}
+        @include('calendar.parts.guide',['list'=>$lists])
     </div>
 
     <div id='calendar' 
