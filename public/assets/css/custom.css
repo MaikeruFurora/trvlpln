@@ -1,6 +1,6 @@
 #overlay {
     background: #ffffff;
-    color: #666666;
+    color: black;
     position: fixed;
     height: 100%;
     width: 100%;
@@ -10,7 +10,7 @@
     float: left;
     text-align: center;
     padding-top: 25%;
-    opacity: .70;
+    opacity: .60;
     display: none; /* Initial state */
   }
 
@@ -19,7 +19,7 @@
     height: 44px;
     width: 44px;
     animation: rotate 0.8s infinite linear;
-    border: 5px solid firebrick;
+    border: 2px solid firebrick;
     border-right-color: transparent;
     border-radius: 50%;
   }
@@ -152,4 +152,15 @@ html, body{
       display: flex;
       justify-content: center; /* Center the buttons */
   }
+}
+
+.no-border-list .list-group-item {
+    border: none; /* Remove the borders */
+}
+
+.circle {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    display: inline-block;
 }

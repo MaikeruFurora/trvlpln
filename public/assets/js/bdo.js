@@ -35,7 +35,9 @@ Activity.on('submit', function(e) {
     }).done(function(data) {
         if (data.msg) {
             CoreModel.toasMessage(data.msg, "success", data.icon);
-            CoreModel.defaultTime();            
+            setTimeout(function() {
+                CoreModel.defaultTime();            
+            }, 2000);
             Activity[0].reset();
         }
     }).fail(CoreModel.handleAjaxError)
@@ -127,9 +129,7 @@ CoreModel.calendar.fullCalendar('on', 'eventClick', function(event, jsEvent, vie
     $(this).popover('hide');
     let disablePastAndFuture =  moment(getTime()).format('YYYY-MM-DD')!==moment(event.start).format('YYYY-MM-DD');
     disablePastAndFuture ? ActivityForm.find("button[name=delete]").hide() : ActivityForm.find("button[name=delete]").show()
-    $('#viewActivity').modal('show');
     ActivityForm[0].reset()
-    $('#viewActivityLabel').text(event.title);
     let updateUrl   = CoreModel.calendar.attr("data-info").replace("param",event.id)
     $.ajax({
         url: updateUrl,
@@ -137,6 +137,8 @@ CoreModel.calendar.fullCalendar('on', 'eventClick', function(event, jsEvent, vie
         dataType: 'json'
     })
     .done(function(data) {
+        $('#viewActivity').modal('show');
+        $('#viewActivityLabel').text(event.title);
         // Update CoreModel with fetched data
         CoreModel.booking = data.booking;
     
@@ -147,9 +149,11 @@ CoreModel.calendar.fullCalendar('on', 'eventClick', function(event, jsEvent, vie
         ActivityForm.find("input[name=id]").val(data.id);
         $("#ActivityForm .getInput").each(function() {
             var name = this.name;
-            if (name !== 'sttus[]') {
+            if (name !== 'sttus[]' && name !== 'client') {
                 var $elem = ActivityForm.find("[name=" + name + "]");
                 $elem.val(data[name]).prop('readonly', disablePastAndFuture);
+            }else{
+                ActivityForm.find("input[name=client]").val(data['client']);
             }
         });
     

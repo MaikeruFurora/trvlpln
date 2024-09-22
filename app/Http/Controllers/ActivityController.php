@@ -157,10 +157,10 @@ class ActivityController extends Controller
     public function color($sttus){
         switch ($sttus) {
             case 'success':
-                    return '#46cd93';
+                    return '#3ab380';
                 break;
             case 'resched':
-                    return '#fdba45';
+                    return '#f4a429';
                 break;
             case 'failed':
                     return '#dc3545';
@@ -169,7 +169,7 @@ class ActivityController extends Controller
                     return '#bc9090';
                 break;
             default:
-                    return '#3788d8';
+                    return '#306fb0';
                 break;
         }
     }
@@ -303,9 +303,10 @@ class ActivityController extends Controller
                 $activity->update([
                     'date_from' => $dateTimeFrom->format('Y-m-d H:i:s'),
                     'date_to'   => $dateTimeTo->format('Y-m-d H:i:s'),
+                    'client'    => $request->client,
                 ]);
                 return response()->json([
-                    'msg' => 'Updated Activity Time Slot',
+                    'msg' => 'Updated Activity Time Slot and details',
                     'icon'  => 'success'
                 ], 200);
             }else{

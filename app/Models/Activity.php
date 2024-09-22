@@ -19,6 +19,10 @@ class Activity extends Model implements Auditable
     
     protected $guarded = [];
 
+    public function getClientAttribute($value){
+        return strtoupper($value);
+    }
+
     public function user(){
         return $this->belongsTo(User::class);
     }

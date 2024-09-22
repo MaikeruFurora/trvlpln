@@ -128,10 +128,20 @@ const CoreModel = {
             allDaySlot: false,
             selectable: true,
             events: {
-                url:  getDataURL,
-                type:'POST',
-                data: {  
-                    _token: CoreModel.token
+                url: getDataURL,
+                type: 'POST',
+                data: function() {
+                    return {
+                        _token: CoreModel.token,
+                        start: $('#calendar').fullCalendar('getView').start.format(), // Start date of the view
+                        end: $('#calendar').fullCalendar('getView').end.format()     // End date of the view
+                    };
+                },
+                success: function(events) {
+                    // Optionally process the events before rendering
+                },
+                error: function() {
+                    alert('There was an error while fetching events.');
                 }
             },
             businessHours: {
@@ -194,6 +204,33 @@ const CoreModel = {
                 element.find('.fc-title').css('display', 'flex');
                 element.find('.fc-title').css('align-items', 'center'); // Align icon and title vertically
                 element.find('.fc-title').css('justify-content', 'flex-start'); // Align icon and title to the left
+                element.find('.fc-title').css('text-align', 'left'); // Align the title text to the left
+                // Add time from and time to
+                const timeElement = document.createElement('div');
+                timeElement.className = 'fc-time';
+                timeElement.style.fontSize = '9px';
+                timeElement.style.display = 'flex';
+                timeElement.style.justifyContent = 'flex-end';
+                timeElement.style.marginTop = '5px'; // Add space between title and time
+                timeElement.style.marginLeft = '10px'; // Add space between title and time
+                timeElement.innerHTML = ` ${moment(event.start).format('h:mm A')} - ${moment(event.end).format('h:mm A')}`;
+                element.append(timeElement);
+                
+                // let currentTime =  CoreModel.fetchTime();
+                // (async () => {
+                //     if ($(window).width() > 768 && moment(event.start).isSame(currentTime, 'day') && event.sttus === null) {
+                //         // Add Pending text to the right top corner of the title
+                //         let pending = document.createElement('span');
+                //         pending.innerHTML = '[Pending]';  // Show only the title
+                //         pending.style.position = 'absolute';
+                //         pending.style.fontSize = '8px';
+                //         pending.style.bottom = '0';
+                //         pending.style.right = '0';
+                //         pending.style.color = 'white';
+                //         element.find('.fc-title').append(pending);
+                //     }
+                // })();
+
             }, 
             eventContent: function(arg) {
                 $('.popover').popover('hide');
@@ -205,6 +242,14 @@ const CoreModel = {
                 return { domNodes: [title] };  // Return only the title, no details
 
               },
+            loading: function(isLoading) {
+                let overlay = document.getElementById('overlay');
+                if (isLoading) {
+                    overlay.style.display = 'block';
+                } else {
+                     overlay.style.display = 'none';
+                }
+            },
         }
     },
     handleAjaxError:(jqxHR) =>{
