@@ -150,38 +150,40 @@ const CoreModel = {
                 $('.popover').remove(); // Completely remove the popover elements
             },
             eventRender: function(event, element) {
-                // First, destroy any existing popover for this element (just in case)
-                element.popover({
-                    trigger: 'manual',
-                    placement: 'top',
-                    container: 'body',
-                    animation: false,
-                    delay: { show: 500, hide: 10 },
-                    title: 'Details',
-                    content: event.title+ (event.note === null ? '' : ' - '+event.note),
-                });
-                
-                // Ensure the cursor is set to pointer
-                element.css('cursor', 'pointer');
-                
-                // Display full event title with time
-                element.find('.fc-title').html(event.title);
-                
-                // Store the popover in event data to access it later
-                event.popover = element.popover();
-                
-                // Add delay before showing the popover
-                element.on('mouseenter', function () {
-                    event.popover = setTimeout(function () {
-                        element.popover('show');
-                    }, 500);
-                });
+                if ($(window).width() > 768) { // if not mobile screen
+                    // First, destroy any existing popover for this element (just in case)
+                    element.popover({
+                        trigger: 'manual',
+                        placement: 'top',
+                        container: 'body',
+                        animation: false,
+                        delay: { show: 500, hide: 10 },
+                        title: 'Details',
+                        content: event.title+ (event.note === null ? '' : ' - '+event.note),
+                    });
+                    
+                    // Ensure the cursor is set to pointer
+                    element.css('cursor', 'pointer');
+                    
+                    // Display full event title with time
+                    element.find('.fc-title').html(event.title);
+                    
+                    // Store the popover in event data to access it later
+                    event.popover = element.popover();
+                    
+                    // Add delay before showing the popover
+                    element.on('mouseenter', function () {
+                        event.popover = setTimeout(function () {
+                            element.popover('show');
+                        }, 500);
+                    });
 
-                // Clean up when leaving
-                element.on('mouseleave', function () {
-                    clearTimeout(event.popover);
-                    element.popover('hide');
-                });
+                    // Clean up when leaving
+                    element.on('mouseleave', function () {
+                        clearTimeout(event.popover);
+                        element.popover('hide');
+                    });
+                }
 
                 // Add icon to the title
                 let icon = document.createElement('i');
