@@ -91,7 +91,6 @@ const CoreModel = {
     calendarSettings:(getDataURL,defaultView = 'basicWeek') => {
         return {
             displayEventTime: false,
-            themeSystem: 'bootstrap',
             timeZone: 'UTC',
             defaultView:defaultView,//agendaWeek
             aspectRatio: 1.5, // Adjust as needed
@@ -103,21 +102,18 @@ const CoreModel = {
             slotEventOverlap:false,
             eventOverlap:false,
             header: {
-                left: 'prev,next',
+                left: 'prev,next today',
                 center: 'title',
-                right: 'month,agendaWeek,agendaDay,basicWeek'
+                right: 'month,basicWeek,listDay,listWeek'
             },
-            views: {
-                agendaWeek: { // Customize the agendaWeek view
-                    type: 'agendaWeek', // Use the timeGridWeek view type
-                    buttonText: 'Agenda Week' // Rename the button text
-                },
-                basicWeek: { // Customize the basicWeek view
-                    buttonText: 'Basic Week' // Rename the button text
-                },
-                agendaDay:{
-                    buttonText: 'Today', // Rename the button text
-                }
+            buttonText: {
+                prev: 'Previous',
+                next: 'Next',
+                today: 'Today',
+                month: 'Month',
+                agendaWeek: 'Week',
+                listDay: 'Day',
+                listWeek: 'List'
             },
             minTime: '07:00:00', // Set the minimum time to display (e.g., 8:00 AM)
             maxTime: '20:00:00', // Set the maximum time to display (e.g., 6:00 PM)
@@ -133,15 +129,23 @@ const CoreModel = {
                 data: function() {
                     return {
                         _token: CoreModel.token,
-                        start: $('#calendar').fullCalendar('getView').start.format(), // Start date of the view
-                        end: $('#calendar').fullCalendar('getView').end.format()     // End date of the view
+                        start: $('#calendar').fullCalendar('getView').start, // Start date of the view
+                        end: $('#calendar').fullCalendar('getView').end     // End date of the view
                     };
+                },
+                beforeSend: function() {
+                    // Show loading overlay
+                    document.getElementById('overlay').style.display = 'block';
                 },
                 success: function(events) {
                     // Optionally process the events before rendering
+                    // Hide loading overlay after loading is done
+                    document.getElementById('overlay').style.display = 'none';
                 },
                 error: function() {
                     alert('There was an error while fetching events.');
+                    // Hide loading overlay on error
+                    document.getElementById('overlay').style.display = 'none';
                 }
             },
             businessHours: {
@@ -159,6 +163,7 @@ const CoreModel = {
                 $('.popover').popover('hide');
                 $('.popover').remove(); // Completely remove the popover elements
             },
+
             eventRender: function(event, element) {
                 if ($(window).width() > 768) { // if not mobile screen
                     // First, destroy any existing popover for this element (just in case)
@@ -206,15 +211,20 @@ const CoreModel = {
                 element.find('.fc-title').css('justify-content', 'flex-start'); // Align icon and title to the left
                 element.find('.fc-title').css('text-align', 'left'); // Align the title text to the left
                 // Add time from and time to
-                const timeElement = document.createElement('div');
-                timeElement.className = 'fc-time';
-                timeElement.style.fontSize = '9px';
-                timeElement.style.display = 'flex';
-                timeElement.style.justifyContent = 'flex-end';
-                timeElement.style.marginTop = '5px'; // Add space between title and time
-                timeElement.style.marginLeft = '10px'; // Add space between title and time
-                timeElement.innerHTML = ` ${moment(event.start).format('h:mm A')} - ${moment(event.end).format('h:mm A')}`;
-                element.append(timeElement);
+                const currentView = $('#calendar').fullCalendar('getView');
+
+                // Add time from and time to only if not in listDay or listWeek view
+                if (currentView.name !== 'listDay' && currentView.name !== 'listWeek') {
+                    const timeElement = document.createElement('div');
+                    timeElement.className = 'fc-time';
+                    timeElement.style.fontSize = '9px';
+                    timeElement.style.display = 'flex';
+                    timeElement.style.justifyContent = 'flex-end';
+                    timeElement.style.marginTop = '5px'; // Add space between title and time
+                    timeElement.style.marginLeft = '10px'; // Add space between title and time
+                    timeElement.innerHTML = ` ${moment(event.start).format('h:mm A')} - ${moment(event.end).format('h:mm A')}`;
+                    element.append(timeElement);
+                }
                 
                 // let currentTime =  CoreModel.fetchTime();
                 // (async () => {
@@ -242,14 +252,6 @@ const CoreModel = {
                 return { domNodes: [title] };  // Return only the title, no details
 
               },
-            loading: function(isLoading) {
-                let overlay = document.getElementById('overlay');
-                if (isLoading) {
-                    overlay.style.display = 'block';
-                } else {
-                     overlay.style.display = 'none';
-                }
-            },
         }
     },
     handleAjaxError:(jqxHR) =>{

@@ -128,30 +128,36 @@ html, body{
 }
 
 @media (max-width: 768px) {
-  .fc-toolbar { /* Target the toolbar (header) of FullCalendar */
-      display: flex;
-      flex-direction: column; /* Stack the buttons and title vertically */
-      align-items: center; /* Center-align the content horizontally */
-      justify-content: center; /* Center-align the content vertically */
-  }
+  @media (max-width: 768px) {
+    .fc-toolbar {
+      flex-direction: row; /* Stack the buttons and title horizontally */
+      align-items: center; /* Center-align the content vertically */
+      justify-content: space-between; /* Space out the buttons */
+    }
 
-  .fc-left, .fc-right {
-      float: none; /* Remove the float to align items in the center */
+    .fc-left, .fc-right {
+      flex: 1 1 auto; /* Equal width distribution */
       text-align: center;
-      width: 100%;
       margin-bottom: 10px; /* Add spacing between buttons */
-  }
+    }
 
-  .fc-center {
+    .fc-center {
       text-align: center; /* Center-align the title */
       margin-bottom: 10px; /* Space between title and buttons */
-  }
+      flex: 2 1 auto; /* Twice the width of the buttons */
+    }
 
-  .fc-toolbar .fc-button-group {
+    .fc-toolbar .fc-button-group {
       font-size: 10px;
       display: flex;
-      justify-content: center; /* Center the buttons */
+      justify-content: space-between; /* Space out the buttons */
+    }
+
+    .fc-toolbar .fc-today-button {
+      font-size: 10px;
+    }
   }
+
 }
 
 .no-border-list .list-group-item {

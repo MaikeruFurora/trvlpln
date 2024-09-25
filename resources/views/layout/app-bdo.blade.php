@@ -20,7 +20,8 @@
         <link href="{{ asset('assets/css/icons.css') }}" rel="stylesheet" type="text/css" />
         <link href="{{ asset('assets/css/style.css') }}" rel="stylesheet" type="text/css" />
         <link href="{{ asset('assets/css/custom.css') }}" rel="stylesheet" type="text/css" />
-        <link href="{{ asset('plugins/fullcalendar/css/fullcalendar.css') }}" rel="stylesheet" />
+        {{-- <link href="{{ asset('plugins/fullcalendar/css/fullcalendar.css') }}" rel="stylesheet" /> --}}
+        <link href="{{ asset('plugins/fullcalendar/css/fullcalendar-3.10.2.min.css') }}" rel="stylesheet" />
         <link href="{{ asset('plugins/timepicker/jquery.timepicker.css') }}" rel="stylesheet" />
         <link href="{{ asset('plugins/datetimepicker/jquery.datetimepicker.min.css') }}" rel="stylesheet">
         <link href="{{ asset('plugins/alertify/css/alertify.css') }}" rel="stylesheet">
@@ -83,21 +84,20 @@
         <!-- end wrapper -->
 
         <!-- jQuery  -->
-        <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
+        <script src="{{ asset('assets/js/jquery-3.6.0.min.js') }}"></script>
         <script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
         <script src="{{ asset('assets/js/tooltip.min.js') }}"></script>
         <script src="{{ asset('assets/js/modernizr.min.js') }}"></script>
         <script src="{{ asset('assets/js/waves.js') }}"></script>
         <script src="{{ asset('assets/js/jquery.slimscroll.js') }}"></script>
         <!-- Jquery-Ui -->
-        <script src="{{ asset('plugins/jquery-ui/jquery-ui.min.js') }}"></script>
-        <script src="{{ asset('plugins/moment/moment.js') }}"></script>
-        <script src='{{ asset('plugins/fullcalendar/js/fullcalendar.min.js') }}'></script>
+        {{-- <script src="{{ asset('plugins/jquery-ui/jquery-ui.min.js') }}"></script> --}}
+        <script src="{{ asset('plugins/moment/moment-2.29.1.min.js') }}"></script>
+        <script src='{{ asset('plugins/fullcalendar/js/fullcalendar-3.10.2.min.js') }}'></script>
         <script src="{{ asset('plugins/datetimepicker/jquery.datetimepicker.full.min.js') }}"></script>
         <script src="{{ asset('plugins/timepicker/jquery.timepicker.js') }}"></script>
         <script src="{{ asset('plugins/alertify/js/alertify.js') }}"></script>
         <script src="{{ asset('plugins/jquery-toast/jquery.toast.js') }}"></script>
-        <script src="{{ asset('plugins/moment/moment.js') }}"></script>
         <script src="{{ asset('plugins/select2/select2.min.js') }}"></script>
         <script src="{{ asset('assets/js/global.js') }}?v={{ time() }}"></script>
         @yield('js')
