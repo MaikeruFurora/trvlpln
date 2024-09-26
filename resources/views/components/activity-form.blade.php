@@ -15,7 +15,7 @@
             <label class="label-text" for="">Date</label>
             <input type="text" class="form-control datepicker" name="date_from" required/>
         </div>
-        <div class="row">
+        <div class="row d-none">
             <div class="col-lg-6 col-md-6 col-sm-12">
                 <div class="mb-3">
                     <label for="time_from" class="label-text">Time From</label>
@@ -33,11 +33,6 @@
             <input type="checkbox" class="form-check-input" name="week" id="applydisWeek">
             <label class="form-check-label label-text" for="applydisWeek">Apply this week.</label>
         </div>
-        
-        {{-- <div class="mb-3">
-            <label class="label-text" for="">Date & time </label>
-            <input type="text" class="form-control datepicker" name="date_to"/>
-        </div> --}}
         <div class="mb-3">
             <label class="label-text" for="">Client or Title</label>
             <textarea class="form-control text-uppercase" id="" rows="3" name="client" maxlength="100" required></textarea>

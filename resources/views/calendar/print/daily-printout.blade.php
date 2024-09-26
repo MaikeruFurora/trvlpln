@@ -26,7 +26,7 @@
         table.table-bordered > tbody > tr > td {
             border: 1px solid #e0e0e0;
             padding: 8px 12px;
-            font-size: 13px;
+            font-size: 14px;
         }
 
         th {
@@ -47,7 +47,7 @@
         }
 
         li {
-            font-size: 12px;
+            font-size: 14px;
             margin-bottom: 5px;
         }
 
@@ -63,7 +63,7 @@
         }
 
         .table-summary th, .table-summary td {
-            font-size: 9px;
+            font-size: 13px;
             background-color: #f9f9f9;
             border: none;
         }
@@ -82,7 +82,7 @@
 </head>
 <body onload="window.print();">
 
-    <h6>BDO: {{ $user->name }}</h6>
+    <h6>{{ $user->name }}</h6>
     <p class="mb-0">Beat Plan Daily Report</p>
     <p class="mb-0">Date: {{ date("m/d/Y") }}</p>
 
@@ -99,13 +99,13 @@
             @if ($activities->count())
                 @foreach ($activities as $activity)
                 <tr>
-                    <td style=" font-size: 10px">{{ $activity->client }}</td>
-                    <td style=" font-size: 10px">{{ $activity->note ?? 'No remarks' }}</td>
-                    <td style=" font-size: 10px">
+                    <td style=" font-size: 13px">{{ $activity->client }}</td>
+                    <td style=" font-size: 13px">{{ $activity->note ?? 'No remarks' }}</td>
+                    <td style=" font-size: 13px">
                         @if ($activity->bookings->count())
                             <ol>
                                 @foreach ($activity->bookings as $booking)
-                                    <li style=" font-size: 10px">{{ $booking->product->name ?? $booking->free_type }} (Qty: {{ $booking->qty }}) Price: {{ $booking->price }}</li>
+                                    <li style=" font-size: 13px">{{ $booking->product->name ?? $booking->free_type }} (Qty: {{ $booking->qty }}) Price: {{ $booking->price }}</li>
                                 @endforeach
                             </ol>
                         @else

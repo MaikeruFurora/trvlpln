@@ -26,7 +26,7 @@
         table.table-bordered > tbody > tr > td {
             border: 1px solid #ccc;
             padding: 6px 10px;
-            font-size: 12px;
+            font-size: 14px;
         }
 
         th {
@@ -45,7 +45,7 @@
         }
 
         li {
-            font-size: 11px;
+            font-size: 14px;
             margin-bottom: 5px;
         }
 
@@ -64,7 +64,7 @@
 </head>
 <body onload="window.print();">
 
-    <h6>BDO: {{ $user->name }}</h6>
+    <h6>{{ $user->name }}</h6>
     <p style="font-size: 11px" class="mb-0">Beat Plan Weekly Report</p>
     <p style="font-size: 11px" class="mb-0">Date: {{ date("m/d/Y", strtotime($monday)) }} - {{ date("m/d/Y", strtotime($saturday)) }}</p>
 
@@ -73,7 +73,7 @@
             $date = strtotime("+$i day", strtotime($monday)); 
             $dayName = ucfirst(strftime("%A", $date));
         ?>
-        <h6 style="font-size: 11px" class="mt-4">{{ $dayName }} ({{ date("m/d", $date) }})</h6>
+        <h6 style="font-size: 13px" class="mt-4">{{ $dayName }} ({{ date("m/d", $date) }})</h6>
         <table class="table table-sm table-bordered">
             <thead>
                 <tr>
@@ -96,7 +96,7 @@
                                     @endforeach
                                 </ol>
                             @else
-                               'dasda'
+                                
                             @endif
                             
                         </td>

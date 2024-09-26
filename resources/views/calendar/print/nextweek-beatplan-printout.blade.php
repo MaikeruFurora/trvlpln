@@ -41,7 +41,7 @@
                 border: 1px solid black;
             }
             .table thead tr th, .table tbody tr td {
-                font-size: 10.5px !important;
+                font-size: 13px !important;
                 padding: 2px;
             }
             table.table-bordered > tfoot > tr > th {
@@ -98,7 +98,7 @@
                         $dayName = ucfirst(strftime('%A', strtotime("+$i day", strtotime($monday))));
                         $activityCount = isset($activities[$dayName]) ? $activities[$dayName]->count() : 0;
                     ?>
-                    <th style="font-size: 11px">Count: {{ $activityCount }}</th>
+                    <th style="font-size: 13px">Count: {{ $activityCount }}</th>
                 @endfor
             </tr>
         </tfoot>

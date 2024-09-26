@@ -93,13 +93,13 @@ html, body{
     white-space: normal; /* Allow text wrapping */
     word-wrap: break-word; /* Ensure long words are wrapped */
     font-size: 11px; /* Adjust font size if necessary */
-    padding: 1px; /* Adjust padding for readability */
+    padding: 2px; /* Adjust padding for readability */
 }
 .fc-time {
     display: inline-block;
 }
 .fc-event {
-    min-height: 20px; /* Ensure events have enough space */
+    min-height: 30px; /* Ensure events have enough space */
     padding: 1px; /* Adjust padding if text is being cut off */
 }
 .fc-row {

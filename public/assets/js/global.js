@@ -202,7 +202,7 @@ const CoreModel = {
 
                 // Add icon to the title
                 let icon = document.createElement('i');
-                icon.className = event.icon ?? 'fas fa-user-circle';
+                icon.className = event.icon ?? 'fas fa-user-circle'; 
                 icon.style.marginRight = '5px'; // Add space between icon and title
                 icon.style.marginLeft = '5px'; // Add space between icon and title
                 element.find('.fc-title').prepend(icon);
@@ -211,35 +211,7 @@ const CoreModel = {
                 element.find('.fc-title').css('justify-content', 'flex-start'); // Align icon and title to the left
                 element.find('.fc-title').css('text-align', 'left'); // Align the title text to the left
                 // Add time from and time to
-                const currentView = $('#calendar').fullCalendar('getView');
-
-                // Add time from and time to only if not in listDay or listWeek view
-                if (currentView.name !== 'listDay' && currentView.name !== 'listWeek') {
-                    const timeElement = document.createElement('div');
-                    timeElement.className = 'fc-time';
-                    timeElement.style.fontSize = '9px';
-                    timeElement.style.display = 'flex';
-                    timeElement.style.justifyContent = 'flex-end';
-                    timeElement.style.marginTop = '5px'; // Add space between title and time
-                    timeElement.style.marginLeft = '10px'; // Add space between title and time
-                    timeElement.innerHTML = ` ${moment(event.start).format('h:mm A')} - ${moment(event.end).format('h:mm A')}`;
-                    element.append(timeElement);
-                }
-                
-                // let currentTime =  CoreModel.fetchTime();
-                // (async () => {
-                //     if ($(window).width() > 768 && moment(event.start).isSame(currentTime, 'day') && event.sttus === null) {
-                //         // Add Pending text to the right top corner of the title
-                //         let pending = document.createElement('span');
-                //         pending.innerHTML = '[Pending]';  // Show only the title
-                //         pending.style.position = 'absolute';
-                //         pending.style.fontSize = '8px';
-                //         pending.style.bottom = '0';
-                //         pending.style.right = '0';
-                //         pending.style.color = 'white';
-                //         element.find('.fc-title').append(pending);
-                //     }
-                // })();
+               
 
             }, 
             eventContent: function(arg) {
@@ -269,10 +241,11 @@ const getTime = async () => {
     return currentTime
     // Do something with currentTime
 }
-
-console.log('current date',moment(getTime()).format('YYYY-MM-DD'));
-
-
+getTime().then(currentTime => {
+    if (currentTime) {
+        console.log('Current date:', currentTime.format('YYYY-MM-DD'));
+    }
+});
 
 
 window.onload = function() {

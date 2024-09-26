@@ -9,7 +9,7 @@
             <x-activity-form :lists="$lists"/>
         </div>
         <div class="col-12 d-none d-md-block">
-            @include('calendar.parts.guide')
+            @include('calendar.parts.guide',['list'=>$lists])
         </div>
     </div>
     <div class="col-xl-10 col-lg-9 col-md-8">

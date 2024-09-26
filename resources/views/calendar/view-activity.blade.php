@@ -30,13 +30,7 @@
               <div class="tab-content">
                 <div class="tab-pane active" id="details" role="tabpanel" aria-labelledby="details-tab">
                   <div class="card-body p-2 mb-0">
-                    <div class="row">
-                      <div class="col-lg-4 col-md-4 col-sm-12">
-                          <div class="mb-3">
-                            <label class="mb-2 label-text" for="">Date</label>
-                            <input type="text" class="form-control getInput datepicker" name="date_from">
-                          </div>
-                      </div>
+                    <div class="row d-none"> 
                       <div class="col-lg-4 col-md-4 col-sm-6">
                           <div class="mb-3">
                             <label class="mb-2 label-text" for="">Time From</label>
@@ -50,14 +44,24 @@
                         </div>
                       </div>
                     </div>
-                    <div class="mb-3">
-                      <label class="mb-2 label-text" for="">Activity</label>
-                      <select name="activity" class="getInput form-control" id="">
-                        <option value=""></option>
-                        @foreach ($lists as $item)
-                            <option value="{{ $item->id }}">{{ $item->name }}</option>
-                        @endforeach
-                      </select>
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="mb-3">
+                              <label class="mb-2 label-text" for="">Date</label>
+                              <input type="text" class="form-control getInput datepicker" name="date_from">
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                          <div class="mb-3">
+                            <label class="mb-2 label-text" for="">Activity</label>
+                            <select name="activity" class="getInput form-control" id="">
+                              <option value=""></option>
+                              @foreach ($lists as $item)
+                                  <option value="{{ $item->id }}">{{ $item->name }}</option>
+                              @endforeach
+                            </select>
+                          </div>
+                        </div>
                     </div>
                     <div class="mb-4">
                         <label class="mb-2 label-text" for="">Client</label>
@@ -67,7 +71,7 @@
                       @foreach ($sttus as $key => $item)
                       <div class="form-check form-check-inline">
                         <input type="checkbox" class="form-check-input getInput sample{{$key}}"  name="sttus[]" id="customControlValidation1{{$item}}" value="{{ $item }}">
-                        <label class="form-check-label" for="customControlValidation1{{$item}}">{{ ucwords($item) }}</label>
+                        <label class="form-check-label" style="font-size: 13px" for="customControlValidation1{{$item}}">{{ ucwords($item) }}</label>
                       </div>
                       @endforeach
                     </div>

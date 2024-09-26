@@ -11,7 +11,7 @@
      }
  });
 
-var defaultView  = ($(window).width() <= 600) ? 'basicDay' : 'basicWeek';
+var defaultView  = ($(window).width() <= 600) ? 'listDay' : 'basicWeek';
 let Activity     = $("#Activity")
 let ActivityForm = $("#ActivityForm")
 let ActivityDate = $("#ActivityDate")
@@ -127,60 +127,74 @@ $(document).on('click', '.form-check-input', function() {
 CoreModel.calendar.fullCalendar('off', 'eventClick');
 CoreModel.calendar.fullCalendar('on', 'eventClick', function(event, jsEvent, view) {
     $(this).popover('hide');
-    let disablePastAndFuture =  moment(getTime()).format('YYYY-MM-DD')!==moment(event.start).format('YYYY-MM-DD');
-    disablePastAndFuture ? ActivityForm.find("button[name=delete]").hide() : ActivityForm.find("button[name=delete]").show()
-    ActivityForm[0].reset()
-    let updateUrl   = CoreModel.calendar.attr("data-info").replace("param",event.id)
-    $.ajax({
-        url: updateUrl,
-        type: "GET",
-        dataType: 'json'
-    })
-    .done(function(data) {
-        $('#viewActivity').modal('show');
-        $('#viewActivityLabel').text(event.title);
-        // Update CoreModel with fetched data
-        CoreModel.booking = data.booking;
-    
-        // Render table with data
-        renderTable(disablePastAndFuture);
-    
-        // Update form fields with data
-        ActivityForm.find("input[name=id]").val(data.id);
-        $("#ActivityForm .getInput").each(function() {
-            var name = this.name;
-            if (name !== 'sttus[]' && name !== 'client') {
-                var $elem = ActivityForm.find("[name=" + name + "]");
-                $elem.val(data[name]).prop('readonly', disablePastAndFuture);
-            }else{
-                ActivityForm.find("input[name=client]").val(data['client']);
-            }
-        });
-    
-        // Update checkbox states
-        ActivityForm.find("input[type=checkbox]")
-            .prop('checked', false)
-            .filter(function() { return this.value == data.sttus; })
-            .prop('checked', true);
-    
-        // Show/hide delete button
-        ActivityForm.find("button[name=delete]").toggle(!data.isDelete);
-    
-        // Set form field properties based on disablePastAndFuture
-        ActivityForm.find("input[type=checkbox]").prop('disabled', disablePastAndFuture);
-        ActivityForm.find("select[name=activity]").val(data.activity_list_id);
-        ActivityForm.find("input[name=date_from]").val(moment(data.date_from).format('YYYY-MM-DD')).prop('readonly', false);
-        ActivityForm.find("input[name=time_from]").val(moment(data.date_from).format('HH:mm')).prop('readonly', false);
-        ActivityForm.find("input[name=time_to]").val(moment(data.date_to).format('HH:mm')).prop('readonly', false);
-    
-        // Set readonly and disabled properties for booking fields
-        ActivityForm.find('input[name=product], input[name=qty], input[name=price]').prop('readonly', disablePastAndFuture);
-        ActivityForm.find('button[id=addProduct]').prop('disabled', disablePastAndFuture);
-    })
-    .fail(CoreModel.handleAjaxError)
-    .always(function() {
-        $('#calendar').fullCalendar('refetchEvents');
+    getTime().then(currentTime => {
+        if (currentTime) {
+            ActivityForm[0].reset(); // Reset form before populating new data
+
+            let updateUrl = CoreModel.calendar.attr("data-info").replace("param", event.id);
+
+            $.ajax({
+                url: updateUrl,
+                type: "GET",
+                dataType: 'json'
+            })
+            .done(function(data) {
+                // Display modal and update the modal title
+                $('#viewActivity').modal('show');
+                $('#viewActivityLabel').text(event.title);
+
+                // Update CoreModel with fetched data
+                CoreModel.booking = data.booking;
+
+                // Calculate disablePastAndFuture based on current date and event date
+                let disablePastAndFuture = moment(currentTime).format('YYYY-MM-DD') !== moment(event.start).format('YYYY-MM-DD');
+
+                // Render table with data (this depends on your implementation)
+                renderTable(disablePastAndFuture);
+
+                // Update form fields with data
+                ActivityForm.find("input[name=id]").val(data.id);
+                $("#ActivityForm .getInput").each(function() {
+                    var name = this.name;
+                    if (name !== 'sttus[]' && name !== 'client') {
+                        var $elem = ActivityForm.find("[name=" + name + "]");
+                        $elem.val(data[name]).prop('readonly', disablePastAndFuture);
+                    } else {
+                        ActivityForm.find("input[name=client]").val(data['client']);
+                    }
+                });
+
+                // Update checkbox state
+                ActivityForm.find("input[type=checkbox]")
+                    .prop('checked', false)
+                    .filter(function() { return this.value == data.sttus; })
+                    .prop('checked', true);
+
+                // Show/hide delete button based on isDelete
+                ActivityForm.find("button[name=delete]").toggle(!data.isDelete);
+
+                // Update fields based on disablePastAndFuture
+                ActivityForm.find("input[type=checkbox]").prop('disabled', disablePastAndFuture);
+                ActivityForm.find("select[name=activity]").val(data.activity_list_id);
+                ActivityForm.find("input[name=date_from]").val(moment(data.date_from).format('YYYY-MM-DD')).prop('readonly', false);
+                
+                // Optionally, update time fields if needed (commented out in your original code)
+                // ActivityForm.find("input[name=time_from]").val(moment(data.date_from).format('HH:mm')).prop('readonly', false);
+                // ActivityForm.find("input[name=time_to]").val(moment(data.date_to).format('HH:mm')).prop('readonly', false);
+
+                // Set readonly or disabled states for booking fields
+                ActivityForm.find('input[name=product], input[name=qty], input[name=price]').prop('readonly', disablePastAndFuture);
+                ActivityForm.find('button[id=addProduct]').prop('disabled', disablePastAndFuture);
+
+            })
+            .fail(CoreModel.handleAjaxError)
+            .always(function() {
+                // Refetch events to refresh the calendar
+                $('#calendar').fullCalendar('refetchEvents');
+            });
+        }
     });
+
     
  });
 
