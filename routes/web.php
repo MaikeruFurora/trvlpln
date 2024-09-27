@@ -56,9 +56,14 @@ Route::middleware(['auth:web','preventBackHistory','auth.user'])->name('authenti
     Route::get('activity/weekly/beatplan/printout',[BDOController::class,'beatplanWeeklyPrintout'])->name('activity.weekly.beatplan.printout');
     Route::get('activity/nextweek/beatplan/printout',[BDOController::class,'beatplanNextWeekPrintout'])->name('activity.nextweek.beatplan.printout');
 
+    //EXCEL REPORT
+    Route::get('activity/daily/excel',[BDOController::class,'excelDailyReport'])->name('activity.daily.excel');
+    Route::get('activity/weekly/excel',[BDOController::class,'excelWeeklyReport'])->name('activity.weekly.excel');
+    
     // ADMIN API
     Route::get('dashboard',[AdminController::class,'dashboard'])->name('dashboard');
     Route::get('vw',[AdminController::class,'index'])->name('admin');
+    Route::get('report/excel',[AdminController::class,'reportExcel'])->name('admin.report.excel');
     Route::get('vw/report',[AdminController::class,'report'])->name('admin.report');
     Route::get('user',[UserController::class,'index'])->name('user');
     Route::get('user/list',[UserController::class,'list'])->name('user.list');

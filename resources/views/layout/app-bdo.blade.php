@@ -52,9 +52,17 @@
                     <a class="dropdown-item" href="#" data-url="{{ route('authenticate.activity.weekly.beatplan.printout') }}">Beat Plan Weekly Summary</a>
                     <a class="dropdown-item" href="#" data-url="{{ route('authenticate.activity.nextweek.beatplan.printout') }}">Beat Plan Next Week Summary</a>
                     <a class="dropdown-item" href="#" data-url="{{ route('authenticate.activity.weekly.printout') }}">Weekly Details Report</a>
-                    <a class="dropdown-item" href="#" data-url="{{ route('authenticate.activity.daily.printout') }}">Today Daily ({{ date('l') }})</a>
+                    <a class="dropdown-item" href="#" data-url="{{ route('authenticate.activity.daily.printout') }}">Today Details Report({{ date('l') }})</a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#">Other Report</a>
+                    <div class="dropdown-submenu">
+                      <a class="dropdown-item" href="#"><i class="fas fa-table"></i> Excel Report</a>
+                      <div class="dropdown-menu">
+                        @if (date('l')!=="Sunday")
+                        <a class="nav-link text-dark" target="_blank" href="{{ route('authenticate.activity.daily.excel') }}"><i class="fas fa-table"></i> Today Details ({{ date('l') }})</a> 
+                        @endif
+                        <a class="nav-link text-dark" target="_blank" href="{{ route('authenticate.activity.weekly.excel') }}"><i class="fas fa-table"></i> Weekly Details</a> 
+                      </div>
+                    </div>
                 </div>
             </li>
             <li class="nav-item">

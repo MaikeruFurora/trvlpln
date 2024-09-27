@@ -64,7 +64,7 @@
                         </div>
                     </div>
                     <div class="mb-4">
-                        <label class="mb-2 label-text" for="">Client</label>
+                        <label class="mb-2 label-text" for="">Client or Title</label>
                         <input type="text" name="client" class="getInput form-control" id="">
                     </div>
                     <div class="col-12 mb-2 d-flex justify-content-end">

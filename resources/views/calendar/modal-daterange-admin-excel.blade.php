@@ -3,22 +3,14 @@
       <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content">
           <div class="modal-header p-2">
-            <p class="modal-title ml-1" id="reportModalLabel">Report - Filter Excel</p>
+            <p class="modal-title ml-1" id="reportModalLabel">Report - Filter (Spvsr)</p>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <div class="modal-body p-2">
             {{--  --}}
-            <form action="{{ route('authenticate.supervisor.report') }}" id="reportDateRangeForm" autocomplete="off">@csrf
-              <div class="form-group"> 
-                  <select class="custom-select custom-select-sm" name="wrhs" id="" required>
-                      <option value="all">All</option>
-                      @foreach ($bdo as $key => $item)   
-                      <option value="{{ $item->id }}">{{ $item->name }}</option>
-                      @endforeach
-                </select>
-              </div>
+            <form action="{{ route('authenticate.admin.report.excel') }}" id="reportDateRangeExcelForm" autocomplete="off">@csrf
               <div class="form-group">
                 <div>
                     <div class="input-daterange input-group" id="date-range">
@@ -28,9 +20,9 @@
                 </div>
               </div>
               <div class="form-group">
-                 <select class="custom-select custom-select-sm" name="wrhs" id="" required>
-                     <option value="all">All</option>
-                     @foreach ($bdo as $key => $item)   
+                 <select class="custom-select custom-select-sm" name="user" id="" required>
+                     <option value=""></option>
+                     @foreach ($users as $key => $item)   
                      <option value="{{ $item->id }}">{{ $item->name }}</option>
                      @endforeach
                  </select>

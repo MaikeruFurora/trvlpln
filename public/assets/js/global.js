@@ -200,17 +200,33 @@ const CoreModel = {
                     });
                 }
 
-                // Add icon to the title
+                 // Add icon to the title
                 let icon = document.createElement('i');
-                icon.className = event.icon ?? 'fas fa-user-circle'; 
+                icon.className = event.icon ?? 'fas fa-user-circle'; // Use provided icon or default
                 icon.style.marginRight = '5px'; // Add space between icon and title
                 icon.style.marginLeft = '5px'; // Add space between icon and title
-                element.find('.fc-title').prepend(icon);
-                element.find('.fc-title').css('display', 'flex');
-                element.find('.fc-title').css('align-items', 'center'); // Align icon and title vertically
-                element.find('.fc-title').css('justify-content', 'flex-start'); // Align icon and title to the left
-                element.find('.fc-title').css('text-align', 'left'); // Align the title text to the left
-                // Add time from and time to
+
+                // Update both day/week views and list views
+                if (element.find('.fc-title').length) {
+                    // For week/day views
+                    element.find('.fc-title').prepend(icon);
+                    element.find('.fc-title').css({
+                        'display': 'flex',
+                        'align-items': 'center', // Align icon and title vertically
+                        'justify-content': 'flex-start', // Align icon and title to the left
+                        'text-align': 'left' // Align the title text to the left
+                    });
+                } else if (element.find('.fc-list-item-title').length) {
+                    // For list views
+                    element.find('.fc-list-item-title').prepend(icon);
+                    element.find('.fc-list-item-title').css({
+                        'font-size':'11px',
+                        'display': 'flex',
+                        'align-items': 'center', // Align icon and title vertically
+                        'justify-content': 'flex-start', // Align icon and title to the left
+                        'text-align': 'left' // Align the title text to the left
+                    });
+                }
                
 
             }, 

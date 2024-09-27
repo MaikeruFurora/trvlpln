@@ -82,11 +82,12 @@ class AdminController extends Controller
     }
 
     public function index(){
-        $users = $this->listBdo();
+        $wrhsWithBDO = $this->listBdo();
+        $users = User::notAdmin()->getActive()->get(['id','name','type','wrhs']);
         $lists = ActivityList::getActive()->get(['id','name','color','icon']);
         $wrhs = Wrhs::active()->get(['id','name']);
         $groupedArray = $this->userGroup();
-        return view('admin.index',compact('users','lists','wrhs','groupedArray'));
+        return view('admin.index',compact('users','lists','wrhs','groupedArray','wrhsWithBDO'));
     }
 
     public function userGroup(){
@@ -175,6 +176,9 @@ class AdminController extends Controller
             }
           
             return view('admin.report-template.date-range', compact('reportData','start','end','wrhs'));
+    }
 
+    public function reportExcel(Request $request){
+        
     }
 }

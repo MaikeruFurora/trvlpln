@@ -2,12 +2,12 @@
 @section('content')
 <div class="card">
     <div class="card-body">
-            <div class="row">
+        <div class="row">
             <div class="col-xl-2 col-lg-3 col-md-3 col-sm-12">
                 <button name="report" class="btn btn-secondary btn-block mb-3 btn-sm">REPORT</button>
                 @if (empty(auth()->user()->wrhs) && auth()->user()->type=='admin')
                 <div id="accordion">
-                    @foreach ($users as $key => $item)    
+                    @foreach ($wrhsWithBDO as $key => $item)    
                         <div class="card m-0 border">
                             <!-- Accordion Header -->
                             <a data-toggle="collapse" href="#collapseOne{{ $key }}"
@@ -36,7 +36,6 @@
                     @endforeach
                 </div>
                 @else
-                    
                 <div id="accordion">
                     @forelse ($groupedArray as $group => $items)    
                 <div class="card m-0 border">
@@ -84,17 +83,9 @@
         </div>
     </div>
 </div>
-    {{-- <div class="col-xl-1 col-lg-1 col-md-1 col-sm-12">
-        <button name="report" class="btn btn-secondary btn-block mb-3 btn-sm">REPORT</button>
-        <p><strong>Guide</strong></p>
-        <ul class="list-group">
-            @foreach ($lists as $item)
-                <i class="list-group-item text-center p-1 pt-3" style="font-size: 11px"> <i class="{{ $item->icon }}" style="font-size: 15px"></i> <br>{{ $item->name }}</i>
-            @endforeach
-        </ul>
-    </div> --}}
 @include('calendar.readonly')
 @include('calendar.modal-daterange-admin',['wrhs'=>$wrhs])
+@include('calendar.modal-daterange-admin-excel',['users'=>$users])
 @endsection
 @section('js')
 <script src="{{ asset('assets/js/admin.v2.js') }}?v={{ time() }}"></script>

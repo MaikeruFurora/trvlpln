@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\Report\DailyReport;
+use App\Exports\Report\WeeklyReport;
 use App\Models\ActivityList;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class BDOController extends Controller
 {
@@ -91,5 +94,13 @@ class BDOController extends Controller
         // Pass data to the view
         return view('calendar.print.nextweek-beatplan-printout', compact('activities', 'user', 'monday', 'saturday'));
 
+    }
+
+    public function excelDailyReport(){
+        return Excel::download(new DailyReport(),'Daily Report.xlsx');
+    }
+    
+    public function excelWeeklyReport(){
+        return Excel::download(new WeeklyReport(),'Weekly Report.xlsx');
     }
 }

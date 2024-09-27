@@ -70,7 +70,6 @@ $("button[name=report]").on('click',function(e){
         datepicker: true,
         timepicker: false, // Disables time selection
         format: 'Y-m-d',
-        maxDate: 0,
     });
 })
 
@@ -89,4 +88,25 @@ $("#reportDateRangeForm").on('submit',function(e){
     let adsURL     = url_string+"?_token="+_token+"&start="+start+"&end="+end+"&wrhs="+wrhs;
 
     CoreModel.loadToPrint(adsURL)
+})
+
+$("#reportDateRangeExcelForm").on('submit',function(e){
+    $(this).find("button[type=submit]").text("Please wait...").prop('disabled',true);
+    setInterval(() => {
+        $(this).find("button[type=submit]").text("Generate Report").prop('disabled',false);
+    }, 7000);
+    e.preventDefault()
+    let url_string = $(this).attr("action");
+    let start      = $(this).find("input[name='start']").val()
+    let end        = $(this).find("input[name='end']").val()
+    let _token     = $(this).find("input[name='_token']").val()
+    let user       = $(this).find("select[name='user']").val()
+    let adsURL     = url_string+"?_token="+_token+"&start="+start+"&end="+end+"&user="+user;
+
+    let link = $("<a>", {
+        href: adsURL,
+        // target: '_blank',
+        text: "Download Report"
+    });
+    $(this).find("button[type=submit]").after(link);
 })
