@@ -375,6 +375,10 @@ class ActivityController extends Controller
  
         // Date from the request
         $date = Carbon::parse($request->date_from);
+
+        if ($this->isSunday($date)) {
+            return response()->json(['msg'=>'Date is Sunday', 'icon'  => 'warning'],500);
+        }
         
         // Handle booking if provided
         if ($request->has('booking')) {
@@ -392,25 +396,44 @@ class ActivityController extends Controller
 
         // If the date is today
         if ($date->isToday()) {
-            $data = $activity->update([
-                'date_from'         => $date->format('Y-m-d'), // Only date, no time
-                'date_to'           => $date->format('Y-m-d'), // Only date, no time
-                'activity_list_id'  => $request->activity,
-                'client'            => strtoupper($request->client),
-                'note'              => $request->note,
-                'osnum'             => $request->osnum,
-                'sttus'             => $request->sttus[0] ?? null,
-            ]);
-
-            if ($data) {
+            if (!$date_fromDB->isPast()) {
+                $data = $activity->update([
+                    'date_from'         => $date->format('Y-m-d'), // Only date, no time
+                    'date_to'           => $date->format('Y-m-d'), // Only date, no time
+                    'activity_list_id'  => $request->activity,
+                    'client'            => strtoupper($request->client),
+                    'note'              => $request->note,
+                    'osnum'             => $request->osnum,
+                    'sttus'             => $request->sttus[0] ?? null,
+                ]);
+    
+                if ($data) {
+                    return response()->json([
+                        'msg' => 'Updated Activity',
+                        'icon' => 'success'
+                    ], 200);
+                }
+            }else{
                 return response()->json([
-                    'msg' => 'Updated Activity',
-                    'icon' => 'success'
-                ], 200);
+                    'msg' => 'Not permitted because the date has passed.',
+                    'icon' => 'warning'
+                ], 500);
             }
         } else {
             // User can update only if the original activity date is not in the past
-            if (!$date_fromDB->isPast()) {
+            if ($date_fromDB->isToday()) {
+                $activity->update([
+                    'date_from' => $date->format('Y-m-d'), // Only date
+                    'date_to'   => $date->format('Y-m-d'), // Only date
+                    'client'    => strtoupper($request->client),
+                    'activity_list_id'  => $request->activity,
+                ]);
+
+                return response()->json([
+                    'msg' => 'Updated Activity Date and Details',
+                    'icon' => 'success'
+                ], 200);
+            } else if (!$date_fromDB->isPast()) {
                 $activity->update([
                     'date_from' => $date->format('Y-m-d'), // Only date
                     'date_to'   => $date->format('Y-m-d'), // Only date
